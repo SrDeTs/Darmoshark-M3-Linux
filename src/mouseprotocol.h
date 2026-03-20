@@ -1,0 +1,80 @@
+#pragma once
+
+#include <cstdint>
+#include <vector>
+#include <QString>
+#include <QStringList>
+
+namespace DarmosharkProtocol {
+
+// Device Identifiers
+const uint16_t DARMOSHARK_VID = 0x248A;
+const uint16_t M3_USB_PID = 0xFF12;
+const uint16_t M3_24G_PID = 0xFF30;
+const uint16_t M3_24G_G_PID = 0xFF31;
+
+// Helper to calculate XOR checksum and finalize packet
+void finalizePacket(std::vector<uint8_t>& packet) {
+    if (packet.size() < 65) return;
+    
+    uint8_t checksum = 0;
+    for (size_t i = 1; i < 64; ++i) { // Calculate checksum from byte 1 to 63
+        checksum ^= packet[i];
+    }
+    packet[64] = checksum;
+}
+
+// DPI Feature Report captured from the Windows driver.
+std::vector<uint8_t> createDpiPacket(const QStringList& stages, int current_stage) {
+    std::vector<uint8_t> packet(21, 0x00);
+    packet[0] = 0x51;
+    packet[1] = 0x40;
+    packet[2] = 0xff;
+    packet[3] = static_cast<uint8_t>(current_stage);
+    packet[4] = 0xff;
+    
+    for (int i = 0; i < stages.size() && i < 7; ++i) {
+        int dpi = stages[i].toInt(); // Raw DPI value (Little Endian)
+        packet[5 + i*2] = dpi & 0xFF;
+        packet[6 + i*2] = (dpi >> 8) & 0xFF;
+    }
+    packet[15] = static_cast<uint8_t>(stages.size());
+    return packet;
+}
+
+// Polling Rate Feature Report captured from the Windows driver.
+std::vector<uint8_t> createPollingRatePacket(int pollingRate) {
+    std::vector<uint8_t> packet(21, 0x00);
+    packet[0] = 0x51;
+    packet[1] = 0x41;
+    packet[2] = 0xff;
+
+    // Captured order from the original driver:
+    // 1000Hz: 0, 500Hz: 1, 125Hz: 2
+    uint8_t prIdx = 0;
+    if (pollingRate == 500) prIdx = 1;
+    else if (pollingRate == 125) prIdx = 2;
+
+    packet[3] = prIdx;
+    packet[4] = 0xff;
+    packet[5] = 0x7d; packet[6] = 0x00;
+    packet[7] = 0xf4; packet[8] = 0x01;
+    packet[9] = 0xe8; packet[10] = 0x03;
+    return packet;
+}
+
+// Button Remap Packet
+std::vector<uint8_t> createRemapPacket(const std::vector<uint8_t>& mapping) {
+    std::vector<uint8_t> packet(65, 0x00);
+    packet[0] = 0x51;
+    packet[1] = 0x50; 
+    
+    for (size_t i = 0; i < mapping.size() && i < 7; ++i) {
+        packet[2 + i] = mapping[i];
+    }
+
+    finalizePacket(packet);
+    return packet;
+}
+
+} // namespace DarmosharkProtocol

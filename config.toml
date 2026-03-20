@@ -1,0 +1,17 @@
+# Darmoshark M3 Configuration
+
+[device]
+name = "Darmoshark M3"
+vid = 0x248A
+pid = 0xFF12
+
+[dpi]
+current_stage = 1
+stages = [400, 800, 1600, 3200, 4800]
+
+[buttons]
+left = "Left-Click"
+right = "Right-Click"
+middle = "Middle-Click"
+forward = "Forward"
+backward = "Backward"

@@ -1,0 +1,5 @@
+ninja: Entering directory `build'
+[1/5] Automatic MOC and UIC for target DarmosharkM3
+[2/4] Building CXX object CMakeFiles/DarmosharkM3.dir/src/hidmanager.cpp.o
+[3/4] Building CXX object CMakeFiles/DarmosharkM3.dir/src/configmanager.cpp.o
+[4/4] Linking CXX executable DarmosharkM3

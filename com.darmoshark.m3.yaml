@@ -1,0 +1,24 @@
+app-id: com.darmoshark.m3
+runtime: org.kde.Platform
+runtime-version: '6.6'
+sdk: org.kde.Sdk
+command: DarmosharkM3
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=all
+  - --share=network
+modules:
+  - name: hidapi
+    buildsystem: cmake
+    sources:
+      - type: archive
+        url: https://github.com/libusb/hidapi/archive/refs/tags/hidapi-0.14.0.tar.gz
+        sha256: 0ae6e344e6878b61e27fc2946c76c023d5a4847e174b0cc6c2ec0f39386d70fb
+
+  - name: darmoshark-m3
+    buildsystem: cmake
+    sources:
+      - type: dir
+        path: .
