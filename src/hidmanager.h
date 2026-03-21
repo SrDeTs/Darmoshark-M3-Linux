@@ -35,7 +35,6 @@ public:
     Q_INVOKABLE void applyLiftOffDistance(bool low);
     Q_INVOKABLE void applyScrollDirection(bool forward);
     Q_INVOKABLE void applyESportsMode(bool open);
-    Q_INVOKABLE void applyButtonRemap(const QVariantList &mapping);
 
 signals:
     void deviceConnectedChanged();

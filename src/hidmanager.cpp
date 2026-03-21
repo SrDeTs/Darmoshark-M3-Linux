@@ -204,19 +204,6 @@ void HidManager::applyDpi(const QVariantList &stages, int current_stage)
     sendConfigPacket(data);
 }
 
-void HidManager::applyButtonRemap(const QVariantList &mapping) {
-    if (!m_device) return;
-    
-    std::vector<uint8_t> mapVec;
-    for (const QVariant &v : mapping) {
-        mapVec.push_back(static_cast<uint8_t>(v.toInt()));
-    }
-    
-    auto packet = DarmosharkProtocol::createRemapPacket(mapVec);
-    sendConfigPacket(QByteArray(reinterpret_cast<const char*>(packet.data()), packet.size()));
-    qDebug() << "Applied button remapping:" << mapping;
-}
-
 void HidManager::applySettings(int pollingRate)
 {
     const bool wiredMode = (m_currentPid == 0xff12);

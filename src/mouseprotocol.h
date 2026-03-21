@@ -206,18 +206,4 @@ std::vector<uint8_t> createESportsModePacket(bool open, bool wiredMode) {
     return packet;
 }
 
-// Button Remap Packet
-std::vector<uint8_t> createRemapPacket(const std::vector<uint8_t>& mapping) {
-    std::vector<uint8_t> packet(65, 0x00);
-    packet[0] = 0x51;
-    packet[1] = 0x50; 
-    
-    for (size_t i = 0; i < mapping.size() && i < 7; ++i) {
-        packet[2 + i] = mapping[i];
-    }
-
-    finalizePacket(packet);
-    return packet;
-}
-
 } // namespace DarmosharkProtocol

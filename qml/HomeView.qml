@@ -410,7 +410,7 @@ Item {
 
                                 Text {
                                 width: parent.width
-                                text: "Próximo passo: botões, macro e ajuste fino."
+                                text: "Próximo passo: ajuste fino de navegação e consistência visual."
                                 color: accent
                                 font.pixelSize: 11
                                 font.family: bodyFont
@@ -551,7 +551,7 @@ Item {
 
                             Text {
                                 width: parent.width
-                                text: "1. DPI, report rate e LOD estão fechados.\n2. Botões e macro ficam para a próxima frente.\n3. O shell foi organizado por feature."
+                                text: "1. DPI, report rate e LOD estão fechados.\n2. O shell foi organizado por feature.\n3. O restante é refinamento visual."
                                 color: textPrimary
                                 font.pixelSize: 12
                                 font.family: bodyFont
