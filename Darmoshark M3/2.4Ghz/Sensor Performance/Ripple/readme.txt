@@ -1,0 +1,1 @@
+Ripple Ligado.pcapng eu obviamente liguei essa funcao no app e Ripple Desligado.pcapng eu desmarquei a funcao Ripple no app

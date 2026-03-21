@@ -1,0 +1,1 @@
+Aqui e foram capturados usando o Dongle 2.4Ghz

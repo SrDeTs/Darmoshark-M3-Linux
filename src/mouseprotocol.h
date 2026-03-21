@@ -25,12 +25,17 @@ void finalizePacket(std::vector<uint8_t>& packet) {
 }
 
 // DPI Feature Report captured from the Windows driver.
-std::vector<uint8_t> createDpiPacket(const QStringList& stages, int current_stage) {
+std::vector<uint8_t> createDpiPacket(const QStringList& stages, int current_stage, bool wiredMode) {
     std::vector<uint8_t> packet(21, 0x00);
     packet[0] = 0x51;
     packet[1] = 0x40;
-    packet[2] = 0xff;
-    packet[3] = static_cast<uint8_t>(current_stage);
+    if (wiredMode) {
+        packet[2] = static_cast<uint8_t>(current_stage);
+        packet[3] = 0xff;
+    } else {
+        packet[2] = 0xff;
+        packet[3] = static_cast<uint8_t>(current_stage);
+    }
     packet[4] = 0xff;
     
     for (int i = 0; i < stages.size() && i < 7; ++i) {
@@ -43,23 +48,81 @@ std::vector<uint8_t> createDpiPacket(const QStringList& stages, int current_stag
 }
 
 // Polling Rate Feature Report captured from the Windows driver.
-std::vector<uint8_t> createPollingRatePacket(int pollingRate) {
+std::vector<uint8_t> createPollingRatePacket(int pollingRate, bool wiredMode) {
     std::vector<uint8_t> packet(21, 0x00);
     packet[0] = 0x51;
     packet[1] = 0x41;
     packet[2] = 0xff;
 
     // Captured order from the original driver:
-    // 1000Hz: 0, 500Hz: 1, 125Hz: 2
-    uint8_t prIdx = 0;
-    if (pollingRate == 500) prIdx = 1;
-    else if (pollingRate == 125) prIdx = 2;
+    // 125Hz: 0, 500Hz: 1, 1000Hz: 2
+    uint8_t prIdx = 2;
+    if (pollingRate == 125) prIdx = 0;
+    else if (pollingRate == 500) prIdx = 1;
 
-    packet[3] = prIdx;
+    if (wiredMode) {
+        packet[2] = prIdx;
+        packet[3] = 0xff;
+    } else {
+        packet[2] = 0xff;
+        packet[3] = prIdx;
+    }
     packet[4] = 0xff;
     packet[5] = 0x7d; packet[6] = 0x00;
     packet[7] = 0xf4; packet[8] = 0x01;
     packet[9] = 0xe8; packet[10] = 0x03;
+    return packet;
+}
+
+// Motion Sync packet captured from the Windows driver.
+std::vector<uint8_t> createMotionSyncPacket(bool enabled, bool wiredMode) {
+    if (wiredMode) {
+        std::vector<uint8_t> packet(13, 0x00);
+        packet[0] = 0x09;
+        packet[1] = 0x00;
+        packet[2] = 0x00;
+        packet[3] = 0x01;
+        packet[4] = 0x00;
+        packet[5] = 0x02;
+        packet[6] = 0x00;
+        packet[7] = enabled ? 0x82 : 0x84;
+        packet[8] = 0x01;
+        return packet;
+    }
+
+    std::vector<uint8_t> packet(21, 0x00);
+    packet[0] = 0x09;
+    packet[1] = 0x00;
+    packet[2] = 0x01;
+    packet[3] = 0x02;
+    packet[4] = 0x00;
+    packet[5] = 0x03;
+    packet[6] = 0x00;
+    packet[7] = 0x82;
+    packet[8] = 0x01;
+    packet[9] = 0x08;
+    packet[13] = 0x03;
+    packet[17] = enabled ? 0x01 : 0x00;
+    return packet;
+}
+
+// Angle Snap packet captured from the Windows driver.
+std::vector<uint8_t> createAngleSnapPacket(bool enabled, bool wiredMode) {
+    std::vector<uint8_t> packet(14, 0x00);
+    packet[0] = 0x82;
+    packet[1] = 0x01;
+    packet[2] = 0x08;
+    packet[3] = 0x00;
+    packet[4] = 0x00;
+    packet[5] = 0x00;
+    packet[6] = wiredMode ? 0x01 : 0x03;
+    packet[7] = 0x00;
+    packet[8] = 0x00;
+    packet[9] = 0x00;
+    packet[10] = enabled ? 0x01 : 0x00;
+    packet[11] = 0x00;
+    packet[12] = 0x00;
+    packet[13] = 0x00;
     return packet;
 }
 

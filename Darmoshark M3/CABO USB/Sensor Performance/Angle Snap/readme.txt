@@ -1,0 +1,1 @@
+Angle Snap Ligadp.pcapng eu obviamente liguei essa funcao no app e Angle Snap Desligado.pcapng eu desmarquei a funcao Angle Snap no app

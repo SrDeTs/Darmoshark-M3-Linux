@@ -1,0 +1,1 @@
+Motion Sync Ligado.pcapng eu obviamente liguei essa funcao no app e Motion Sync Desligado.pcapng eu desmarquei a funcao Motion Sync no app

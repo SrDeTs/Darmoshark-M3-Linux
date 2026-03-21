@@ -26,9 +26,12 @@ public:
     Q_INVOKABLE void disconnectDevice();
     Q_INVOKABLE void writeReport(const QByteArray &data);
     Q_INVOKABLE void sendFeatureReport(const QByteArray &data);
+    Q_INVOKABLE void sendConfigPacket(const QByteArray &data);
     
     Q_INVOKABLE void applyDpi(const QVariantList &stages, int current_stage);
     Q_INVOKABLE void applySettings(int pollingRate);
+    Q_INVOKABLE void applyMotionSync(bool enabled);
+    Q_INVOKABLE void applyAngleSnap(bool enabled);
     Q_INVOKABLE void applyButtonRemap(const QVariantList &mapping);
 
 signals:

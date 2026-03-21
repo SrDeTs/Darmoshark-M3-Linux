@@ -15,6 +15,8 @@ Item {
     property color textPrimary: "#f4f7f6"
     property color textSecondary: "#8b9593"
     property color danger: "#ff6b6b"
+    property string titleFont: "Red Hat Display"
+    property string bodyFont: "Fira Sans"
 
     function connectionLabel(mode) {
         if (!mode || mode.length === 0)
@@ -24,6 +26,13 @@ Item {
         if (mode === "Wired")
             return "Cabo"
         return mode
+    }
+
+    function homeIcon(kind) {
+        if (kind === "battery") return "▣"
+        if (kind === "connection") return "◌"
+        if (kind === "quick") return "⌕"
+        return "↗"
     }
 
     Flickable {
@@ -44,10 +53,13 @@ Item {
 
             Rectangle {
                 width: parent.width
-                height: 248
+                height: 232
                 radius: 24
-                color: panel
-                border.color: border
+                gradient: Gradient {
+                    GradientStop { position: 0; color: "#131917" }
+                    GradientStop { position: 1; color: "#0b0f0e" }
+                }
+                border.color: accent
                 border.width: 1
                 clip: true
 
@@ -57,19 +69,22 @@ Item {
                     spacing: 18
 
                     Rectangle {
-                        width: 220
-                        height: 208
+                        width: 208
+                        height: 192
                         radius: 22
-                        color: panelAlt
-                        border.color: border
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "#1a2120" }
+                            GradientStop { position: 1; color: "#111715" }
+                        }
+                        border.color: accent
                         border.width: 1
                         clip: true
 
                         Image {
                             anchors.centerIn: parent
                             source: "qrc:/images/m3_device_mouse.png"
-                            width: 164
-                            height: 164
+                            width: 152
+                            height: 152
                             fillMode: Image.PreserveAspectFit
                             smooth: true
                         }
@@ -82,15 +97,17 @@ Item {
                         Text {
                             text: "Darmoshark M3"
                             color: textPrimary
-                            font.pixelSize: 34
+                            font.pixelSize: 28
                             font.bold: true
+                            font.family: titleFont
                         }
 
                         Text {
                             width: parent.width
                             text: "Painel consolidado do mouse. O hardware já está falando o mesmo protocolo do software Windows para DPI e polling rate."
-                            color: textSecondary
-                            font.pixelSize: 12
+                            color: "#a5b0ad"
+                            font.pixelSize: 11
+                            font.family: bodyFont
                             wrapMode: Text.WordWrap
                         }
 
@@ -101,7 +118,10 @@ Item {
                                 width: 116
                                 height: 34
                                 radius: 17
-                                color: hidManager.deviceConnected ? "#103b33" : "#2b1717"
+                                gradient: Gradient {
+                                    GradientStop { position: 0; color: hidManager.deviceConnected ? "#103b33" : "#342020" }
+                                    GradientStop { position: 1; color: hidManager.deviceConnected ? "#0f2f29" : "#241616" }
+                                }
                                 border.color: hidManager.deviceConnected ? accent : danger
                                 border.width: 1
 
@@ -111,6 +131,7 @@ Item {
                                     color: hidManager.deviceConnected ? accent : danger
                                     font.pixelSize: 11
                                     font.bold: true
+                                    font.family: titleFont
                                 }
                             }
 
@@ -118,23 +139,27 @@ Item {
                                 width: 136
                                 height: 34
                                 radius: 17
-                                color: "#18211f"
-                                border.color: border
+                                gradient: Gradient {
+                                    GradientStop { position: 0; color: "#1a2321" }
+                                    GradientStop { position: 1; color: "#121816" }
+                                }
+                                border.color: accentSoft
                                 border.width: 1
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: connectionLabel(hidManager.connectionMode)
-                                    color: textPrimary
+                                    color: accentSoft
                                     font.pixelSize: 11
                                     font.bold: true
+                                    font.family: titleFont
                                 }
                             }
                         }
 
                         Rectangle {
                             width: parent.width
-                            height: 86
+                            height: 78
                             radius: 18
                             color: panelDeep
                             border.color: border
@@ -151,13 +176,16 @@ Item {
                                     height: parent.height - 28
                                     radius: 16
                                     color: "#1b2421"
+                                    border.color: accent
+                                    border.width: 1
 
                                     Text {
                                         anchors.centerIn: parent
                                         text: "M3"
                                         color: accent
-                                        font.pixelSize: 24
+                                        font.pixelSize: 22
                                         font.bold: true
+                                        font.family: titleFont
                                     }
                                 }
 
@@ -170,6 +198,7 @@ Item {
                                         color: accent
                                         font.pixelSize: 12
                                         font.bold: true
+                                        font.family: titleFont
                                     }
 
                                     Text {
@@ -177,6 +206,7 @@ Item {
                                         text: "DPI e polling rate já estão alinhados com a captura do driver original."
                                         color: textSecondary
                                         font.pixelSize: 11
+                                        font.family: bodyFont
                                         wrapMode: Text.WordWrap
                                     }
                                 }
@@ -190,25 +220,50 @@ Item {
                 width: parent.width
                 spacing: 16
 
-                Rectangle {
-                    width: Math.round((parent.width - 16) * 0.58)
-                    height: 276
-                    radius: 24
-                    color: panelAlt
-                    border.color: border
-                    border.width: 1
-                    clip: true
+            Rectangle {
+                        width: Math.round((parent.width - 16) * 0.58)
+                        height: 256
+                        radius: 24
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "#171e1c" }
+                            GradientStop { position: 1; color: "#0f1312" }
+                        }
+                        border.color: accent
+                        border.width: 1
+                        clip: true
 
                     Column {
                         anchors.fill: parent
                         anchors.margins: 18
-                        spacing: 14
+                        spacing: 12
 
-                        Text {
-                            text: "ESTADO DO SISTEMA"
-                            color: textSecondary
-                            font.pixelSize: 10
-                            font.bold: true
+                        Row {
+                            spacing: 8
+
+                            Rectangle {
+                                width: 18
+                                height: 18
+                                radius: 6
+                                color: "#18211f"
+                                border.color: border
+                                border.width: 1
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: homeIcon("battery")
+                                    color: accent
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                }
+                            }
+
+                            Text {
+                                text: "ESTADO DO SISTEMA"
+                                color: textSecondary
+                                font.pixelSize: 10
+                                font.bold: true
+                                font.family: titleFont
+                            }
                         }
 
                         Row {
@@ -217,10 +272,13 @@ Item {
 
                             Rectangle {
                                 width: Math.floor((parent.width - 24) / 3)
-                                height: 98
+                                height: 94
                                 radius: 18
-                                color: "#101614"
-                                border.color: border
+                                gradient: Gradient {
+                                    GradientStop { position: 0; color: "#151c1a" }
+                                    GradientStop { position: 1; color: "#0f1312" }
+                                }
+                                border.color: accentSoft
                                 border.width: 1
 
                                 Column {
@@ -230,9 +288,10 @@ Item {
 
                                     Text {
                                         text: "BATERIA"
-                                        color: textSecondary
+                                        color: "#b0b8b6"
                                         font.pixelSize: 10
                                         font.bold: true
+                                        font.family: titleFont
                                     }
 
                                     Text {
@@ -240,16 +299,20 @@ Item {
                                         color: textPrimary
                                         font.pixelSize: 28
                                         font.bold: true
+                                        font.family: titleFont
                                     }
                                 }
                             }
 
                             Rectangle {
                                 width: Math.floor((parent.width - 24) / 3)
-                                height: 98
+                                height: 94
                                 radius: 18
-                                color: "#101614"
-                                border.color: border
+                                gradient: Gradient {
+                                    GradientStop { position: 0; color: "#151c1a" }
+                                    GradientStop { position: 1; color: "#0f1312" }
+                                }
+                                border.color: accentSoft
                                 border.width: 1
 
                                 Column {
@@ -259,9 +322,10 @@ Item {
 
                                     Text {
                                         text: "CONEXÃO"
-                                        color: textSecondary
+                                        color: "#b0b8b6"
                                         font.pixelSize: 10
                                         font.bold: true
+                                        font.family: titleFont
                                     }
 
                                     Text {
@@ -269,16 +333,20 @@ Item {
                                         color: hidManager.deviceConnected ? accent : danger
                                         font.pixelSize: 28
                                         font.bold: true
+                                        font.family: titleFont
                                     }
                                 }
                             }
 
                             Rectangle {
                                 width: Math.floor((parent.width - 24) / 3)
-                                height: 98
+                                height: 94
                                 radius: 18
-                                color: "#101614"
-                                border.color: border
+                                gradient: Gradient {
+                                    GradientStop { position: 0; color: "#151c1a" }
+                                    GradientStop { position: 1; color: "#0f1312" }
+                                }
+                                border.color: accentSoft
                                 border.width: 1
 
                                 Column {
@@ -288,9 +356,10 @@ Item {
 
                                     Text {
                                         text: "MODO"
-                                        color: textSecondary
+                                        color: "#b0b8b6"
                                         font.pixelSize: 10
                                         font.bold: true
+                                        font.family: titleFont
                                     }
 
                                     Text {
@@ -298,6 +367,7 @@ Item {
                                         color: textPrimary
                                         font.pixelSize: 20
                                         font.bold: true
+                                        font.family: titleFont
                                         wrapMode: Text.WordWrap
                                     }
                                 }
@@ -305,72 +375,107 @@ Item {
                         }
 
                         Rectangle {
-                            width: parent.width
-                            height: 122
-                            radius: 18
-                            color: panelDeep
-                            border.color: border
-                            border.width: 1
+                        width: parent.width
+                        height: 122
+                        radius: 18
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "#121816" }
+                            GradientStop { position: 1; color: "#0c1010" }
+                        }
+                        border.color: accent
+                        border.width: 1
 
                             Column {
                                 anchors.fill: parent
                                 anchors.margins: 14
                                 spacing: 8
 
-                                Text {
-                                    text: "Status do trabalho"
-                                    color: textSecondary
-                                    font.pixelSize: 10
-                                    font.bold: true
-                                }
-
-                                Text {
-                                    width: parent.width
-                                    text: "A interface foi reconstruída com hierarquia fixa, sem blocos vazando para fora do card."
-                                    color: textPrimary
-                                    font.pixelSize: 14
-                                    font.bold: true
-                                    wrapMode: Text.WordWrap
-                                }
-
-                                Text {
-                                    width: parent.width
-                                    text: "Próximo passo: botões, macro e polimento fino."
-                                    color: accentSoft
-                                    font.pixelSize: 11
-                                    wrapMode: Text.WordWrap
-                                }
+                            Text {
+                                text: "Status do trabalho"
+                                color: "#b0b8b6"
+                                font.pixelSize: 10
+                                font.bold: true
+                                font.family: titleFont
                             }
+
+                            Text {
+                                width: parent.width
+                                text: "A interface foi reconstruída com hierarquia fixa, sem blocos vazando para fora do card."
+                                color: textPrimary
+                                font.pixelSize: 13
+                                font.bold: true
+                                font.family: titleFont
+                                wrapMode: Text.WordWrap
+                            }
+
+                                Text {
+                                width: parent.width
+                                text: "Próximo passo: botões, macro e polimento fino."
+                                color: accent
+                                font.pixelSize: 11
+                                font.family: bodyFont
+                                wrapMode: Text.WordWrap
+                            }
+                        }
                         }
                     }
                 }
 
-                Column {
-                    width: Math.round((parent.width - 16) * 0.42)
-                    spacing: 16
+                    Column {
+                        width: Math.round((parent.width - 16) * 0.42)
+                        spacing: 16
 
                     Rectangle {
                         width: parent.width
-                        height: 128
+                        height: 120
                         radius: 24
-                        color: panel
-                        border.color: border
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "#131917" }
+                            GradientStop { position: 1; color: "#0e1211" }
+                        }
+                        border.color: accent
                         border.width: 1
                         clip: true
+                        scale: scanHit.containsMouse ? 1.01 : 1.0
+                        Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
                         Column {
                             anchors.fill: parent
                             anchors.margins: 16
                             spacing: 8
 
+                            Row {
+                                spacing: 8
+
+                                Rectangle {
+                                    width: 18
+                                    height: 18
+                                    radius: 6
+                                    color: "#18211f"
+                                    border.color: border
+                                    border.width: 1
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: homeIcon("quick")
+                                        color: accent
+                                        font.pixelSize: 10
+                                        font.bold: true
+                                        font.family: titleFont
+                                    }
+                                }
+
                             Text {
                                 text: "AÇÃO RÁPIDA"
-                                color: textSecondary
+                                color: "#b0b8b6"
                                 font.pixelSize: 10
                                 font.bold: true
+                                font.family: titleFont
+                            }
                             }
 
                             Button {
+                                id: scanHit
                                 text: "PROCURAR DISPOSITIVOS"
                                 width: parent.width
                                 height: 44
@@ -387,6 +492,7 @@ Item {
                                     text: parent.text
                                     color: accent
                                     font.bold: true
+                                    font.family: titleFont
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }
@@ -398,10 +504,13 @@ Item {
 
                     Rectangle {
                         width: parent.width
-                        height: 132
+                        height: 124
                         radius: 24
-                        color: panelAlt
-                        border.color: border
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "#161c1a" }
+                            GradientStop { position: 1; color: "#101514" }
+                        }
+                        border.color: accentSoft
                         border.width: 1
                         clip: true
 
@@ -410,11 +519,34 @@ Item {
                             anchors.margins: 16
                             spacing: 8
 
+                            Row {
+                                spacing: 8
+
+                                Rectangle {
+                                    width: 18
+                                    height: 18
+                                    radius: 6
+                                    color: "#18211f"
+                                    border.color: border
+                                    border.width: 1
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: homeIcon("connection")
+                                        color: accent
+                                        font.pixelSize: 10
+                                        font.bold: true
+                                        font.family: titleFont
+                                    }
+                                }
+
                             Text {
                                 text: "GUIA RÁPIDA"
-                                color: textSecondary
+                                color: "#b0b8b6"
                                 font.pixelSize: 10
                                 font.bold: true
+                                font.family: titleFont
+                            }
                             }
 
                             Text {
@@ -422,6 +554,7 @@ Item {
                                 text: "1. DPI e polling rate já funcionam.\n2. Agora falta fechar botões e macro.\n3. O shell foi redesenhado do zero."
                                 color: textPrimary
                                 font.pixelSize: 12
+                                font.family: bodyFont
                                 wrapMode: Text.WordWrap
                                 lineHeight: 1.2
                             }
@@ -432,10 +565,13 @@ Item {
 
             Rectangle {
                 width: parent.width
-                height: 84
+                height: 76
                 radius: 24
-                color: panel
-                border.color: border
+                gradient: Gradient {
+                    GradientStop { position: 0; color: "#131917" }
+                    GradientStop { position: 1; color: "#0b0f0e" }
+                }
+                border.color: accent
                 border.width: 1
                 clip: true
 
@@ -448,21 +584,23 @@ Item {
                         width: parent.width - 170
                         spacing: 4
 
-                        Text {
-                            text: "STATUS FINAL"
-                            color: textSecondary
-                            font.pixelSize: 10
-                            font.bold: true
-                        }
+                            Text {
+                                text: "STATUS FINAL"
+                                color: "#b0b8b6"
+                                font.pixelSize: 10
+                                font.bold: true
+                                font.family: titleFont
+                            }
 
-                        Text {
-                            width: parent.width
-                            text: "A UI está sendo refeita do zero para manter consistência visual e reduzir comportamento quebrado."
-                            color: textPrimary
-                            font.pixelSize: 14
-                            font.bold: true
-                            wrapMode: Text.WordWrap
-                        }
+                            Text {
+                                width: parent.width
+                                text: "A UI está sendo refeita do zero para manter consistência visual e reduzir comportamento quebrado."
+                                color: textPrimary
+                                font.pixelSize: 13
+                                font.bold: true
+                                font.family: titleFont
+                                wrapMode: Text.WordWrap
+                            }
                     }
 
                     Rectangle {
@@ -479,6 +617,7 @@ Item {
                             color: accent
                             font.pixelSize: 12
                             font.bold: true
+                            font.family: titleFont
                         }
                     }
                 }

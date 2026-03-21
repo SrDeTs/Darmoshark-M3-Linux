@@ -1,0 +1,1 @@
+como a funcao Scroll Direction Setting so pode ser talterada e nao desmarcada estava em reverse e foi trocada para forward

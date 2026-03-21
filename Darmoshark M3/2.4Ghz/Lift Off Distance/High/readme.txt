@@ -1,0 +1,1 @@
+como a funcao Lift Off Distance so pode ser talterada e nao desmarcada estava em low e foi trocada para high

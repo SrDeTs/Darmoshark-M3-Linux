@@ -167,6 +167,15 @@ void HidManager::sendFeatureReport(const QByteArray &data)
     }
 }
 
+void HidManager::sendConfigPacket(const QByteArray &data)
+{
+    if (!m_device) return;
+
+    const bool wiredMode = (m_currentPid == 0xff12);
+    qDebug() << "Sending config packet using hid_send_feature_report for" << (wiredMode ? "USB" : "2.4G");
+    sendFeatureReport(data);
+}
+
 void HidManager::applyDpi(const QVariantList &stages, int current_stage)
 {
     if (!m_device) return;
@@ -188,10 +197,11 @@ void HidManager::applyDpi(const QVariantList &stages, int current_stage)
     qDebug() << "Applying DPI packet with stages:" << stageValues
              << "current_stage:" << stageNumber;
 
-    auto packet = DarmosharkProtocol::createDpiPacket(stageValues, stageNumber);
+    const bool wiredMode = (m_currentPid == 0xff12);
+    auto packet = DarmosharkProtocol::createDpiPacket(stageValues, stageNumber, wiredMode);
     QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
 
-    sendFeatureReport(data);
+    sendConfigPacket(data);
 }
 
 void HidManager::applyButtonRemap(const QVariantList &mapping) {
@@ -203,16 +213,37 @@ void HidManager::applyButtonRemap(const QVariantList &mapping) {
     }
     
     auto packet = DarmosharkProtocol::createRemapPacket(mapVec);
-    sendFeatureReport(QByteArray(reinterpret_cast<const char*>(packet.data()), packet.size()));
+    sendConfigPacket(QByteArray(reinterpret_cast<const char*>(packet.data()), packet.size()));
     qDebug() << "Applied button remapping:" << mapping;
 }
 
 void HidManager::applySettings(int pollingRate)
 {
-    auto packet = DarmosharkProtocol::createPollingRatePacket(pollingRate);
+    const bool wiredMode = (m_currentPid == 0xff12);
+    auto packet = DarmosharkProtocol::createPollingRatePacket(pollingRate, wiredMode);
     QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
 
-    sendFeatureReport(data);
+    sendConfigPacket(data);
+}
+
+void HidManager::applyMotionSync(bool enabled)
+{
+    const bool wiredMode = (m_currentPid == 0xff12);
+    auto packet = DarmosharkProtocol::createMotionSyncPacket(enabled, wiredMode);
+    QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
+
+    qDebug() << "Applying Motion Sync:" << enabled << "wiredMode:" << wiredMode;
+    sendConfigPacket(data);
+}
+
+void HidManager::applyAngleSnap(bool enabled)
+{
+    const bool wiredMode = (m_currentPid == 0xff12);
+    auto packet = DarmosharkProtocol::createAngleSnapPacket(enabled, wiredMode);
+    QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
+
+    qDebug() << "Applying Angle Snap:" << enabled << "wiredMode:" << wiredMode;
+    sendConfigPacket(data);
 }
 
 void HidManager::pollStatus()

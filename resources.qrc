@@ -4,6 +4,10 @@
         <file>qml/Main.qml</file>
         <file>qml/DPIView.qml</file>
         <file>qml/HomeView.qml</file>
-        <file>qml/SettingsView.qml</file>
+        <file>qml/ReportRateView.qml</file>
+        <file>qml/SensorPerformanceView.qml</file>
+        <file>qml/LiftOffDistanceView.qml</file>
+        <file>qml/ScrollDirectionView.qml</file>
+        <file>qml/ESportsModeView.qml</file>
     </qresource>
 </RCC>

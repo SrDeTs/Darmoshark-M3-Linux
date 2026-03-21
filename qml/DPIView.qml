@@ -14,6 +14,8 @@ Item {
     property color border: "#2a3331"
     property color textPrimary: "#f4f7f6"
     property color textSecondary: "#8b9593"
+    property string titleFont: "Red Hat Display"
+    property string bodyFont: "Fira Sans"
 
     function stageCountList() {
         return [1, 2, 3, 4, 5]
@@ -45,7 +47,10 @@ Item {
                 width: parent.width
                 height: 88
                 radius: 24
-                color: panel
+                gradient: Gradient {
+                    GradientStop { position: 0; color: "#121816" }
+                    GradientStop { position: 1; color: "#0d1110" }
+                }
                 border.color: border
                 border.width: 1
                 clip: true
@@ -59,17 +64,40 @@ Item {
                         width: parent.width - 170
                         spacing: 4
 
-                        Text {
-                            text: "PERFIS DE DPI"
-                            color: textPrimary
-                            font.pixelSize: 25
-                            font.bold: true
+                        Row {
+                            spacing: 8
+
+                            Rectangle {
+                                width: 18
+                                height: 18
+                                radius: 6
+                                color: "#18211f"
+                                border.color: border
+                                border.width: 1
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "◉"
+                                    color: accent
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                }
+                            }
+
+                            Text {
+                                text: "PERFIS DE DPI"
+                                color: textPrimary
+                                font.pixelSize: 24
+                                font.bold: true
+                                font.family: titleFont
+                            }
                         }
 
                         Text {
                             text: "Edita os perfis, escolhe o estágio ativo e envia direto ao mouse."
                             color: textSecondary
                             font.pixelSize: 11
+                            font.family: bodyFont
                         }
                     }
 
@@ -98,9 +126,12 @@ Item {
 
                 Rectangle {
                     width: Math.round((parent.width - 16) * 0.64)
-                    height: 558
+                    height: 524
                     radius: 24
-                    color: panelAlt
+                    gradient: Gradient {
+                        GradientStop { position: 0; color: "#151c1a" }
+                        GradientStop { position: 1; color: "#101514" }
+                    }
                     border.color: border
                     border.width: 1
                     clip: true
@@ -115,6 +146,7 @@ Item {
                             color: textSecondary
                             font.pixelSize: 10
                             font.bold: true
+                            font.family: titleFont
                         }
 
                         Repeater {
@@ -122,15 +154,23 @@ Item {
 
                             delegate: Rectangle {
                                 width: parent.width
-                                height: 86
+                                height: 82
                                 radius: 18
-                                color: dpiRoot.currentActiveStage === index ? "#12241f" : panelDeep
+                                scale: dpiRoot.currentActiveStage === index ? 1.012 : (hit.containsMouse ? 1.004 : 1.0)
+                                Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
+                                gradient: Gradient {
+                                    GradientStop { position: 0; color: dpiRoot.currentActiveStage === index ? "#12241f" : (hit.containsMouse ? "#131918" : "#101513") }
+                                    GradientStop { position: 1; color: dpiRoot.currentActiveStage === index ? "#0f2d27" : "#0c1010" }
+                                }
                                 border.color: dpiRoot.currentActiveStage === index ? accent : border
                                 border.width: dpiRoot.currentActiveStage === index ? 1.5 : 1
                                 clip: true
+                                Behavior on border.color { ColorAnimation { duration: 140 } }
 
                                 MouseArea {
+                                    id: hit
                                     anchors.fill: parent
+                                    hoverEnabled: true
                                     onClicked: dpiRoot.currentActiveStage = index
                                 }
 
@@ -158,8 +198,9 @@ Item {
                                             anchors.centerIn: parent
                                             text: index + 1
                                             color: dpiRoot.currentActiveStage === index ? "#041312" : textPrimary
-                                            font.pixelSize: 15
+                                            font.pixelSize: 14
                                             font.bold: true
+                                            font.family: titleFont
                                         }
                                     }
 
@@ -172,6 +213,7 @@ Item {
                                             color: dpiRoot.currentActiveStage === index ? accent : textSecondary
                                             font.pixelSize: 10
                                             font.bold: true
+                                            font.family: titleFont
                                         }
 
                                         Row {
@@ -180,14 +222,16 @@ Item {
                                             Text {
                                                 text: modelData.value
                                                 color: textPrimary
-                                                font.pixelSize: 22
+                                                font.pixelSize: 20
                                                 font.bold: true
+                                                font.family: titleFont
                                             }
 
                                             Text {
                                                 text: "DPI"
                                                 color: textSecondary
                                                 font.pixelSize: 11
+                                                font.family: bodyFont
                                                 anchors.verticalCenter: parent.verticalCenter
                                             }
                                         }
@@ -224,18 +268,24 @@ Item {
                                         width: 74
                                         height: 30
                                         radius: 15
-                                        color: dpiRoot.currentActiveStage === index ? "#103b33" : "#1a201f"
+                                        scale: dpiRoot.currentActiveStage === index ? 1.02 : (hit.containsMouse ? 1.005 : 1.0)
+                                        Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
+                                        gradient: Gradient {
+                                            GradientStop { position: 0; color: dpiRoot.currentActiveStage === index ? "#103b33" : (hit.containsMouse ? "#1c2322" : "#1a201f") }
+                                            GradientStop { position: 1; color: dpiRoot.currentActiveStage === index ? "#0f2f29" : "#121816" }
+                                        }
                                         border.color: dpiRoot.currentActiveStage === index ? accent : border
                                         border.width: 1
 
-                                        Text {
-                                            anchors.centerIn: parent
-                                            text: dpiRoot.currentActiveStage === index ? "ATIVO" : "ESCOLHER"
-                                            color: dpiRoot.currentActiveStage === index ? accent : textSecondary
-                                            font.pixelSize: 10
-                                            font.bold: true
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: dpiRoot.currentActiveStage === index ? "ATIVO" : "ESCOLHER"
+                                                color: dpiRoot.currentActiveStage === index ? accent : textSecondary
+                                                font.pixelSize: 10
+                                                font.bold: true
+                                                font.family: titleFont
+                                            }
                                         }
-                                    }
                                 }
                             }
                         }
@@ -248,9 +298,12 @@ Item {
 
                     Rectangle {
                         width: parent.width
-                        height: 244
+                        height: 232
                         radius: 24
-                        color: panel
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "#121816" }
+                            GradientStop { position: 1; color: "#0d1110" }
+                        }
                         border.color: border
                         border.width: 1
                         clip: true
@@ -265,19 +318,22 @@ Item {
                                 color: textSecondary
                                 font.pixelSize: 10
                                 font.bold: true
+                                font.family: titleFont
                             }
 
                             Text {
                                 text: (dpiRoot.currentActiveStage + 1) + "º"
                                 color: accent
-                                font.pixelSize: 48
+                                font.pixelSize: 44
                                 font.bold: true
+                                font.family: titleFont
                             }
 
                             Text {
                                 text: "A seleção muda o estágio que receberá o próximo envio."
                                 color: textPrimary
                                 font.pixelSize: 12
+                                font.family: bodyFont
                                 wrapMode: Text.WordWrap
                             }
 
@@ -291,6 +347,7 @@ Item {
                                 text: "Modo atual: " + connectionLabel()
                                 color: textSecondary
                                 font.pixelSize: 11
+                                font.family: bodyFont
                             }
 
                             Text {
@@ -298,15 +355,19 @@ Item {
                                 color: hidManager.deviceConnected ? accent : "#c95f5f"
                                 font.pixelSize: 12
                                 font.bold: true
+                                font.family: titleFont
                             }
                         }
                     }
 
                     Rectangle {
                         width: parent.width
-                        height: 146
+                        height: 136
                         radius: 24
-                        color: panelAlt
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "#151c1a" }
+                            GradientStop { position: 1; color: "#101514" }
+                        }
                         border.color: border
                         border.width: 1
                         clip: true
@@ -321,6 +382,7 @@ Item {
                                 color: textSecondary
                                 font.pixelSize: 10
                                 font.bold: true
+                                font.family: titleFont
                             }
 
                             ComboBox {
@@ -340,6 +402,7 @@ Item {
                                     text: dpiCountSelector.displayText
                                     color: textPrimary
                                     font.bold: true
+                                    font.family: titleFont
                                     verticalAlignment: Text.AlignVCenter
                                     leftPadding: 12
                                 }
@@ -368,6 +431,7 @@ Item {
                                     text: parent.text
                                     color: parent.enabled ? "#071412" : "#7d8785"
                                     font.bold: true
+                                    font.family: titleFont
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }

@@ -1,0 +1,1 @@
+Aqui e foram capturados usando o CABO USB

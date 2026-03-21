@@ -1,0 +1,1 @@
+como a funcao E-Sports Mode so pode ser talterada e nao desmarcada estava em close e foi trocada para open
