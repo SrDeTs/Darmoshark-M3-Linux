@@ -85,55 +85,6 @@ Item {
                             font.family: titleFont
                         }
 
-                        Text {
-                            width: parent.width
-                            text: "Visão geral do mouse."
-                            color: textSecondary
-                            font.pixelSize: 11
-                            font.family: bodyFont
-                            wrapMode: Text.WordWrap
-                        }
-
-                        Row {
-                            spacing: 10
-
-                            Rectangle {
-                                width: 114
-                                height: 34
-                                radius: 17
-                                color: hidManager.deviceConnected ? "#103b33" : "#342020"
-                                border.color: hidManager.deviceConnected ? accent : danger
-                                border.width: 1
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: hidManager.deviceConnected ? "Ativo" : "Sem link"
-                                    color: hidManager.deviceConnected ? accent : danger
-                                    font.pixelSize: 11
-                                    font.bold: true
-                                    font.family: titleFont
-                                }
-                            }
-
-                            Rectangle {
-                                width: 126
-                                height: 34
-                                radius: 17
-                                color: "#121816"
-                                border.color: accentSoft
-                                border.width: 1
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: connectionLabel(hidManager.connectionMode)
-                                    color: accentSoft
-                                    font.pixelSize: 11
-                                    font.bold: true
-                                    font.family: titleFont
-                                }
-                            }
-                        }
-
                     }
                 }
             }
