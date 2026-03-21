@@ -351,7 +351,7 @@ Item {
                             }
 
                             Text {
-                                text: hidManager.deviceConnected ? "Mouse pronto para receber" : "Sem dispositivo conectado"
+                                text: hidManager.deviceConnected ? "Pronto para aplicar" : "Sem dispositivo conectado"
                                 color: hidManager.deviceConnected ? accent : "#c95f5f"
                                 font.pixelSize: 12
                                 font.bold: true
@@ -415,7 +415,7 @@ Item {
                             }
 
                             Button {
-                                text: "APLICAR DPI"
+                                text: "ENVIAR DPI"
                                 width: parent.width
                                 height: 46
                                 enabled: hidManager.deviceConnected

@@ -63,7 +63,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "A captura existe, mas a interface ainda não foi fechada. A página fica isolada para manter o restante do shell limpo."
+                        text: "A captura existe, mas a interface ainda não foi fechada."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -87,7 +87,7 @@ Item {
                     spacing: 10
 
                     Text {
-                        text: "ESTRUTURA ISOLADA"
+                        text: "ESTADO DO BLOCO"
                         color: textSecondary
                         font.pixelSize: 10
                         font.bold: true
@@ -106,7 +106,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Sem atalhos temporários e sem mistura de funções."
+                        text: "Separado de propósito para manter a navegação limpa."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont

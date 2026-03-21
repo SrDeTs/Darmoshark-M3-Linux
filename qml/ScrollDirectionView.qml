@@ -63,7 +63,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "A função ainda depende da confirmação final do pacote. A página já está separada para não contaminar outros grupos."
+                        text: "A função ainda depende da confirmação final do pacote."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -87,7 +87,7 @@ Item {
                     spacing: 10
 
                     Text {
-                        text: "MÓDULO ISOLADO"
+                        text: "ESTADO DO BLOCO"
                         color: textSecondary
                         font.pixelSize: 10
                         font.bold: true
@@ -106,7 +106,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Separação por aba mantida de propósito."
+                        text: "Separado de propósito para manter a navegação limpa."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont

@@ -63,7 +63,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "O modo fica separado até a captura confirmar se existe comando próprio ou só preset interno."
+                        text: "O modo fica separado até a captura confirmar se existe comando próprio."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -87,7 +87,7 @@ Item {
                     spacing: 10
 
                     Text {
-                        text: "BLOCO SEPARADO"
+                        text: "ESTADO DO BLOCO"
                         color: textSecondary
                         font.pixelSize: 10
                         font.bold: true
@@ -106,7 +106,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Quando a captura fechar, a implementação entra aqui."
+                        text: "Separado de propósito para manter a navegação limpa."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont

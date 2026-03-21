@@ -127,7 +127,7 @@ Item {
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: hidManager.deviceConnected ? "Conectado" : "Sem mouse"
+                                    text: hidManager.deviceConnected ? "Ativo" : "Sem link"
                                     color: hidManager.deviceConnected ? accent : danger
                                     font.pixelSize: 11
                                     font.bold: true
@@ -465,18 +465,18 @@ Item {
                                     }
                                 }
 
-                            Text {
-                                text: "AÇÃO RÁPIDA"
-                                color: "#b0b8b6"
-                                font.pixelSize: 10
-                                font.bold: true
-                                font.family: titleFont
-                            }
+                                Text {
+                                    text: "AÇÃO RÁPIDA"
+                                    color: "#b0b8b6"
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                    font.family: titleFont
+                                }
                             }
 
                             Button {
                                 id: scanHit
-                                text: "PROCURAR DISPOSITIVOS"
+                                text: "ESCANEAR DISPOSITIVOS"
                                 width: parent.width
                                 height: 44
                                 hoverEnabled: true
@@ -540,18 +540,18 @@ Item {
                                     }
                                 }
 
-                            Text {
-                                text: "GUIA RÁPIDA"
-                                color: "#b0b8b6"
-                                font.pixelSize: 10
-                                font.bold: true
-                                font.family: titleFont
-                            }
+                                Text {
+                                    text: "GUIA RÁPIDA"
+                                    color: "#b0b8b6"
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                    font.family: titleFont
+                                }
                             }
 
                             Text {
                                 width: parent.width
-                                text: "1. DPI e polling rate já funcionam.\n2. Agora falta fechar botões e macro.\n3. O shell foi redesenhado do zero."
+                                text: "1. DPI e polling rate já funcionam.\n2. Botões e macro ainda faltam.\n3. O shell foi redesenhado do zero."
                                 color: textPrimary
                                 font.pixelSize: 12
                                 font.family: bodyFont
@@ -584,23 +584,23 @@ Item {
                         width: parent.width - 170
                         spacing: 4
 
-                            Text {
-                                text: "STATUS FINAL"
-                                color: "#b0b8b6"
-                                font.pixelSize: 10
-                                font.bold: true
-                                font.family: titleFont
-                            }
+                                Text {
+                                    text: "STATUS FINAL"
+                                    color: "#b0b8b6"
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                    font.family: titleFont
+                                }
 
-                            Text {
-                                width: parent.width
-                                text: "A UI está sendo refeita do zero para manter consistência visual e reduzir comportamento quebrado."
-                                color: textPrimary
-                                font.pixelSize: 13
-                                font.bold: true
-                                font.family: titleFont
-                                wrapMode: Text.WordWrap
-                            }
+                                Text {
+                                    width: parent.width
+                                    text: "A UI está sendo refeita do zero para manter consistência visual e reduzir comportamento quebrado."
+                                    color: textPrimary
+                                    font.pixelSize: 13
+                                    font.bold: true
+                                    font.family: titleFont
+                                    wrapMode: Text.WordWrap
+                                }
                     }
 
                     Rectangle {

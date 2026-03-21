@@ -141,7 +141,7 @@ Item {
                             spacing: 2
 
                             Text {
-                                text: motionSyncGroup.enabled ? "Ligado" : "Desligado"
+                                text: motionSyncGroup.enabled ? "Ativo" : "Inativo"
                                 color: motionSyncGroup.enabled ? accent : textSecondary
                                 font.pixelSize: 16
                                 font.bold: true
@@ -234,7 +234,7 @@ Item {
                             spacing: 2
 
                             Text {
-                                text: angleSnapGroup.enabled ? "Ligado" : "Desligado"
+                                text: angleSnapGroup.enabled ? "Ativo" : "Inativo"
                                 color: angleSnapGroup.enabled ? accent : textSecondary
                                 font.pixelSize: 16
                                 font.bold: true
