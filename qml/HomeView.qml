@@ -104,7 +104,7 @@ Item {
 
                         Text {
                             width: parent.width
-                            text: "Visão geral do mouse. DPI e polling rate já estão fechados."
+                            text: "Visão geral do mouse. DPI, report rate e LOD já estão fechados."
                             color: "#a5b0ad"
                             font.pixelSize: 11
                             font.family: bodyFont
@@ -551,7 +551,7 @@ Item {
 
                             Text {
                                 width: parent.width
-                                text: "1. DPI e polling rate estão fechados.\n2. Botões e macro ainda faltam.\n3. O shell foi redesenhado do zero."
+                                text: "1. DPI, report rate e LOD estão fechados.\n2. Botões e macro ficam para a próxima frente.\n3. O shell foi organizado por feature."
                                 color: textPrimary
                                 font.pixelSize: 12
                                 font.family: bodyFont
@@ -594,7 +594,7 @@ Item {
 
                                 Text {
                                     width: parent.width
-                                    text: "A UI está sendo refeita do zero para manter consistência visual."
+                                    text: "A UI está organizada por feature para manter consistência visual."
                                     color: textPrimary
                                     font.pixelSize: 13
                                     font.bold: true

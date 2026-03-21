@@ -270,6 +270,19 @@ void HidManager::applyScrollDirection(bool forward)
     sendConfigPacket(data);
 }
 
+void HidManager::applyESportsMode(bool open)
+{
+    if (!m_device) return;
+
+    const bool wiredMode = (m_currentPid == 0xff12);
+    auto packet = DarmosharkProtocol::createESportsModePacket(open, wiredMode);
+    QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
+
+    qDebug() << "Applying E-Sports Mode:" << (open ? "Open" : "Close")
+             << "wiredMode:" << wiredMode;
+    sendConfigPacket(data);
+}
+
 void HidManager::pollStatus()
 {
     if (!m_device) {

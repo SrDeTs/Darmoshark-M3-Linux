@@ -179,7 +179,7 @@ Window {
                             }
 
                             Text {
-                                text: "DPI / Sensor shell"
+                                text: "Shell do mouse"
                                 color: textSecondary
                                 font.pixelSize: 11
                                 font.family: bodyFont

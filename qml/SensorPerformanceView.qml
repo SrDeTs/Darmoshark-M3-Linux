@@ -67,7 +67,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "A aba fica isolada para não misturar sensor com taxa de atualização."
+                        text: "A aba fica isolada para não misturar sensor com taxa de resposta."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -286,7 +286,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Lift Off Distance, Scroll Direction e E-Sports Mode entram nas próprias páginas ao fechar os pacotes."
+                        text: "Lift Off Distance, Scroll Direction e E-Sports Mode já seguem páginas próprias."
                         color: textPrimary
                         font.pixelSize: 13
                         font.bold: true

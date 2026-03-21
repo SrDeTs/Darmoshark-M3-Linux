@@ -63,7 +63,7 @@ Item {
                     }
 
                     Text {
-                        text: "Taxa de atualização"
+                        text: "Taxa de resposta"
                         color: textPrimary
                         font.pixelSize: 24
                         font.bold: true
@@ -217,7 +217,7 @@ Item {
 
                     Rectangle {
                         width: parent.width
-                        height: 160
+                        height: 154
                         radius: 24
                         gradient: Gradient {
                             GradientStop { position: 0; color: "#121816" }
@@ -282,7 +282,7 @@ Item {
 
                     Rectangle {
                         width: parent.width
-                        height: 140
+                        height: 124
                         radius: 24
                         gradient: Gradient {
                             GradientStop { position: 0; color: "#131917" }
