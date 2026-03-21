@@ -6,12 +6,12 @@ Item {
     id: pageRoot
     clip: true
 
-    property color accent: "#00f5d4"
-    property color accentSoft: "#13c9af"
-    property color border: "#2a3331"
-    property color panelDeep: "#0d1110"
-    property color textPrimary: "#f4f7f6"
-    property color textSecondary: "#8b9593"
+    property color accent: "#6da8ff"
+    property color accentSoft: "#91b8ff"
+    property color border: "#2b3650"
+    property color panelDeep: "#11182a"
+    property color textPrimary: "#e8edf6"
+    property color textSecondary: "#a1afc6"
     property string titleFont: "Red Hat Display"
     property string bodyFont: "Fira Sans"
 
@@ -38,8 +38,8 @@ Item {
                 height: 124
                 radius: 24
                 gradient: Gradient {
-                    GradientStop { position: 0; color: "#131917" }
-                    GradientStop { position: 1; color: "#0e1211" }
+                    GradientStop { position: 0; color: "#151d31" }
+                    GradientStop { position: 1; color: "#11182a" }
                 }
                 border.color: accent
                 border.width: 1
@@ -66,8 +66,8 @@ Item {
                 height: 148
                 radius: 24
                 gradient: Gradient {
-                    GradientStop { position: 0; color: "#131917" }
-                    GradientStop { position: 1; color: "#0e1211" }
+                    GradientStop { position: 0; color: "#151d31" }
+                    GradientStop { position: 1; color: "#11182a" }
                 }
                 border.color: rippleGroup.enabled ? accent : border
                 border.width: 1
@@ -85,7 +85,7 @@ Item {
                             width: 18
                             height: 18
                             radius: 6
-                            color: "#18211f"
+                            color: "#22345a"
                             border.color: border
                             border.width: 1
 
@@ -142,8 +142,8 @@ Item {
                 height: 148
                 radius: 24
                 gradient: Gradient {
-                    GradientStop { position: 0; color: "#131917" }
-                    GradientStop { position: 1; color: "#0e1211" }
+                    GradientStop { position: 0; color: "#151d31" }
+                    GradientStop { position: 1; color: "#11182a" }
                 }
                 border.color: motionSyncGroup.enabled ? accent : border
                 border.width: 1
@@ -161,7 +161,7 @@ Item {
                             width: 18
                             height: 18
                             radius: 6
-                            color: "#18211f"
+                            color: "#22345a"
                             border.color: border
                             border.width: 1
 
@@ -218,8 +218,8 @@ Item {
                 height: 148
                 radius: 24
                 gradient: Gradient {
-                    GradientStop { position: 0; color: "#131917" }
-                    GradientStop { position: 1; color: "#0e1211" }
+                    GradientStop { position: 0; color: "#151d31" }
+                    GradientStop { position: 1; color: "#11182a" }
                 }
                 border.color: angleSnapGroup.enabled ? accent : border
                 border.width: 1
@@ -237,7 +237,7 @@ Item {
                             width: 18
                             height: 18
                             radius: 6
-                            color: "#18211f"
+                            color: "#22345a"
                             border.color: border
                             border.width: 1
 

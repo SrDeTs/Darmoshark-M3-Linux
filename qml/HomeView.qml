@@ -6,14 +6,14 @@ Item {
     id: homeRoot
     clip: true
 
-    property color accent: "#00f5d4"
-    property color accentSoft: "#13c9af"
-    property color border: "#2a3331"
-    property color panel: "#111614"
-    property color panelDeep: "#0d1110"
-    property color textPrimary: "#f4f7f6"
-    property color textSecondary: "#8b9593"
-    property color danger: "#ff6b6b"
+    property color accent: "#6da8ff"
+    property color accentSoft: "#91b8ff"
+    property color border: "#2b3650"
+    property color panel: "#151d31"
+    property color panelDeep: "#11182a"
+    property color textPrimary: "#e8edf6"
+    property color textSecondary: "#a1afc6"
+    property color danger: "#8da9ff"
     property string titleFont: "Red Hat Display"
     property string bodyFont: "Fira Sans"
 
@@ -39,16 +39,26 @@ Item {
         Column {
             id: contentColumn
             width: homeRoot.width
-            spacing: 16
+            spacing: 18
 
             Rectangle {
                 width: parent.width
-                height: 204
+                height: 220
                 radius: 24
-                color: "#101514"
-                border.color: accent
+                color: "#11182a"
+                border.color: border
                 border.width: 1
                 clip: true
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: parent.radius
+                    gradient: Gradient {
+                        GradientStop { position: 0; color: "#18213a" }
+                        GradientStop { position: 1; color: "#11182a" }
+                    }
+                    opacity: 0.92
+                }
 
                 Row {
                     anchors.fill: parent
@@ -59,8 +69,8 @@ Item {
                         width: 210
                         height: parent.height - 36
                         radius: 20
-                        color: "#151b19"
-                        border.color: "#2f3836"
+                        color: "#18243c"
+                        border.color: "#354463"
                         border.width: 1
 
                         Image {
@@ -84,7 +94,6 @@ Item {
                             font.bold: true
                             font.family: titleFont
                         }
-
                     }
                 }
             }

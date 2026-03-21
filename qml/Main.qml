@@ -11,21 +11,21 @@ Window {
     minimumHeight: 720
     visible: true
     title: qsTr("Darmoshark M3 Configurator")
-    color: "#050707"
+    color: "#0b1020"
 
     property string titleFont: "Red Hat Display"
     property string bodyFont: "Fira Sans"
-    property color bgBase: "#050707"
-    property color bgShell: "#0b0f0e"
-    property color bgPanel: "#101514"
-    property color bgPanelAlt: "#151b19"
-    property color bgCard: "#121816"
-    property color borderColor: "#26302f"
-    property color accent: "#00f5d4"
-    property color accentSoft: "#14c7ae"
-    property color textPrimary: "#f4f7f6"
-    property color textSecondary: "#8b9593"
-    property color danger: "#ff6b6b"
+    property color bgBase: "#0b1020"
+    property color bgShell: "#11182a"
+    property color bgPanel: "#151d31"
+    property color bgPanelAlt: "#18223a"
+    property color bgCard: "#182235"
+    property color borderColor: "#2b3650"
+    property color accent: "#6da8ff"
+    property color accentSoft: "#91b8ff"
+    property color textPrimary: "#e8edf6"
+    property color textSecondary: "#a1afc6"
+    property color danger: "#8da9ff"
 
     property var navPages: [
         { title: "Início", subtitle: "Visão geral do mouse", source: "qrc:/qml/HomeView.qml" },
@@ -71,8 +71,8 @@ Window {
         width: 460
         height: 460
         radius: 230
-        color: accent
-        opacity: 0.07
+        color: "#7aa4ff"
+        opacity: 0.06
     }
 
     Rectangle {
@@ -83,8 +83,8 @@ Window {
         width: 620
         height: 620
         radius: 310
-        color: "#17302b"
-        opacity: 0.13
+        color: "#18263e"
+        opacity: 0.14
     }
 
     Rectangle {
@@ -95,8 +95,8 @@ Window {
         width: 400
         height: 400
         radius: 200
-        color: "#0d4a3d"
-        opacity: 0.07
+        color: "#20365b"
+        opacity: 0.08
     }
 
     Rectangle {
@@ -104,10 +104,10 @@ Window {
         anchors.margins: 16
         radius: 28
         gradient: Gradient {
-            GradientStop { position: 0; color: "#0d1110" }
-            GradientStop { position: 1; color: "#090d0c" }
+            GradientStop { position: 0; color: "#11182a" }
+            GradientStop { position: 1; color: "#0e1424" }
         }
-        border.color: "#2c3533"
+        border.color: "#2d3958"
         border.width: 1
         opacity: 0.98
     }
@@ -122,8 +122,8 @@ Window {
             Layout.fillHeight: true
             radius: 24
             gradient: Gradient {
-                GradientStop { position: 0; color: "#111716" }
-                GradientStop { position: 1; color: "#0d1110" }
+                GradientStop { position: 0; color: "#151c2d" }
+                GradientStop { position: 1; color: "#11182a" }
             }
             border.color: borderColor
             border.width: 1
@@ -135,16 +135,16 @@ Window {
                 spacing: 16
 
                 ColumnLayout {
-                    spacing: 4
+                        spacing: 3
 
                     RowLayout {
-                        spacing: 10
+                        spacing: 8
 
                         Rectangle {
-                            width: 34
-                            height: 34
-                            radius: 12
-                            color: "#0f2320"
+                            width: 30
+                            height: 30
+                            radius: 10
+                            color: "#1e2a43"
                             border.color: accent
                             border.width: 1
 
@@ -152,7 +152,7 @@ Window {
                                 anchors.centerIn: parent
                                 text: "M3"
                                 color: accent
-                                font.pixelSize: 12
+                                font.pixelSize: 11
                                 font.bold: true
                                 font.family: titleFont
                             }
@@ -164,18 +164,18 @@ Window {
                             Text {
                                 text: "DARMOSHARK"
                                 color: accent
-                                font.pixelSize: 22
+                                font.pixelSize: 20
                                 font.bold: true
                                 font.family: titleFont
-                                font.letterSpacing: 1.5
+                                font.letterSpacing: 1.1
                             }
 
                             Text {
                                 text: "Shell do mouse"
                                 color: textSecondary
-                                font.pixelSize: 11
+                                font.pixelSize: 10
                                 font.family: bodyFont
-                                font.letterSpacing: 0.8
+                                font.letterSpacing: 0.4
                             }
                         }
                     }
@@ -184,7 +184,7 @@ Window {
                 Rectangle {
                     Layout.fillWidth: true
                     height: 1
-                    color: "#27312f"
+                    color: "#2f3b5a"
                 }
 
                 Repeater {
@@ -193,17 +193,17 @@ Window {
                     delegate: Button {
                         id: navBtn
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 56
+                        Layout.preferredHeight: 52
                         flat: true
                         checkable: true
                         checked: stackLayout.currentIndex === index
                         hoverEnabled: true
-                        scale: navBtn.checked ? 1.015 : (navBtn.hovered ? 1.005 : 1.0)
+                        scale: navBtn.checked ? 1.01 : (navBtn.hovered ? 1.004 : 1.0)
                         Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
                         background: Rectangle {
-                            radius: 16
-                            color: navBtn.checked ? "#113b33" : (navBtn.hovered ? "#0e1715" : (navBtn.down ? "#111918" : "transparent"))
+                            radius: 14
+                            color: navBtn.checked ? "#242f49" : (navBtn.hovered ? "#162033" : (navBtn.down ? "#111829" : "transparent"))
                             border.color: navBtn.checked ? accent : "transparent"
                             border.width: navBtn.checked ? 1 : 0
 
@@ -218,34 +218,34 @@ Window {
                                 anchors.left: parent.left
                                 anchors.top: parent.top
                                 anchors.bottom: parent.bottom
-                                width: 4
+                                width: 3
                                 radius: 2
                                 color: accent
-                                opacity: navBtn.checked ? 1 : 0
+                                opacity: navBtn.checked ? 0.9 : 0
                             }
                         }
 
                         contentItem: ColumnLayout {
                             anchors.fill: parent
-                            anchors.margins: 12
+                            anchors.margins: 11
                             spacing: 2
 
                             RowLayout {
                                 spacing: 10
 
                                 Rectangle {
-                                    width: 22
-                                    height: 22
+                                    width: 20
+                                    height: 20
                                     radius: 8
-                                    color: navBtn.checked ? accent : "#16211f"
-                                    border.color: navBtn.checked ? accent : "#26302f"
+                                    color: navBtn.checked ? accent : "#1d2941"
+                                    border.color: navBtn.checked ? accent : borderColor
                                     border.width: 1
 
                                     Text {
                                         anchors.centerIn: parent
                                         text: navIcon(index)
                                         color: navBtn.checked ? "#041312" : textSecondary
-                                        font.pixelSize: 12
+                                        font.pixelSize: 11
                                         font.bold: true
                                     }
                                 }
@@ -253,7 +253,7 @@ Window {
                                 Text {
                                     text: modelData.title
                                     color: navBtn.checked ? textPrimary : textSecondary
-                                    font.pixelSize: 14
+                                    font.pixelSize: 13
                                     font.bold: navBtn.checked
                                     font.family: titleFont
                                 }
@@ -262,7 +262,7 @@ Window {
                             Text {
                                 text: modelData.subtitle
                                 color: navBtn.checked ? accent : "#6b7573"
-                                font.pixelSize: 9
+                                font.pixelSize: 8
                                 font.family: bodyFont
                             }
                         }
@@ -275,11 +275,11 @@ Window {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    height: 108
-                    radius: 18
+                    height: 100
+                    radius: 16
                     gradient: Gradient {
-                        GradientStop { position: 0; color: "#141a19" }
-                        GradientStop { position: 1; color: "#101514" }
+                        GradientStop { position: 0; color: "#161d2f" }
+                        GradientStop { position: 1; color: "#12182a" }
                     }
                     border.color: borderColor
                     border.width: 1
@@ -287,17 +287,17 @@ Window {
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 14
+                        anchors.margins: 13
                         spacing: 6
 
                         RowLayout {
                             spacing: 8
 
                                 Rectangle {
-                                    width: 18
-                                    height: 18
-                                    radius: 6
-                                    color: "#18211f"
+                                    width: 16
+                                    height: 16
+                                    radius: 5
+                                    color: "#1d2941"
                                     border.color: borderColor
                                     border.width: 1
 
@@ -305,7 +305,7 @@ Window {
                                         anchors.centerIn: parent
                                         text: hidManager.deviceConnected ? "●" : "○"
                                         color: hidManager.deviceConnected ? accent : danger
-                                        font.pixelSize: 9
+                                        font.pixelSize: 8
                                         font.bold: true
                                         font.family: titleFont
                                     }
@@ -314,7 +314,7 @@ Window {
                             Text {
                                 text: hidManager.deviceConnected ? "Dispositivo ativo" : "Sem dispositivo"
                                 color: hidManager.deviceConnected ? accent : danger
-                                font.pixelSize: 12
+                                font.pixelSize: 11
                                 font.bold: true
                                 font.family: titleFont
                             }
@@ -323,7 +323,7 @@ Window {
                         Text {
                             text: connectionLabel(hidManager.connectionMode)
                             color: textPrimary
-                            font.pixelSize: 18
+                            font.pixelSize: 16
                             font.bold: true
                             font.family: titleFont
                         }
@@ -331,7 +331,7 @@ Window {
                         Text {
                             text: "Bateria " + hidManager.batteryLevel + "%"
                             color: textSecondary
-                            font.pixelSize: 10
+                            font.pixelSize: 9
                             font.family: bodyFont
                         }
                     }

@@ -7,13 +7,13 @@ Item {
     clip: true
 
     property int currentActiveStage: 0
-    property color accent: "#00f5d4"
+    property color accent: "#6da8ff"
     property color panel: "#111614"
-    property color panelAlt: "#151b19"
-    property color panelDeep: "#0d1110"
-    property color border: "#2a3331"
-    property color textPrimary: "#f4f7f6"
-    property color textSecondary: "#8b9593"
+    property color panelAlt: "#18223a"
+    property color panelDeep: "#11182a"
+    property color border: "#2b3650"
+    property color textPrimary: "#e8edf6"
+    property color textSecondary: "#a1afc6"
     property string titleFont: "Red Hat Display"
     property string bodyFont: "Fira Sans"
 
@@ -48,8 +48,8 @@ Item {
                 height: 88
                 radius: 24
                 gradient: Gradient {
-                    GradientStop { position: 0; color: "#121816" }
-                    GradientStop { position: 1; color: "#0d1110" }
+                    GradientStop { position: 0; color: "#151d31" }
+                    GradientStop { position: 1; color: "#11182a" }
                 }
                 border.color: border
                 border.width: 1
@@ -71,7 +71,7 @@ Item {
                                 width: 18
                                 height: 18
                                 radius: 6
-                                color: "#18211f"
+                                color: "#22345a"
                                 border.color: border
                                 border.width: 1
 
@@ -99,7 +99,7 @@ Item {
                         width: 142
                         height: 42
                         radius: 21
-                        color: "#103b33"
+                        color: "#26334f"
                         border.color: accent
                         border.width: 1
 
@@ -123,8 +123,8 @@ Item {
                     height: 524
                     radius: 24
                     gradient: Gradient {
-                        GradientStop { position: 0; color: "#151c1a" }
-                        GradientStop { position: 1; color: "#101514" }
+                        GradientStop { position: 0; color: "#151d31" }
+                        GradientStop { position: 1; color: "#151d31" }
                     }
                     border.color: border
                     border.width: 1
@@ -153,8 +153,8 @@ Item {
                                 scale: dpiRoot.currentActiveStage === index ? 1.012 : (hit.containsMouse ? 1.004 : 1.0)
                                 Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
                                 gradient: Gradient {
-                                    GradientStop { position: 0; color: dpiRoot.currentActiveStage === index ? "#12241f" : (hit.containsMouse ? "#131918" : "#101513") }
-                                    GradientStop { position: 1; color: dpiRoot.currentActiveStage === index ? "#0f2d27" : "#0c1010" }
+                                    GradientStop { position: 0; color: dpiRoot.currentActiveStage === index ? "#172134" : (hit.containsMouse ? "#1b263d" : "#182235") }
+                                    GradientStop { position: 1; color: dpiRoot.currentActiveStage === index ? "#122034" : "#11192b" }
                                 }
                                 border.color: dpiRoot.currentActiveStage === index ? accent : border
                                 border.width: dpiRoot.currentActiveStage === index ? 1.5 : 1
@@ -184,7 +184,7 @@ Item {
                                         width: 42
                                         height: 42
                                         radius: 13
-                                        color: dpiRoot.currentActiveStage === index ? accent : "#1f2423"
+                                        color: dpiRoot.currentActiveStage === index ? accent : "#202a42"
                                         border.color: dpiRoot.currentActiveStage === index ? accent : border
                                         border.width: 1
 
@@ -265,8 +265,8 @@ Item {
                                         scale: dpiRoot.currentActiveStage === index ? 1.02 : (hit.containsMouse ? 1.005 : 1.0)
                                         Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
                                         gradient: Gradient {
-                                            GradientStop { position: 0; color: dpiRoot.currentActiveStage === index ? "#103b33" : (hit.containsMouse ? "#1c2322" : "#1a201f") }
-                                            GradientStop { position: 1; color: dpiRoot.currentActiveStage === index ? "#0f2f29" : "#121816" }
+                                            GradientStop { position: 0; color: dpiRoot.currentActiveStage === index ? "#26334f" : (hit.containsMouse ? "#23324f" : "#22314d") }
+                                            GradientStop { position: 1; color: dpiRoot.currentActiveStage === index ? "#1d2f4a" : "#151d31" }
                                         }
                                         border.color: dpiRoot.currentActiveStage === index ? accent : border
                                         border.width: 1
@@ -295,8 +295,8 @@ Item {
                         height: 232
                         radius: 24
                         gradient: Gradient {
-                            GradientStop { position: 0; color: "#121816" }
-                            GradientStop { position: 1; color: "#0d1110" }
+                            GradientStop { position: 0; color: "#151d31" }
+                            GradientStop { position: 1; color: "#11182a" }
                         }
                         border.color: border
                         border.width: 1
@@ -351,8 +351,8 @@ Item {
                         height: 136
                         radius: 24
                         gradient: Gradient {
-                            GradientStop { position: 0; color: "#151c1a" }
-                            GradientStop { position: 1; color: "#101514" }
+                            GradientStop { position: 0; color: "#151d31" }
+                            GradientStop { position: 1; color: "#151d31" }
                         }
                         border.color: border
                         border.width: 1
@@ -408,14 +408,14 @@ Item {
 
                                 background: Rectangle {
                                     radius: 14
-                                    color: parent.enabled ? (parent.pressed ? "#00c5a5" : accent) : "#2d3635"
-                                    border.color: parent.enabled ? accent : "#4a5452"
+                                    color: parent.enabled ? (parent.pressed ? "#6da8ff" : accent) : "#39435c"
+                                    border.color: parent.enabled ? accent : "#5a6480"
                                     border.width: 1
                                 }
 
                                 contentItem: Text {
                                     text: parent.text
-                                    color: parent.enabled ? "#071412" : "#7d8785"
+                                    color: parent.enabled ? "#e8edf6" : "#a1afc6"
                                     font.bold: true
                                     font.family: titleFont
                                     horizontalAlignment: Text.AlignHCenter
