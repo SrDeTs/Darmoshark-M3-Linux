@@ -37,14 +37,6 @@ Window {
         { title: "E-Sports Mode", subtitle: "Modo especial", source: "qrc:/qml/ESportsModeView.qml" }
     ]
 
-    function pageTitle(index) {
-        return navPages[index].title
-    }
-
-    function pageSubtitle(index) {
-        return navPages[index].subtitle
-    }
-
     function connectionLabel(mode) {
         if (!mode || mode.length === 0)
             return "Desconhecido"
@@ -347,87 +339,24 @@ Window {
             }
         }
 
-        ColumnLayout {
+        SwipeView {
+            id: stackLayout
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 16
+            clip: true
+            interactive: false
+            currentIndex: 0
 
-            Rectangle {
-                Layout.fillWidth: true
-                height: 84
-                radius: 24
-                gradient: Gradient {
-                    GradientStop { position: 0; color: "#121817" }
-                    GradientStop { position: 1; color: "#0f1312" }
-                }
-                border.color: borderColor
-                border.width: 1
-                clip: true
+            Repeater {
+                model: navPages.length
 
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 18
-                    spacing: 14
+                Item {
+                    width: stackLayout.width
+                    height: stackLayout.height
 
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 4
-
-                        Text {
-                            text: appRoot.pageTitle(stackLayout.currentIndex)
-                            color: textPrimary
-                            font.pixelSize: 24
-                            font.bold: true
-                            font.family: titleFont
-                        }
-
-                        Text {
-                            text: appRoot.pageSubtitle(stackLayout.currentIndex)
-                            color: textSecondary
-                            font.pixelSize: 11
-                            font.family: bodyFont
-                        }
-                    }
-
-                    Rectangle {
-                        width: 142
-                        height: 40
-                        radius: 21
-                        color: hidManager.deviceConnected ? "#103b33" : "#301717"
-                        border.color: hidManager.deviceConnected ? accent : danger
-                        border.width: 1
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: hidManager.deviceConnected ? "ONLINE" : "OFFLINE"
-                            color: hidManager.deviceConnected ? accent : danger
-                            font.pixelSize: 11
-                            font.bold: true
-                            font.family: titleFont
-                        }
-                    }
-                }
-            }
-
-            SwipeView {
-                id: stackLayout
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                interactive: false
-                currentIndex: 0
-
-                Repeater {
-                    model: navPages.length
-
-                    Item {
-                        width: stackLayout.width
-                        height: stackLayout.height
-
-                        Loader {
-                            anchors.fill: parent
-                            source: appRoot.pageSource(index)
-                        }
+                    Loader {
+                        anchors.fill: parent
+                        source: appRoot.pageSource(index)
                     }
                 }
             }
