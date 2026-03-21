@@ -54,7 +54,7 @@ Item {
                     }
 
                     Text {
-                        text: "Reservado para implementação"
+                        text: "Bloco reservado"
                         color: textPrimary
                         font.pixelSize: 24
                         font.bold: true
@@ -63,7 +63,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "O modo fica reservado até a captura confirmar o comportamento."
+                        text: "O modo fica separado até a captura confirmar se existe comando próprio ou só preset interno."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -87,7 +87,7 @@ Item {
                     spacing: 10
 
                     Text {
-                        text: "PÁGINA RESERVADA"
+                        text: "BLOCO SEPARADO"
                         color: textSecondary
                         font.pixelSize: 10
                         font.bold: true
@@ -106,7 +106,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Quando a captura confirmar o comportamento, a implementação entra aqui."
+                        text: "Quando a captura fechar, a implementação entra aqui."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont

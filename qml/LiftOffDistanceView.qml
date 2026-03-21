@@ -54,7 +54,7 @@ Item {
                     }
 
                     Text {
-                        text: "Reservado para implementação"
+                        text: "Bloco reservado"
                         color: textPrimary
                         font.pixelSize: 24
                         font.bold: true
@@ -63,7 +63,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "A captura existe e a página já está separada para não misturar sensor performance com outros grupos."
+                        text: "A captura existe, mas a interface ainda não foi fechada. A página fica isolada para manter o restante do shell limpo."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -87,7 +87,7 @@ Item {
                     spacing: 10
 
                     Text {
-                        text: "ESTRUTURA RESERVADA"
+                        text: "ESTRUTURA ISOLADA"
                         color: textSecondary
                         font.pixelSize: 10
                         font.bold: true
@@ -96,7 +96,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Quando o pacote estiver fechado, os controles entram aqui sem afetar as outras páginas."
+                        text: "Quando o pacote estiver fechado, os controles entram aqui sem impactar DPI, report rate ou sensor performance."
                         color: textPrimary
                         font.pixelSize: 14
                         font.bold: true
@@ -106,7 +106,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Por enquanto a página fica reservada."
+                        text: "Sem atalhos temporários e sem mistura de funções."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont

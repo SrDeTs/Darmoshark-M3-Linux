@@ -54,7 +54,7 @@ Item {
                     }
 
                     Text {
-                        text: "Reservado para implementação"
+                        text: "Bloco reservado"
                         color: textPrimary
                         font.pixelSize: 24
                         font.bold: true
@@ -63,7 +63,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "A estrutura já está reservada para receber essa função quando o pacote ficar fechado."
+                        text: "A função ainda depende da confirmação final do pacote. A página já está separada para não contaminar outros grupos."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -87,7 +87,7 @@ Item {
                     spacing: 10
 
                     Text {
-                        text: "PÁGINA RESERVADA"
+                        text: "MÓDULO ISOLADO"
                         color: textSecondary
                         font.pixelSize: 10
                         font.bold: true
@@ -106,7 +106,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "A separação por aba foi mantida de propósito."
+                        text: "Separação por aba mantida de propósito."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
