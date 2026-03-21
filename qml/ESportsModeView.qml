@@ -72,14 +72,6 @@ Item {
                         font.family: titleFont
                     }
 
-                    Text {
-                        width: parent.width
-                        text: "A captura confirmou dois estados: Open e Close."
-                        color: textSecondary
-                        font.pixelSize: 11
-                        font.family: bodyFont
-                        wrapMode: Text.WordWrap
-                    }
                 }
             }
 
@@ -278,16 +270,6 @@ Item {
                                 font.family: titleFont
                             }
 
-                            Text {
-                                width: parent.width
-                                text: "O valor selecionado é enviado direto para o mouse."
-                                color: textPrimary
-                                font.pixelSize: 14
-                                font.bold: true
-                                font.family: titleFont
-                                wrapMode: Text.WordWrap
-                            }
-
                             Button {
                                 text: "ENVIAR MODO"
                                 width: parent.width
@@ -345,20 +327,11 @@ Item {
 
                             Text {
                                 width: parent.width
-                                text: "Separado de propósito para manter a navegação limpa."
+                                text: "Atual: " + modeTitle()
                                 color: textPrimary
                                 font.pixelSize: 13
                                 font.bold: true
                                 font.family: titleFont
-                                wrapMode: Text.WordWrap
-                            }
-
-                            Text {
-                                width: parent.width
-                                text: "Atual: " + modeTitle() + " - " + modeDescription()
-                                color: textSecondary
-                                font.pixelSize: 11
-                                font.family: bodyFont
                                 wrapMode: Text.WordWrap
                             }
                         }

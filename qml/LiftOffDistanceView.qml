@@ -72,14 +72,6 @@ Item {
                         font.family: titleFont
                     }
 
-                    Text {
-                        width: parent.width
-                        text: "A captura confirmou dois estados simples: Low e High."
-                        color: textSecondary
-                        font.pixelSize: 11
-                        font.family: bodyFont
-                        wrapMode: Text.WordWrap
-                    }
                 }
             }
 
@@ -278,16 +270,6 @@ Item {
                                 font.family: titleFont
                             }
 
-                            Text {
-                                width: parent.width
-                                text: "O valor selecionado é enviado direto para o mouse."
-                                color: textPrimary
-                                font.pixelSize: 14
-                                font.bold: true
-                                font.family: titleFont
-                                wrapMode: Text.WordWrap
-                            }
-
                             Button {
                                 text: "ENVIAR LOD"
                                 width: parent.width
@@ -345,20 +327,11 @@ Item {
 
                             Text {
                                 width: parent.width
-                                text: "Separado de DPI, report rate e sensor performance."
+                                text: "Atual: " + lodTitle() + " (" + lodDescription() + ")"
                                 color: textPrimary
                                 font.pixelSize: 13
                                 font.bold: true
                                 font.family: titleFont
-                                wrapMode: Text.WordWrap
-                            }
-
-                            Text {
-                                width: parent.width
-                                text: "Sem atalhos temporários."
-                                color: textSecondary
-                                font.pixelSize: 11
-                                font.family: bodyFont
                                 wrapMode: Text.WordWrap
                             }
                         }

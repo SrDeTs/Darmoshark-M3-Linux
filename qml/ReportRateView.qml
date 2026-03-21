@@ -70,14 +70,6 @@ Item {
                         font.family: titleFont
                     }
 
-                    Text {
-                        width: parent.width
-                        text: "Ajuste confirmado no USB e no 2.4G."
-                        color: textSecondary
-                        font.pixelSize: 11
-                        font.family: bodyFont
-                        wrapMode: Text.WordWrap
-                    }
                 }
             }
 
@@ -240,16 +232,6 @@ Item {
                                 font.family: titleFont
                             }
 
-                            Text {
-                                width: parent.width
-                                text: "Clique em aplicar para enviar a taxa selecionada ao mouse."
-                                color: textPrimary
-                                font.pixelSize: 14
-                                font.bold: true
-                                font.family: titleFont
-                                wrapMode: Text.WordWrap
-                            }
-
                             Button {
                                 text: "ENVIAR TAXA"
                                 width: parent.width
@@ -305,24 +287,6 @@ Item {
                                 font.family: titleFont
                             }
 
-                            Text {
-                                width: parent.width
-                                text: "Aqui só fica o que foi confirmado na captura do driver original."
-                                color: textPrimary
-                                font.pixelSize: 13
-                                font.bold: true
-                                font.family: titleFont
-                                wrapMode: Text.WordWrap
-                            }
-
-                            Text {
-                                width: parent.width
-                                text: "Não misturar com outras funções."
-                                color: textSecondary
-                                font.pixelSize: 11
-                                font.family: bodyFont
-                                wrapMode: Text.WordWrap
-                            }
                         }
                     }
                 }

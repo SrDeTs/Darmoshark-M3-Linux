@@ -93,12 +93,6 @@ Item {
                             }
                         }
 
-                        Text {
-                            text: "Edita os perfis, escolhe o estágio ativo e envia direto ao mouse."
-                            color: textSecondary
-                            font.pixelSize: 11
-                            font.family: bodyFont
-                        }
                     }
 
                     Rectangle {
@@ -327,14 +321,6 @@ Item {
                                 font.pixelSize: 44
                                 font.bold: true
                                 font.family: titleFont
-                            }
-
-                            Text {
-                                text: "A seleção define o próximo estágio aplicado."
-                                color: textPrimary
-                                font.pixelSize: 12
-                                font.family: bodyFont
-                                wrapMode: Text.WordWrap
                             }
 
                             Rectangle {

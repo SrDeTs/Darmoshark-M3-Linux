@@ -58,22 +58,6 @@ Item {
                         font.family: titleFont
                     }
 
-                    Text {
-                        text: "Ripple, Motion Sync e Angle Snap"
-                        color: textPrimary
-                        font.pixelSize: 24
-                        font.bold: true
-                        font.family: titleFont
-                    }
-
-                    Text {
-                        width: parent.width
-                        text: "A aba fica isolada para não misturar ripple, sensor e taxa de resposta."
-                        color: textSecondary
-                        font.pixelSize: 11
-                        font.family: bodyFont
-                        wrapMode: Text.WordWrap
-                    }
                 }
             }
 
@@ -124,15 +108,6 @@ Item {
                         }
                     }
 
-                    Text {
-                        width: parent.width
-                        text: "Em DPI alto ele reduz a ondulação do sensor."
-                        color: textPrimary
-                        font.pixelSize: 13
-                        font.family: bodyFont
-                        wrapMode: Text.WordWrap
-                    }
-
                     Row {
                         width: parent.width
                         spacing: 10
@@ -149,14 +124,6 @@ Item {
                                 font.family: titleFont
                             }
 
-                            Text {
-                                width: parent.width
-                                text: "Aplicação direta no mouse."
-                                color: textSecondary
-                                font.pixelSize: 10
-                                font.family: bodyFont
-                                wrapMode: Text.WordWrap
-                            }
                         }
 
                         Switch {
@@ -217,15 +184,6 @@ Item {
                         }
                     }
 
-                    Text {
-                        width: parent.width
-                        text: "Toggle confirmado nas capturas de USB e 2.4G."
-                        color: textPrimary
-                        font.pixelSize: 13
-                        font.family: bodyFont
-                        wrapMode: Text.WordWrap
-                    }
-
                     Row {
                         width: parent.width
                         spacing: 10
@@ -242,14 +200,6 @@ Item {
                                 font.family: titleFont
                             }
 
-                            Text {
-                                width: parent.width
-                                text: "Aplicação direta no mouse."
-                                color: textSecondary
-                                font.pixelSize: 10
-                                font.family: bodyFont
-                                wrapMode: Text.WordWrap
-                            }
                         }
 
                         Switch {
@@ -310,15 +260,6 @@ Item {
                         }
                     }
 
-                    Text {
-                        width: parent.width
-                        text: "Também separado para manter a tela limpa e legível."
-                        color: textPrimary
-                        font.pixelSize: 13
-                        font.family: bodyFont
-                        wrapMode: Text.WordWrap
-                    }
-
                     Row {
                         width: parent.width
                         spacing: 10
@@ -335,14 +276,6 @@ Item {
                                 font.family: titleFont
                             }
 
-                            Text {
-                                width: parent.width
-                                text: "Aplicação direta no mouse."
-                                color: textSecondary
-                                font.pixelSize: 10
-                                font.family: bodyFont
-                                wrapMode: Text.WordWrap
-                            }
                         }
 
                         Switch {
@@ -370,32 +303,6 @@ Item {
                     anchors.margins: 16
                     spacing: 8
 
-                    Text {
-                        text: "PRÓXIMO BLOCO"
-                        color: textSecondary
-                        font.pixelSize: 10
-                        font.bold: true
-                        font.family: titleFont
-                    }
-
-                    Text {
-                        width: parent.width
-                        text: "Lift Off Distance, Scroll Direction e E-Sports Mode já seguem páginas próprias."
-                        color: textPrimary
-                        font.pixelSize: 13
-                        font.bold: true
-                        font.family: titleFont
-                        wrapMode: Text.WordWrap
-                    }
-
-                    Text {
-                        width: parent.width
-                        text: "A separação impede que a página vire um painel misturado."
-                        color: textSecondary
-                        font.pixelSize: 11
-                        font.family: bodyFont
-                        wrapMode: Text.WordWrap
-                    }
                 }
             }
         }
