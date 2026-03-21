@@ -54,7 +54,7 @@ Item {
                     }
 
                     Text {
-                        text: "Em breve"
+                        text: "Reservado para implementação"
                         color: textPrimary
                         font.pixelSize: 24
                         font.bold: true
@@ -63,7 +63,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Se esse modo existir no protocolo, ele merece aba própria."
+                        text: "O modo fica reservado até a captura confirmar o comportamento."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -106,7 +106,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Quando você tiver a captura certa, a implementação entra aqui."
+                        text: "Quando a captura confirmar o comportamento, a implementação entra aqui."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont

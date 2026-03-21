@@ -162,6 +162,7 @@ Window {
                                 color: accent
                                 font.pixelSize: 12
                                 font.bold: true
+                                font.family: titleFont
                             }
                         }
 
@@ -178,7 +179,7 @@ Window {
                             }
 
                             Text {
-                                text: "M3 configurator"
+                                text: "DPI / Sensor shell"
                                 color: textSecondary
                                 font.pixelSize: 11
                                 font.family: bodyFont
@@ -300,28 +301,30 @@ Window {
                         RowLayout {
                             spacing: 8
 
-                            Rectangle {
-                                width: 18
-                                height: 18
-                                radius: 6
-                                color: "#18211f"
-                                border.color: borderColor
-                                border.width: 1
+                                Rectangle {
+                                    width: 18
+                                    height: 18
+                                    radius: 6
+                                    color: "#18211f"
+                                    border.color: borderColor
+                                    border.width: 1
 
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: hidManager.deviceConnected ? "●" : "○"
-                                    color: hidManager.deviceConnected ? accent : danger
-                                    font.pixelSize: 9
-                                    font.bold: true
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: hidManager.deviceConnected ? "●" : "○"
+                                        color: hidManager.deviceConnected ? accent : danger
+                                        font.pixelSize: 9
+                                        font.bold: true
+                                        font.family: titleFont
+                                    }
                                 }
-                            }
 
                             Text {
-                                text: hidManager.deviceConnected ? "Dispositivo conectado" : "Sem dispositivo"
+                                text: hidManager.deviceConnected ? "Dispositivo ativo" : "Sem dispositivo"
                                 color: hidManager.deviceConnected ? accent : danger
                                 font.pixelSize: 12
                                 font.bold: true
+                                font.family: titleFont
                             }
                         }
 

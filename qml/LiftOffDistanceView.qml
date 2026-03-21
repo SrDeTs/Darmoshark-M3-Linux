@@ -54,7 +54,7 @@ Item {
                     }
 
                     Text {
-                        text: "Em breve"
+                        text: "Reservado para implementação"
                         color: textPrimary
                         font.pixelSize: 24
                         font.bold: true
@@ -63,7 +63,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Existe captura separada na pasta Darmoshark M3, então essa função pode virar uma aba própria sem misturar com sensor performance."
+                        text: "A captura existe e a página já está separada para não misturar sensor performance com outros grupos."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -96,7 +96,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Quando você fechar o comportamento do LOD, essa página já está separada para receber os controles sem bagunçar o resto do app."
+                        text: "Quando o pacote estiver fechado, os controles entram aqui sem afetar as outras páginas."
                         color: textPrimary
                         font.pixelSize: 14
                         font.bold: true
@@ -106,7 +106,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Por enquanto eu deixo só o shell pronto e limpo."
+                        text: "Por enquanto a página fica reservada."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont

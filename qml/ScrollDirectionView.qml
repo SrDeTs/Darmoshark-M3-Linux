@@ -54,7 +54,7 @@ Item {
                     }
 
                     Text {
-                        text: "Em breve"
+                        text: "Reservado para implementação"
                         color: textPrimary
                         font.pixelSize: 24
                         font.bold: true
@@ -63,7 +63,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "A captura existe separada, então essa função vai ganhar página própria quando o pacote ficar fechado."
+                        text: "A estrutura já está reservada para receber essa função quando o pacote ficar fechado."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
