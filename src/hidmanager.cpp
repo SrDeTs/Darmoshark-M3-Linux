@@ -246,6 +246,17 @@ void HidManager::applyAngleSnap(bool enabled)
     sendConfigPacket(data);
 }
 
+void HidManager::applyLiftOffDistance(bool low)
+{
+    if (!m_device) return;
+
+    auto packet = DarmosharkProtocol::createLiftOffDistancePacket(low);
+    QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
+
+    qDebug() << "Applying Lift Off Distance:" << (low ? "Low" : "High");
+    sendConfigPacket(data);
+}
+
 void HidManager::pollStatus()
 {
     if (!m_device) {
