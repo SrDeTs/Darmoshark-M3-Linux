@@ -72,7 +72,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Ajuste confirmado no USB e no 2.4G, com o mesmo padrão de pacote."
+                        text: "Ajuste confirmado no USB e no 2.4G."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -233,7 +233,7 @@ Item {
                             spacing: 10
 
                             Text {
-                                text: "APLICAÇÃO DIRETA"
+                                text: "AÇÃO DIRETA"
                                 color: textSecondary
                                 font.pixelSize: 10
                                 font.bold: true
@@ -251,7 +251,7 @@ Item {
                             }
 
                             Button {
-                                text: "APLICAR"
+                                text: "ENVIAR TAXA"
                                 width: parent.width
                                 height: 48
                                 enabled: hidManager.deviceConnected
@@ -317,7 +317,7 @@ Item {
 
                             Text {
                                 width: parent.width
-                                text: "Não misturar com outras funções do sensor."
+                                text: "Não misturar com outras funções."
                                 color: textSecondary
                                 font.pixelSize: 11
                                 font.family: bodyFont

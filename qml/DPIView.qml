@@ -330,7 +330,7 @@ Item {
                             }
 
                             Text {
-                                text: "A seleção muda o estágio que receberá o próximo envio."
+                                text: "A seleção define o próximo estágio aplicado."
                                 color: textPrimary
                                 font.pixelSize: 12
                                 font.family: bodyFont

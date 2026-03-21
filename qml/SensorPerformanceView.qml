@@ -67,7 +67,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "A aba fica isolada para não misturar toggles do sensor com taxa de atualização."
+                        text: "A aba fica isolada para não misturar sensor com taxa de atualização."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
@@ -286,7 +286,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Lift Off Distance, Scroll Direction e E-Sports Mode entram nas suas próprias páginas quando você fechar os pacotes."
+                        text: "Lift Off Distance, Scroll Direction e E-Sports Mode entram nas próprias páginas ao fechar os pacotes."
                         color: textPrimary
                         font.pixelSize: 13
                         font.bold: true
@@ -296,7 +296,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Essa separação impede que a página vire um painel misturado."
+                        text: "A separação impede que a página vire um painel misturado."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont

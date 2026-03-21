@@ -104,7 +104,7 @@ Item {
 
                         Text {
                             width: parent.width
-                            text: "Visão geral do mouse. DPI e polling rate já estão alinhados com a captura do driver original."
+                            text: "Visão geral do mouse. DPI e polling rate já estão fechados."
                             color: "#a5b0ad"
                             font.pixelSize: 11
                             font.family: bodyFont
@@ -203,7 +203,7 @@ Item {
 
                                     Text {
                                         width: parent.width
-                                        text: "As páginas principais já estão separadas por feature e o protocolo base está fechado."
+                                        text: "As páginas principais já estão separadas por feature."
                                         color: textSecondary
                                         font.pixelSize: 11
                                         font.family: bodyFont
@@ -400,7 +400,7 @@ Item {
 
                             Text {
                                 width: parent.width
-                                text: "A interface foi reconstruída com hierarquia fixa, sem blocos vazando para fora do card."
+                                text: "A interface foi reconstruída com hierarquia fixa e sem vazamento de blocos."
                                 color: textPrimary
                                 font.pixelSize: 13
                                 font.bold: true
@@ -410,7 +410,7 @@ Item {
 
                                 Text {
                                 width: parent.width
-                                text: "Próximo passo: botões, macro e polimento fino."
+                                text: "Próximo passo: botões, macro e ajuste fino."
                                 color: accent
                                 font.pixelSize: 11
                                 font.family: bodyFont
@@ -551,7 +551,7 @@ Item {
 
                             Text {
                                 width: parent.width
-                                text: "1. DPI e polling rate já funcionam.\n2. Botões e macro ainda faltam.\n3. O shell foi redesenhado do zero."
+                                text: "1. DPI e polling rate estão fechados.\n2. Botões e macro ainda faltam.\n3. O shell foi redesenhado do zero."
                                 color: textPrimary
                                 font.pixelSize: 12
                                 font.family: bodyFont
@@ -594,7 +594,7 @@ Item {
 
                                 Text {
                                     width: parent.width
-                                    text: "A UI está sendo refeita do zero para manter consistência visual e reduzir comportamento quebrado."
+                                    text: "A UI está sendo refeita do zero para manter consistência visual."
                                     color: textPrimary
                                     font.pixelSize: 13
                                     font.bold: true
