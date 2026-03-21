@@ -147,6 +147,65 @@ std::vector<uint8_t> createLiftOffDistancePacket(bool low) {
     return packet;
 }
 
+// Scroll Direction packet captured from the Windows driver.
+// Forward = normal scrolling, Reverse = inverted scrolling.
+std::vector<uint8_t> createScrollDirectionPacket(bool forward, bool wiredMode) {
+    std::vector<uint8_t> packet(14, 0x00);
+    packet[0] = 0x82;
+    packet[1] = 0x01;
+    packet[2] = 0x08;
+    packet[3] = 0x00;
+    packet[4] = 0x00;
+    packet[5] = 0x00;
+    packet[6] = wiredMode ? 0x01 : 0x03;
+    packet[7] = 0x00;
+
+    if (wiredMode) {
+        packet[8] = forward ? 0x01 : 0x02;
+        packet[9] = 0x00;
+        packet[10] = 0x00;
+    } else {
+        packet[8] = forward ? 0x00 : 0x01;
+        packet[9] = 0x00;
+        packet[10] = forward ? 0x01 : 0x00;
+    }
+
+    packet[11] = 0x00;
+    packet[12] = 0x00;
+    packet[13] = 0x00;
+    return packet;
+}
+
+// E-Sports Mode packet captured from the Windows driver.
+// Open = faster response mode, Close = default mode.
+std::vector<uint8_t> createESportsModePacket(bool open, bool wiredMode) {
+    std::vector<uint8_t> packet(14, 0x00);
+    packet[0] = 0x82;
+    packet[1] = 0x01;
+    packet[2] = 0x08;
+    packet[3] = 0x00;
+    packet[4] = 0x00;
+    packet[5] = 0x00;
+    packet[6] = wiredMode ? 0x01 : 0x03;
+    packet[7] = 0x00;
+
+    if (wiredMode) {
+        packet[8] = open ? 0x01 : 0x00;
+        packet[9] = 0x00;
+        packet[10] = open ? 0x00 : 0xff;
+        packet[11] = open ? 0x00 : 0xff;
+    } else {
+        packet[8] = open ? 0x00 : 0x01;
+        packet[9] = 0x00;
+        packet[10] = open ? 0x01 : 0x00;
+        packet[11] = 0x00;
+    }
+
+    packet[12] = 0x00;
+    packet[13] = 0x00;
+    return packet;
+}
+
 // Button Remap Packet
 std::vector<uint8_t> createRemapPacket(const std::vector<uint8_t>& mapping) {
     std::vector<uint8_t> packet(65, 0x00);

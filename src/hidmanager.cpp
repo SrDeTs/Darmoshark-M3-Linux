@@ -257,6 +257,19 @@ void HidManager::applyLiftOffDistance(bool low)
     sendConfigPacket(data);
 }
 
+void HidManager::applyScrollDirection(bool forward)
+{
+    if (!m_device) return;
+
+    const bool wiredMode = (m_currentPid == 0xff12);
+    auto packet = DarmosharkProtocol::createScrollDirectionPacket(forward, wiredMode);
+    QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
+
+    qDebug() << "Applying Scroll Direction:" << (forward ? "Forward" : "Reverse")
+             << "wiredMode:" << wiredMode;
+    sendConfigPacket(data);
+}
+
 void HidManager::pollStatus()
 {
     if (!m_device) {
