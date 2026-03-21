@@ -28,13 +28,6 @@ Item {
         return mode
     }
 
-    function homeIcon(kind) {
-        if (kind === "battery") return "▣"
-        if (kind === "connection") return "◌"
-        if (kind === "quick") return "⌕"
-        return "↗"
-    }
-
     Flickable {
         anchors.fill: parent
         contentWidth: homeRoot.width
@@ -42,9 +35,7 @@ Item {
         clip: true
         boundsBehavior: Flickable.StopAtBounds
         flickableDirection: Flickable.VerticalFlick
-        ScrollBar.vertical: ScrollBar {
-            policy: ScrollBar.AsNeeded
-        }
+        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
 
         Column {
             id: contentColumn
@@ -53,11 +44,69 @@ Item {
 
             Rectangle {
                 width: parent.width
-                height: 232
+                height: 92
+                radius: 22
+                color: "#101514"
+                border.color: border
+                border.width: 1
+                clip: true
+
+                Row {
+                    anchors.fill: parent
+                    anchors.margins: 16
+                    spacing: 16
+
+                    Column {
+                        width: parent.width - 170
+                        spacing: 4
+
+                        Text {
+                            text: "Início"
+                            color: textPrimary
+                            font.pixelSize: 24
+                            font.bold: true
+                            font.family: titleFont
+                        }
+
+                        Text {
+                            text: "Visão geral do mouse"
+                            color: textSecondary
+                            font.pixelSize: 11
+                            font.family: bodyFont
+                        }
+                    }
+
+                    Rectangle {
+                        width: 132
+                        height: 34
+                        radius: 17
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: hidManager.deviceConnected ? "#103b33" : "#342020" }
+                            GradientStop { position: 1; color: hidManager.deviceConnected ? "#0f2f29" : "#241616" }
+                        }
+                        border.color: hidManager.deviceConnected ? accent : danger
+                        border.width: 1
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: hidManager.deviceConnected ? "ONLINE" : "SEM LINK"
+                            color: hidManager.deviceConnected ? accent : danger
+                            font.pixelSize: 11
+                            font.bold: true
+                            font.family: titleFont
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 240
                 radius: 24
                 gradient: Gradient {
-                    GradientStop { position: 0; color: "#131917" }
-                    GradientStop { position: 1; color: "#0b0f0e" }
+                    GradientStop { position: 0; color: "#141918" }
+                    GradientStop { position: 1; color: "#0c100f" }
                 }
                 border.color: accent
                 border.width: 1
@@ -65,47 +114,43 @@ Item {
 
                 Row {
                     anchors.fill: parent
-                    anchors.margins: 20
+                    anchors.margins: 18
                     spacing: 18
 
                     Rectangle {
-                        width: 208
-                        height: 192
-                        radius: 22
-                        gradient: Gradient {
-                            GradientStop { position: 0; color: "#1a2120" }
-                            GradientStop { position: 1; color: "#111715" }
-                        }
-                        border.color: accent
+                        width: 190
+                        height: parent.height - 36
+                        radius: 20
+                        color: "#151b19"
+                        border.color: "#2f3836"
                         border.width: 1
-                        clip: true
 
                         Image {
                             anchors.centerIn: parent
                             source: "qrc:/images/m3_device_mouse.png"
-                            width: 152
-                            height: 152
+                            width: 128
+                            height: 128
                             fillMode: Image.PreserveAspectFit
                             smooth: true
                         }
                     }
 
                     Column {
-                        width: parent.width - 260
+                        width: parent.width - 208
                         spacing: 10
 
                         Text {
                             text: "Darmoshark M3"
                             color: textPrimary
-                            font.pixelSize: 28
+                            font.pixelSize: 26
                             font.bold: true
                             font.family: titleFont
                         }
 
                         Text {
                             width: parent.width
-                            text: "Visão geral do mouse. DPI, report rate e LOD já estão fechados."
-                            color: "#a5b0ad"
+                            text: "DPI, report rate, LOD e sensor performance já estão organizados por página."
+                            color: textSecondary
                             font.pixelSize: 11
                             font.family: bodyFont
                             wrapMode: Text.WordWrap
@@ -115,20 +160,17 @@ Item {
                             spacing: 10
 
                             Rectangle {
-                                width: 116
+                                width: 112
                                 height: 34
                                 radius: 17
-                                gradient: Gradient {
-                                    GradientStop { position: 0; color: hidManager.deviceConnected ? "#103b33" : "#342020" }
-                                    GradientStop { position: 1; color: hidManager.deviceConnected ? "#0f2f29" : "#241616" }
-                                }
-                                border.color: hidManager.deviceConnected ? accent : danger
+                                color: "#0f2320"
+                                border.color: accent
                                 border.width: 1
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: hidManager.deviceConnected ? "Ativo" : "Sem link"
-                                    color: hidManager.deviceConnected ? accent : danger
+                                    color: accent
                                     font.pixelSize: 11
                                     font.bold: true
                                     font.family: titleFont
@@ -139,10 +181,7 @@ Item {
                                 width: 136
                                 height: 34
                                 radius: 17
-                                gradient: Gradient {
-                                    GradientStop { position: 0; color: "#1a2321" }
-                                    GradientStop { position: 1; color: "#121816" }
-                                }
+                                color: "#121816"
                                 border.color: accentSoft
                                 border.width: 1
 
@@ -159,12 +198,11 @@ Item {
 
                         Rectangle {
                             width: parent.width
-                            height: 78
-                            radius: 18
+                            height: 90
+                            radius: 16
                             color: panelDeep
                             border.color: border
                             border.width: 1
-                            clip: true
 
                             Row {
                                 anchors.fill: parent
@@ -172,10 +210,10 @@ Item {
                                 spacing: 12
 
                                 Rectangle {
-                                    width: 70
+                                    width: 66
                                     height: parent.height - 28
-                                    radius: 16
-                                    color: "#1b2421"
+                                    radius: 14
+                                    color: "#151d1b"
                                     border.color: accent
                                     border.width: 1
 
@@ -183,18 +221,18 @@ Item {
                                         anchors.centerIn: parent
                                         text: "M3"
                                         color: accent
-                                        font.pixelSize: 22
+                                        font.pixelSize: 20
                                         font.bold: true
                                         font.family: titleFont
                                     }
                                 }
 
                                 Column {
-                                    width: parent.width - 82
+                                    width: parent.width - 80
                                     spacing: 4
 
                                     Text {
-                                        text: "Estado validado"
+                                        text: "Shell organizado"
                                         color: accent
                                         font.pixelSize: 12
                                         font.bold: true
@@ -203,7 +241,7 @@ Item {
 
                                     Text {
                                         width: parent.width
-                                        text: "As páginas principais já estão separadas por feature."
+                                        text: "A navegação está separada por feature para evitar blocos misturados."
                                         color: textSecondary
                                         font.pixelSize: 11
                                         font.family: bodyFont
@@ -220,258 +258,100 @@ Item {
                 width: parent.width
                 spacing: 16
 
-            Rectangle {
-                        width: Math.round((parent.width - 16) * 0.58)
-                        height: 256
-                        radius: 24
-                        gradient: Gradient {
-                            GradientStop { position: 0; color: "#171e1c" }
-                            GradientStop { position: 1; color: "#0f1312" }
-                        }
-                        border.color: accent
-                        border.width: 1
-                        clip: true
+                Rectangle {
+                    width: Math.round((parent.width - 16) * 0.58)
+                    height: 160
+                    radius: 20
+                    color: panel
+                    border.color: border
+                    border.width: 1
+                    clip: true
 
-                    Column {
+                    Row {
                         anchors.fill: parent
-                        anchors.margins: 18
+                        anchors.margins: 16
                         spacing: 12
 
-                        Row {
-                            spacing: 8
-
-                            Rectangle {
-                                width: 18
-                                height: 18
-                                radius: 6
-                                color: "#18211f"
-                                border.color: border
-                                border.width: 1
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: homeIcon("battery")
-                                    color: accent
-                                    font.pixelSize: 10
-                                    font.bold: true
-                                }
-                            }
-
-                            Text {
-                                text: "ESTADO DO SISTEMA"
-                                color: textSecondary
-                                font.pixelSize: 10
-                                font.bold: true
-                                font.family: titleFont
-                            }
-                        }
-
-                        Row {
-                            width: parent.width
-                            spacing: 12
-
-                            Rectangle {
-                                width: Math.floor((parent.width - 24) / 3)
-                                height: 94
-                                radius: 18
-                                gradient: Gradient {
-                                    GradientStop { position: 0; color: "#151c1a" }
-                                    GradientStop { position: 1; color: "#0f1312" }
-                                }
-                                border.color: accentSoft
-                                border.width: 1
-
-                                Column {
-                                    anchors.fill: parent
-                                    anchors.margins: 14
-                                    spacing: 6
-
-                                    Text {
-                                        text: "BATERIA"
-                                        color: "#b0b8b6"
-                                        font.pixelSize: 10
-                                        font.bold: true
-                                        font.family: titleFont
-                                    }
-
-                                    Text {
-                                        text: hidManager.batteryLevel + "%"
-                                        color: textPrimary
-                                        font.pixelSize: 28
-                                        font.bold: true
-                                        font.family: titleFont
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                width: Math.floor((parent.width - 24) / 3)
-                                height: 94
-                                radius: 18
-                                gradient: Gradient {
-                                    GradientStop { position: 0; color: "#151c1a" }
-                                    GradientStop { position: 1; color: "#0f1312" }
-                                }
-                                border.color: accentSoft
-                                border.width: 1
-
-                                Column {
-                                    anchors.fill: parent
-                                    anchors.margins: 14
-                                    spacing: 6
-
-                                    Text {
-                                        text: "CONEXÃO"
-                                        color: "#b0b8b6"
-                                        font.pixelSize: 10
-                                        font.bold: true
-                                        font.family: titleFont
-                                    }
-
-                                    Text {
-                                        text: hidManager.deviceConnected ? "Ativa" : "Sem link"
-                                        color: hidManager.deviceConnected ? accent : danger
-                                        font.pixelSize: 28
-                                        font.bold: true
-                                        font.family: titleFont
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                width: Math.floor((parent.width - 24) / 3)
-                                height: 94
-                                radius: 18
-                                gradient: Gradient {
-                                    GradientStop { position: 0; color: "#151c1a" }
-                                    GradientStop { position: 1; color: "#0f1312" }
-                                }
-                                border.color: accentSoft
-                                border.width: 1
-
-                                Column {
-                                    anchors.fill: parent
-                                    anchors.margins: 14
-                                    spacing: 6
-
-                                    Text {
-                                        text: "MODO"
-                                        color: "#b0b8b6"
-                                        font.pixelSize: 10
-                                        font.bold: true
-                                        font.family: titleFont
-                                    }
-
-                                    Text {
-                                        text: connectionLabel(hidManager.connectionMode)
-                                        color: textPrimary
-                                        font.pixelSize: 20
-                                        font.bold: true
-                                        font.family: titleFont
-                                        wrapMode: Text.WordWrap
-                                    }
-                                }
-                            }
-                        }
-
                         Rectangle {
-                        width: parent.width
-                        height: 122
-                        radius: 18
-                        gradient: Gradient {
-                            GradientStop { position: 0; color: "#121816" }
-                            GradientStop { position: 1; color: "#0c1010" }
-                        }
-                        border.color: accent
-                        border.width: 1
+                            width: Math.floor((parent.width - 24) / 3)
+                            height: parent.height - 32
+                            radius: 16
+                            color: "#101513"
+                            border.color: accentSoft
+                            border.width: 1
 
                             Column {
                                 anchors.fill: parent
                                 anchors.margins: 14
-                                spacing: 8
+                                spacing: 6
 
-                            Text {
-                                text: "Status do trabalho"
-                                color: "#b0b8b6"
-                                font.pixelSize: 10
-                                font.bold: true
-                                font.family: titleFont
-                            }
-
-                            Text {
-                                width: parent.width
-                                text: "A interface foi reconstruída com hierarquia fixa e sem vazamento de blocos."
-                                color: textPrimary
-                                font.pixelSize: 13
-                                font.bold: true
-                                font.family: titleFont
-                                wrapMode: Text.WordWrap
-                            }
-
-                                Text {
-                                width: parent.width
-                                text: "Próximo passo: ajuste fino de navegação e consistência visual."
-                                color: accent
-                                font.pixelSize: 11
-                                font.family: bodyFont
-                                wrapMode: Text.WordWrap
+                                Text { text: "BATERIA"; color: textSecondary; font.pixelSize: 10; font.bold: true; font.family: titleFont }
+                                Text { text: hidManager.batteryLevel + "%"; color: textPrimary; font.pixelSize: 28; font.bold: true; font.family: titleFont }
                             }
                         }
+
+                        Rectangle {
+                            width: Math.floor((parent.width - 24) / 3)
+                            height: parent.height - 32
+                            radius: 16
+                            color: "#101513"
+                            border.color: accentSoft
+                            border.width: 1
+
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: 14
+                                spacing: 6
+
+                                Text { text: "CONEXÃO"; color: textSecondary; font.pixelSize: 10; font.bold: true; font.family: titleFont }
+                                Text { text: hidManager.deviceConnected ? "Ativa" : "Sem link"; color: hidManager.deviceConnected ? accent : danger; font.pixelSize: 28; font.bold: true; font.family: titleFont }
+                            }
+                        }
+
+                        Rectangle {
+                            width: Math.floor((parent.width - 24) / 3)
+                            height: parent.height - 32
+                            radius: 16
+                            color: "#101513"
+                            border.color: accentSoft
+                            border.width: 1
+
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: 14
+                                spacing: 6
+
+                                Text { text: "MODO"; color: textSecondary; font.pixelSize: 10; font.bold: true; font.family: titleFont }
+                                Text { text: connectionLabel(hidManager.connectionMode); color: textPrimary; font.pixelSize: 18; font.bold: true; font.family: titleFont; wrapMode: Text.WordWrap }
+                            }
                         }
                     }
                 }
 
-                    Column {
-                        width: Math.round((parent.width - 16) * 0.42)
-                        spacing: 16
+                Column {
+                    width: Math.round((parent.width - 16) * 0.42)
+                    spacing: 16
 
                     Rectangle {
                         width: parent.width
-                        height: 120
-                        radius: 24
-                        gradient: Gradient {
-                            GradientStop { position: 0; color: "#131917" }
-                            GradientStop { position: 1; color: "#0e1211" }
-                        }
-                        border.color: accent
+                        height: 160
+                        radius: 20
+                        color: panel
+                        border.color: border
                         border.width: 1
                         clip: true
-                        scale: scanHit.containsMouse ? 1.01 : 1.0
-                        Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
                         Column {
                             anchors.fill: parent
                             anchors.margins: 16
-                            spacing: 8
+                            spacing: 10
 
-                            Row {
-                                spacing: 8
-
-                                Rectangle {
-                                    width: 18
-                                    height: 18
-                                    radius: 6
-                                    color: "#18211f"
-                                    border.color: border
-                                    border.width: 1
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: homeIcon("quick")
-                                        color: accent
-                                        font.pixelSize: 10
-                                        font.bold: true
-                                        font.family: titleFont
-                                    }
-                                }
-
-                                Text {
-                                    text: "AÇÃO RÁPIDA"
-                                    color: "#b0b8b6"
-                                    font.pixelSize: 10
-                                    font.bold: true
-                                    font.family: titleFont
-                                }
+                            Text {
+                                text: "AÇÃO RÁPIDA"
+                                color: textSecondary
+                                font.pixelSize: 10
+                                font.bold: true
+                                font.family: titleFont
                             }
 
                             Button {
@@ -499,18 +379,24 @@ Item {
 
                                 onClicked: hidManager.scanDevices()
                             }
+
+                            Text {
+                                width: parent.width
+                                text: "Atualiza a conexão sem abrir outra tela."
+                                color: textSecondary
+                                font.pixelSize: 11
+                                font.family: bodyFont
+                                wrapMode: Text.WordWrap
+                            }
                         }
                     }
 
                     Rectangle {
                         width: parent.width
-                        height: 124
-                        radius: 24
-                        gradient: Gradient {
-                            GradientStop { position: 0; color: "#161c1a" }
-                            GradientStop { position: 1; color: "#101514" }
-                        }
-                        border.color: accentSoft
+                        height: 160
+                        radius: 20
+                        color: panel
+                        border.color: border
                         border.width: 1
                         clip: true
 
@@ -519,39 +405,17 @@ Item {
                             anchors.margins: 16
                             spacing: 8
 
-                            Row {
-                                spacing: 8
-
-                                Rectangle {
-                                    width: 18
-                                    height: 18
-                                    radius: 6
-                                    color: "#18211f"
-                                    border.color: border
-                                    border.width: 1
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: homeIcon("connection")
-                                        color: accent
-                                        font.pixelSize: 10
-                                        font.bold: true
-                                        font.family: titleFont
-                                    }
-                                }
-
-                                Text {
-                                    text: "GUIA RÁPIDA"
-                                    color: "#b0b8b6"
-                                    font.pixelSize: 10
-                                    font.bold: true
-                                    font.family: titleFont
-                                }
+                            Text {
+                                text: "GUIA RÁPIDA"
+                                color: textSecondary
+                                font.pixelSize: 10
+                                font.bold: true
+                                font.family: titleFont
                             }
 
                             Text {
                                 width: parent.width
-                                text: "1. DPI, report rate e LOD estão fechados.\n2. O shell foi organizado por feature.\n3. O restante é refinamento visual."
+                                text: "1. Abra a página de feature.\n2. Ajuste o valor.\n3. Envie direto ao mouse."
                                 color: textPrimary
                                 font.pixelSize: 12
                                 font.family: bodyFont
@@ -565,57 +429,55 @@ Item {
 
             Rectangle {
                 width: parent.width
-                height: 76
-                radius: 24
-                gradient: Gradient {
-                    GradientStop { position: 0; color: "#131917" }
-                    GradientStop { position: 1; color: "#0b0f0e" }
-                }
+                height: 64
+                radius: 20
+                color: panelDeep
                 border.color: accent
                 border.width: 1
                 clip: true
 
                 Row {
                     anchors.fill: parent
-                    anchors.margins: 18
+                    anchors.margins: 16
                     spacing: 16
 
                     Column {
-                        width: parent.width - 170
+                        width: parent.width - 150
                         spacing: 4
 
-                                Text {
-                                    text: "STATUS FINAL"
-                                    color: "#b0b8b6"
-                                    font.pixelSize: 10
-                                    font.bold: true
-                                    font.family: titleFont
-                                }
+                        Text {
+                            text: "STATUS FINAL"
+                            color: textSecondary
+                            font.pixelSize: 10
+                            font.bold: true
+                            font.family: titleFont
+                        }
 
-                                Text {
-                                    width: parent.width
-                                    text: "A UI está organizada por feature para manter consistência visual."
-                                    color: textPrimary
-                                    font.pixelSize: 13
-                                    font.bold: true
-                                    font.family: titleFont
-                                    wrapMode: Text.WordWrap
-                                }
+                        Text {
+                            width: parent.width
+                            text: "A interface está organizada por feature e sem blocos mortos."
+                            color: textPrimary
+                            font.pixelSize: 12
+                            font.bold: true
+                            font.family: titleFont
+                            wrapMode: Text.WordWrap
+                        }
                     }
 
                     Rectangle {
-                        width: 130
-                        height: 40
-                        radius: 20
+                        width: 120
+                        height: 34
+                        radius: 17
                         color: "#0f2320"
                         border.color: accent
                         border.width: 1
+                        anchors.verticalCenter: parent.verticalCenter
 
                         Text {
                             anchors.centerIn: parent
                             text: "READY"
                             color: accent
-                            font.pixelSize: 12
+                            font.pixelSize: 11
                             font.bold: true
                             font.family: titleFont
                         }
