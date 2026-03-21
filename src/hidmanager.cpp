@@ -233,6 +233,16 @@ void HidManager::applyAngleSnap(bool enabled)
     sendConfigPacket(data);
 }
 
+void HidManager::applyRipple(bool enabled)
+{
+    const bool wiredMode = (m_currentPid == 0xff12);
+    auto packet = DarmosharkProtocol::createRipplePacket(enabled, wiredMode);
+    QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
+
+    qDebug() << "Applying Ripple:" << enabled << "wiredMode:" << wiredMode;
+    sendConfigPacket(data);
+}
+
 void HidManager::applyLiftOffDistance(bool low)
 {
     if (!m_device) return;

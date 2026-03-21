@@ -15,6 +15,7 @@ Item {
     property string titleFont: "Red Hat Display"
     property string bodyFont: "Fira Sans"
 
+    QtObject { id: rippleGroup; property bool enabled: false }
     QtObject { id: motionSyncGroup; property bool enabled: true }
     QtObject { id: angleSnapGroup; property bool enabled: false }
 
@@ -58,7 +59,7 @@ Item {
                     }
 
                     Text {
-                        text: "Motion Sync e Angle Snap"
+                        text: "Ripple, Motion Sync e Angle Snap"
                         color: textPrimary
                         font.pixelSize: 24
                         font.bold: true
@@ -67,11 +68,104 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "A aba fica isolada para não misturar sensor com taxa de resposta."
+                        text: "A aba fica isolada para não misturar ripple, sensor e taxa de resposta."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
                         wrapMode: Text.WordWrap
+                    }
+                }
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 148
+                radius: 24
+                gradient: Gradient {
+                    GradientStop { position: 0; color: "#131917" }
+                    GradientStop { position: 1; color: "#0e1211" }
+                }
+                border.color: rippleGroup.enabled ? accent : border
+                border.width: 1
+                clip: true
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 16
+                    spacing: 8
+
+                    Row {
+                        spacing: 8
+
+                        Rectangle {
+                            width: 18
+                            height: 18
+                            radius: 6
+                            color: "#18211f"
+                            border.color: border
+                            border.width: 1
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "◈"
+                                color: accent
+                                font.pixelSize: 10
+                                font.bold: true
+                                font.family: titleFont
+                            }
+                        }
+
+                        Text {
+                            text: "RIPPLE CONTROL"
+                            color: textSecondary
+                            font.pixelSize: 10
+                            font.bold: true
+                            font.family: titleFont
+                        }
+                    }
+
+                    Text {
+                        width: parent.width
+                        text: "Em DPI alto ele reduz a ondulação do sensor."
+                        color: textPrimary
+                        font.pixelSize: 13
+                        font.family: bodyFont
+                        wrapMode: Text.WordWrap
+                    }
+
+                    Row {
+                        width: parent.width
+                        spacing: 10
+
+                        Column {
+                            width: parent.width - 90
+                            spacing: 2
+
+                            Text {
+                                text: rippleGroup.enabled ? "Ativo" : "Inativo"
+                                color: rippleGroup.enabled ? accent : textSecondary
+                                font.pixelSize: 16
+                                font.bold: true
+                                font.family: titleFont
+                            }
+
+                            Text {
+                                width: parent.width
+                                text: "Aplicação direta no mouse."
+                                color: textSecondary
+                                font.pixelSize: 10
+                                font.family: bodyFont
+                                wrapMode: Text.WordWrap
+                            }
+                        }
+
+                        Switch {
+                            checked: rippleGroup.enabled
+                            onToggled: {
+                                rippleGroup.enabled = checked
+                                hidManager.applyRipple(checked)
+                            }
+                        }
                     }
                 }
             }

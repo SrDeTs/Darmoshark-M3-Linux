@@ -126,6 +126,27 @@ std::vector<uint8_t> createAngleSnapPacket(bool enabled, bool wiredMode) {
     return packet;
 }
 
+// Ripple Control packet captured from the Windows driver.
+// The capture shows a simple enabled/disabled toggle.
+std::vector<uint8_t> createRipplePacket(bool enabled, bool wiredMode) {
+    std::vector<uint8_t> packet(14, 0x00);
+    packet[0] = 0x82;
+    packet[1] = 0x01;
+    packet[2] = 0x08;
+    packet[3] = 0x00;
+    packet[4] = 0x00;
+    packet[5] = 0x00;
+    packet[6] = wiredMode ? 0x01 : 0x03;
+    packet[7] = 0x00;
+    packet[8] = enabled ? 0x00 : 0x01;
+    packet[9] = 0x00;
+    packet[10] = enabled ? 0xff : 0x00;
+    packet[11] = enabled ? 0xff : 0x00;
+    packet[12] = 0x00;
+    packet[13] = 0x00;
+    return packet;
+}
+
 // Lift Off Distance packet captured from the Windows driver.
 // Low = 1 mm, High = 2 mm.
 std::vector<uint8_t> createLiftOffDistancePacket(bool low) {
