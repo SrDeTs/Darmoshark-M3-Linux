@@ -67,7 +67,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Essa aba ficou separada para não misturar toggles do sensor com taxa de atualização."
+                        text: "A aba fica isolada para não misturar toggles do sensor com taxa de atualização."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont

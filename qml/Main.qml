@@ -28,13 +28,13 @@ Window {
     property color danger: "#ff6b6b"
 
     property var navPages: [
-        { title: "Início", subtitle: "Visão geral do dispositivo", source: "qrc:/qml/HomeView.qml" },
-        { title: "DPI", subtitle: "Perfis e sensibilidade", source: "qrc:/qml/DPIView.qml" },
-        { title: "Report Rate", subtitle: "Taxa de atualização", source: "qrc:/qml/ReportRateView.qml" },
-        { title: "Sensor Performance", subtitle: "Motion Sync e Angle Snap", source: "qrc:/qml/SensorPerformanceView.qml" },
+        { title: "Início", subtitle: "Visão geral do mouse", source: "qrc:/qml/HomeView.qml" },
+        { title: "DPI", subtitle: "Perfis de sensibilidade", source: "qrc:/qml/DPIView.qml" },
+        { title: "Report Rate", subtitle: "Taxa de resposta", source: "qrc:/qml/ReportRateView.qml" },
+        { title: "Sensor Performance", subtitle: "Ajustes do sensor", source: "qrc:/qml/SensorPerformanceView.qml" },
         { title: "Lift Off Distance", subtitle: "Altura de levantamento", source: "qrc:/qml/LiftOffDistanceView.qml" },
         { title: "Scroll Direction", subtitle: "Sentido da rolagem", source: "qrc:/qml/ScrollDirectionView.qml" },
-        { title: "E-Sports Mode", subtitle: "Perfil especial", source: "qrc:/qml/ESportsModeView.qml" }
+        { title: "E-Sports Mode", subtitle: "Modo especial", source: "qrc:/qml/ESportsModeView.qml" }
     ]
 
     function pageTitle(index) {

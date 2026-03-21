@@ -104,7 +104,7 @@ Item {
 
                         Text {
                             width: parent.width
-                            text: "Painel consolidado do mouse. O hardware já está falando o mesmo protocolo do software Windows para DPI e polling rate."
+                            text: "Visão geral do mouse. DPI e polling rate já estão alinhados com a captura do driver original."
                             color: "#a5b0ad"
                             font.pixelSize: 11
                             font.family: bodyFont
@@ -194,7 +194,7 @@ Item {
                                     spacing: 4
 
                                     Text {
-                                        text: "Fluxo validado"
+                                        text: "Estado validado"
                                         color: accent
                                         font.pixelSize: 12
                                         font.bold: true
@@ -203,7 +203,7 @@ Item {
 
                                     Text {
                                         width: parent.width
-                                        text: "DPI e polling rate já estão alinhados com a captura do driver original."
+                                        text: "As páginas principais já estão separadas por feature e o protocolo base está fechado."
                                         color: textSecondary
                                         font.pixelSize: 11
                                         font.family: bodyFont

@@ -72,7 +72,7 @@ Item {
 
                     Text {
                         width: parent.width
-                        text: "Ajuste confirmado no USB e no 2.4G, com o mesmo padrão de pacote por modo."
+                        text: "Ajuste confirmado no USB e no 2.4G, com o mesmo padrão de pacote."
                         color: textSecondary
                         font.pixelSize: 11
                         font.family: bodyFont
