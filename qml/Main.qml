@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Effects
 
 ApplicationWindow {
     id: appRoot
@@ -30,6 +31,7 @@ ApplicationWindow {
     property color onSurfaceVariant: "#a1afc6" // Fica um cinza azulado
     property color danger: "#ffb4ab"
     property bool configWarningDismissed: false
+    property bool modalBlurActive: false
 
     property var navPages: [
         { title: "Início", subtitle: "Visão geral", source: "qrc:/qml/HomeView.qml" },
@@ -68,11 +70,31 @@ ApplicationWindow {
 
 
     Image {
+        id: backgroundImage
         anchors.fill: parent
         source: "qrc:/images/BG-M3-Black.png"
         fillMode: Image.PreserveAspectCrop
         smooth: true
         mipmap: true
+        z: -1
+    }
+
+    MultiEffect {
+        anchors.fill: parent
+        source: backgroundImage
+        autoPaddingEnabled: false
+        blurEnabled: true
+        blurMax: 48
+        blurMultiplier: 1.0
+        blur: 0.9
+        visible: appRoot.modalBlurActive
+        z: -1
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        color: Qt.rgba(8 / 255, 10 / 255, 14 / 255, appRoot.modalBlurActive ? 0.28 : 0.0)
+        visible: appRoot.modalBlurActive
         z: -1
     }
 
