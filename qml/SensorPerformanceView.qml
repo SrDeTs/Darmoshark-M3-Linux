@@ -6,303 +6,146 @@ Item {
     id: pageRoot
     clip: true
 
-    property color accent: "#6da8ff"
-    property color accentSoft: "#91b8ff"
-    property color border: "#2b3650"
-    property color panelDeep: "#11182a"
-    property color textPrimary: "#e8edf6"
-    property color textSecondary: "#a1afc6"
-    property string titleFont: "Red Hat Display"
-    property string bodyFont: "Fira Sans"
+    property color surfaceContainerLow: "#191a1a"
+    property color surfaceContainer: "#2b2c2c"
+    property color surfaceContainerHigh: "#1f2020"
+    property color primary: "#a7c8ff"
+    property color onSurface: "#e7e5e5"
+    property color onSurfaceVariant: "#a1afc6"
+    property string titleFont: "Inter"
+    property string bodyFont: "Inter"
 
-    QtObject { id: rippleGroup; property bool enabled: false }
-    QtObject { id: motionSyncGroup; property bool enabled: true }
-    QtObject { id: angleSnapGroup; property bool enabled: false }
+    QtObject {
+        id: rippleGroup
+        property bool enabled: false
+    }
 
-    Flickable {
-        anchors.fill: parent
-        contentWidth: pageRoot.width
-        contentHeight: contentColumn.height
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
-        flickableDirection: Flickable.VerticalFlick
-        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+    QtObject {
+        id: motionSyncGroup
+        property bool enabled: true
+    }
+
+    QtObject {
+        id: angleSnapGroup
+        property bool enabled: false
+    }
+
+    Rectangle {
+        width: 360
+        height: 220
+        anchors.centerIn: parent
+        color: surfaceContainerLow
+        radius: 24
+        border.color: surfaceContainerHigh
+        border.width: 2
 
         Column {
-            id: contentColumn
-            width: pageRoot.width
-            spacing: 16
+            anchors.centerIn: parent
+            spacing: 18
 
-            Rectangle {
-                width: parent.width
-                height: 124
-                radius: 24
-                gradient: Gradient {
-                    GradientStop { position: 0; color: "#151d31" }
-                    GradientStop { position: 1; color: "#11182a" }
-                }
-                border.color: accent
-                border.width: 1
-                clip: true
-
-                Column {
-                    anchors.fill: parent
-                    anchors.margins: 18
-                    spacing: 6
-
-                    Text {
-                        text: "SENSOR PERFORMANCE"
-                        color: textSecondary
-                        font.pixelSize: 10
-                        font.bold: true
-                        font.family: titleFont
-                    }
-
-                }
+            Text {
+                text: "Sensor Performance"
+                color: onSurface
+                font.pixelSize: 18
+                font.family: titleFont
+                anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            Rectangle {
-                width: parent.width
-                height: 148
-                radius: 24
-                gradient: Gradient {
-                    GradientStop { position: 0; color: "#151d31" }
-                    GradientStop { position: 1; color: "#11182a" }
-                }
-                border.color: rippleGroup.enabled ? accent : border
-                border.width: 1
-                clip: true
+            Column {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 10
 
-                Column {
-                    anchors.fill: parent
-                    anchors.margins: 16
-                    spacing: 8
+                Row {
+                    spacing: 16
 
-                    Row {
-                        spacing: 8
-
-                        Rectangle {
-                            width: 18
-                            height: 18
-                            radius: 6
-                            color: "#22345a"
-                            border.color: border
-                            border.width: 1
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "◈"
-                                color: accent
-                                font.pixelSize: 10
-                                font.bold: true
-                                font.family: titleFont
-                            }
-                        }
-
-                        Text {
-                            text: "RIPPLE CONTROL"
-                            color: textSecondary
-                            font.pixelSize: 10
-                            font.bold: true
-                            font.family: titleFont
-                        }
+                    Text {
+                        text: "Ripple"
+                        color: onSurface
+                        font.pixelSize: 14
+                        font.family: bodyFont
+                        anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    Row {
-                        width: parent.width
-                        spacing: 10
-
-                        Column {
-                            width: parent.width - 90
-                            spacing: 2
-
-                            Text {
-                                text: rippleGroup.enabled ? "Ativo" : "Inativo"
-                                color: rippleGroup.enabled ? accent : textSecondary
-                                font.pixelSize: 16
-                                font.bold: true
-                                font.family: titleFont
-                            }
-
-                        }
-
-                        Switch {
-                            checked: rippleGroup.enabled
-                            onToggled: {
-                                rippleGroup.enabled = checked
+                    Switch {
+                        checked: rippleGroup.enabled
+                        anchors.verticalCenter: parent.verticalCenter
+                        onToggled: {
+                            rippleGroup.enabled = checked
+                            if (typeof hidManager !== "undefined") {
                                 hidManager.applyRipple(checked)
                             }
                         }
                     }
+
+                    Text {
+                        text: rippleGroup.enabled ? "On" : "Off"
+                        color: rippleGroup.enabled ? onSurface : onSurfaceVariant
+                        font.pixelSize: 14
+                        font.family: bodyFont
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
-            }
 
-            Rectangle {
-                width: parent.width
-                height: 148
-                radius: 24
-                gradient: Gradient {
-                    GradientStop { position: 0; color: "#151d31" }
-                    GradientStop { position: 1; color: "#11182a" }
-                }
-                border.color: motionSyncGroup.enabled ? accent : border
-                border.width: 1
-                clip: true
+                Row {
+                    spacing: 16
 
-                Column {
-                    anchors.fill: parent
-                    anchors.margins: 16
-                    spacing: 8
-
-                    Row {
-                        spacing: 8
-
-                        Rectangle {
-                            width: 18
-                            height: 18
-                            radius: 6
-                            color: "#22345a"
-                            border.color: border
-                            border.width: 1
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "◉"
-                                color: accent
-                                font.pixelSize: 10
-                                font.bold: true
-                                font.family: titleFont
-                            }
-                        }
-
-                        Text {
-                            text: "MOTION SYNC"
-                            color: textSecondary
-                            font.pixelSize: 10
-                            font.bold: true
-                            font.family: titleFont
-                        }
+                    Text {
+                        text: "Motion Sync"
+                        color: onSurface
+                        font.pixelSize: 14
+                        font.family: bodyFont
+                        anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    Row {
-                        width: parent.width
-                        spacing: 10
-
-                        Column {
-                            width: parent.width - 90
-                            spacing: 2
-
-                            Text {
-                                text: motionSyncGroup.enabled ? "Ativo" : "Inativo"
-                                color: motionSyncGroup.enabled ? accent : textSecondary
-                                font.pixelSize: 16
-                                font.bold: true
-                                font.family: titleFont
-                            }
-
-                        }
-
-                        Switch {
-                            checked: motionSyncGroup.enabled
-                            onToggled: {
-                                motionSyncGroup.enabled = checked
+                    Switch {
+                        checked: motionSyncGroup.enabled
+                        anchors.verticalCenter: parent.verticalCenter
+                        onToggled: {
+                            motionSyncGroup.enabled = checked
+                            if (typeof hidManager !== "undefined") {
                                 hidManager.applyMotionSync(checked)
                             }
                         }
                     }
+
+                    Text {
+                        text: motionSyncGroup.enabled ? "On" : "Off"
+                        color: motionSyncGroup.enabled ? onSurface : onSurfaceVariant
+                        font.pixelSize: 14
+                        font.family: bodyFont
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
-            }
 
-            Rectangle {
-                width: parent.width
-                height: 148
-                radius: 24
-                gradient: Gradient {
-                    GradientStop { position: 0; color: "#151d31" }
-                    GradientStop { position: 1; color: "#11182a" }
-                }
-                border.color: angleSnapGroup.enabled ? accent : border
-                border.width: 1
-                clip: true
+                Row {
+                    spacing: 16
 
-                Column {
-                    anchors.fill: parent
-                    anchors.margins: 16
-                    spacing: 8
-
-                    Row {
-                        spacing: 8
-
-                        Rectangle {
-                            width: 18
-                            height: 18
-                            radius: 6
-                            color: "#22345a"
-                            border.color: border
-                            border.width: 1
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "◌"
-                                color: accent
-                                font.pixelSize: 10
-                                font.bold: true
-                                font.family: titleFont
-                            }
-                        }
-
-                        Text {
-                            text: "ANGLE SNAP"
-                            color: textSecondary
-                            font.pixelSize: 10
-                            font.bold: true
-                            font.family: titleFont
-                        }
+                    Text {
+                        text: "Angle Snap"
+                        color: onSurface
+                        font.pixelSize: 14
+                        font.family: bodyFont
+                        anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    Row {
-                        width: parent.width
-                        spacing: 10
-
-                        Column {
-                            width: parent.width - 90
-                            spacing: 2
-
-                            Text {
-                                text: angleSnapGroup.enabled ? "Ativo" : "Inativo"
-                                color: angleSnapGroup.enabled ? accent : textSecondary
-                                font.pixelSize: 16
-                                font.bold: true
-                                font.family: titleFont
-                            }
-
-                        }
-
-                        Switch {
-                            checked: angleSnapGroup.enabled
-                            onToggled: {
-                                angleSnapGroup.enabled = checked
+                    Switch {
+                        checked: angleSnapGroup.enabled
+                        anchors.verticalCenter: parent.verticalCenter
+                        onToggled: {
+                            angleSnapGroup.enabled = checked
+                            if (typeof hidManager !== "undefined") {
                                 hidManager.applyAngleSnap(checked)
                             }
                         }
                     }
-                }
-            }
 
-            Rectangle {
-                width: parent.width
-                height: 146
-                radius: 24
-                color: panelDeep
-                border.color: border
-                border.width: 1
-                clip: true
-
-                Column {
-                    anchors.fill: parent
-                    anchors.margins: 16
-                    spacing: 8
-
+                    Text {
+                        text: angleSnapGroup.enabled ? "On" : "Off"
+                        color: angleSnapGroup.enabled ? onSurface : onSurfaceVariant
+                        font.pixelSize: 14
+                        font.family: bodyFont
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
         }

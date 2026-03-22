@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/m3_device_mouse.png</file>
+        <file>images/BB-Black.png</file>
+        <file>images/BG-M3-Black.png</file>
+        <file>images/BG-M3-White.png</file>
+        <file>images/BG-White.png</file>
         <file>qml/Main.qml</file>
         <file>qml/DPIView.qml</file>
         <file>qml/HomeView.qml</file>

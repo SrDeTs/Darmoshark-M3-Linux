@@ -1,0 +1,21 @@
+# Guia de Design: Darmoshark M3 (Estilo Linux Minimalista)
+
+Se você quiser que eu (ou outra ferramenta) gere designs exatamente com essa identidade visual, use as diretrizes abaixo no seu prompt.
+
+## 1. O "Prompt Mestre" (Cópia e Cola)
+> "Crie uma interface desktop para o app Darmoshark M3 no Linux. Use uma estética **minimalista e limpa (estilo Adwaita/GNOME)**. O fundo deve ser **cinza carvão sólido e profundo (#0E0E0E)**, sem degradês ou texturas. A navegação deve ser via **Barra Flutuante (Floating Pill Bar)** centralizada na parte inferior, contendo 9 ícones. O layout deve ser estritamente **'aba por aba'**, onde cada tela exibe apenas o conteúdo específico do botão selecionado, sem misturar configurações. Use acentos em **azul suave (#A7C8FF)** para elementos ativos e tipografia **Inter**."
+
+## 2. Elementos Chave da Identidade Visual
+Para manter a consistência, sempre mencione estes pontos:
+
+*   **Fundo (Background):** Especifique sempre "Sólido", "Escuro" e "Sem degradês". O código hexadecimal ideal é `#0E0E0E`.
+*   **Navegação:** Chame de "Barra Flutuante Inferior" ou "Floating Bottom NavBar". Diga que ela deve ter um efeito de "Glassmorphism" (desfoque/blur) sutil.
+*   **Hierarquia de Conteúdo:** Use o termo "Aba por Aba" ou "Single-Purpose Screens". Isso evita que a IA tente colocar muitas informações em uma tela só.
+*   **Componentes:** Peça por "Cards com cantos arredondados (radius: 24px)" e "Tonal shifts" (pequenas variações de cinza) para separar seções, em vez de usar linhas divisórias.
+
+## 3. Como pedir alterações mantendo o estilo
+Se você quiser criar uma tela nova, peça assim:
+> "Gere a tela de [NOME DA TELA] seguindo exatamente o estilo visual das telas anteriores: fundo sólido #0E0E0E, barra flutuante na base com o item X destacado e cards minimalistas."
+
+## 4. Dica Pro: O Design System
+Como já criamos o **{{DATA:DESIGN_SYSTEM:DESIGN_SYSTEM_1}} (Obsidian Glide)**, você pode simplesmente me dizer: *"Use o design system Obsidian Glide para criar a aba X"*. Eu já tenho todas essas regras salvas lá!

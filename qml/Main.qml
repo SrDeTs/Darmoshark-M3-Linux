@@ -11,39 +11,40 @@ Window {
     minimumHeight: 720
     visible: true
     title: qsTr("Darmoshark M3 Configurator")
-    color: "#0b1020"
+    color: "#0e0e0e"
 
-    property string titleFont: "Red Hat Display"
-    property string bodyFont: "Fira Sans"
-    property color bgBase: "#0b1020"
-    property color bgShell: "#11182a"
-    property color bgPanel: "#151d31"
-    property color bgPanelAlt: "#18223a"
-    property color bgCard: "#182235"
-    property color borderColor: "#2b3650"
-    property color accent: "#6da8ff"
-    property color accentSoft: "#91b8ff"
-    property color textPrimary: "#e8edf6"
-    property color textSecondary: "#a1afc6"
-    property color danger: "#8da9ff"
+    // Obsidian Glide Design System Colors
+    property string titleFont: "Inter"
+    property string bodyFont: "Inter"
+    
+    property color bgBase: "#0e0e0e"
+    property color surfaceContainerLow: "#131313"
+    property color surfaceContainer: "#191a1a"
+    property color surfaceContainerHigh: "#1f2020"
+    property color surfaceBright: "#2b2c2c"
+    
+    // Primary / Accents
+    property color primary: "#a7c8ff"
+    
+    // Text
+    property color onSurface: "#e7e5e5"
+    property color onSurfaceVariant: "#a1afc6" // Fica um cinza azulado
+    property color danger: "#ffb4ab"
 
     property var navPages: [
-        { title: "Início", subtitle: "Visão geral do mouse", source: "qrc:/qml/HomeView.qml" },
-        { title: "DPI", subtitle: "Perfis de sensibilidade", source: "qrc:/qml/DPIView.qml" },
-        { title: "Report Rate", subtitle: "Taxa de resposta", source: "qrc:/qml/ReportRateView.qml" },
-        { title: "Sensor Performance", subtitle: "Ajustes do sensor", source: "qrc:/qml/SensorPerformanceView.qml" },
-        { title: "Lift Off Distance", subtitle: "Altura de levantamento", source: "qrc:/qml/LiftOffDistanceView.qml" },
-        { title: "Scroll Direction", subtitle: "Sentido da rolagem", source: "qrc:/qml/ScrollDirectionView.qml" },
-        { title: "E-Sports Mode", subtitle: "Modo especial", source: "qrc:/qml/ESportsModeView.qml" }
+        { title: "Início", subtitle: "Visão geral", source: "qrc:/qml/HomeView.qml" },
+        { title: "DPI", subtitle: "Sensibilidade", source: "qrc:/qml/DPIView.qml" },
+        { title: "Report Rate", subtitle: "Polling rate", source: "qrc:/qml/ReportRateView.qml" },
+        { title: "Sensor", subtitle: "Performance", source: "qrc:/qml/SensorPerformanceView.qml" },
+        { title: "LOD", subtitle: "Altura de corte", source: "qrc:/qml/LiftOffDistanceView.qml" },
+        { title: "Scroll", subtitle: "Sentido", source: "qrc:/qml/ScrollDirectionView.qml" },
+        { title: "E-Sports", subtitle: "Modo especial", source: "qrc:/qml/ESportsModeView.qml" }
     ]
 
     function connectionLabel(mode) {
-        if (!mode || mode.length === 0)
-            return "Desconhecido"
-        if (mode === "2.4G Wireless")
-            return "Sem fio 2.4G"
-        if (mode === "Wired")
-            return "Cabo"
+        if (!mode || mode.length === 0) return "Desconhecido"
+        if (mode === "2.4G Wireless") return "Sem fio 2.4G"
+        if (mode === "Wired") return "Cabo USB"
         return mode
     }
 
@@ -53,311 +54,190 @@ Window {
         if (index === 2) return "↻"
         if (index === 3) return "◌"
         if (index === 4) return "⇳"
-        return "⇄"
+        if (index === 5) return "⇅"
+        return "⚑"
     }
 
     function pageSource(index) {
         return navPages[index].source
     }
 
-    Rectangle {
+
+    // Rich, Modern Background from Image
+    Image {
         anchors.fill: parent
-        color: bgBase
+        source: "qrc:/images/BG-M3-Black.png"
+        fillMode: Image.PreserveAspectCrop
+        smooth: true
+        mipmap: true
+        z: -1
     }
 
-    Rectangle {
-        x: -120
-        y: -100
-        width: 460
-        height: 460
-        radius: 230
-        color: "#7aa4ff"
-        opacity: 0.06
-    }
-
-    Rectangle {
-        anchors.right: parent.right
-        anchors.top: parent.top
-        x: parent.width - 360
-        y: 50
-        width: 620
-        height: 620
-        radius: 310
-        color: "#18263e"
-        opacity: 0.14
-    }
-
-    Rectangle {
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        x: parent.width - 300
-        y: parent.height - 260
-        width: 400
-        height: 400
-        radius: 200
-        color: "#20365b"
-        opacity: 0.08
-    }
-
-    Rectangle {
-        anchors.fill: parent
-        anchors.margins: 16
-        radius: 28
-        gradient: Gradient {
-            GradientStop { position: 0; color: "#11182a" }
-            GradientStop { position: 1; color: "#0e1424" }
-        }
-        border.color: "#2d3958"
-        border.width: 1
-        opacity: 0.98
-    }
-
+    // Top Status Bar (Minimal)
     RowLayout {
-        anchors.fill: parent
-        anchors.margins: 24
-        spacing: 18
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 32
+        height: 48
+        spacing: 16
+        z: 10 // Above SwipeView
 
-        Rectangle {
-            Layout.preferredWidth: 282
-            Layout.fillHeight: true
-            radius: 24
-            gradient: Gradient {
-                GradientStop { position: 0; color: "#151c2d" }
-                GradientStop { position: 1; color: "#11182a" }
+        Text {
+            text: "Darmoshark M3 - " + navPages[stackLayout.currentIndex].title
+            color: onSurface
+            font.pixelSize: 28
+            font.family: titleFont
+            Layout.alignment: Qt.AlignVCenter
+        }
+
+        Item { Layout.fillWidth: true } // Spacer
+
+        // Device Connection / Profile Node
+        RowLayout {
+            spacing: 12
+            
+            Rectangle {
+                Layout.preferredHeight: 36
+                Layout.preferredWidth: 160
+                radius: 12
+                color: surfaceContainerHigh
+                
+                RowLayout {
+                    anchors.centerIn: parent
+                    spacing: 8
+                    
+                    Text {
+                        text: "⚙"
+                        color: onSurfaceVariant
+                        font.pixelSize: 14
+                    }
+                    Text {
+                        text: "Profile 1" // Placeholder since app lacks profile switching
+                        color: onSurfaceVariant
+                        font.pixelSize: 14
+                        font.family: bodyFont
+                    }
+                }
             }
-            border.color: borderColor
-            border.width: 1
-            clip: true
 
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 18
-                spacing: 16
-
-                ColumnLayout {
-                        spacing: 3
-
-                    RowLayout {
-                        spacing: 8
-
-                        Rectangle {
-                            width: 30
-                            height: 30
-                            radius: 10
-                            color: "#1e2a43"
-                            border.color: accent
-                            border.width: 1
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "M3"
-                                color: accent
-                                font.pixelSize: 11
-                                font.bold: true
-                                font.family: titleFont
-                            }
-                        }
-
-                        ColumnLayout {
-                            spacing: 2
-
-                            Text {
-                                text: "DARMOSHARK"
-                                color: accent
-                                font.pixelSize: 20
-                                font.bold: true
-                                font.family: titleFont
-                                font.letterSpacing: 1.1
-                            }
-
-                            Text {
-                                text: "Shell do mouse"
-                                color: textSecondary
-                                font.pixelSize: 10
-                                font.family: bodyFont
-                                font.letterSpacing: 0.4
-                            }
-                        }
+            Rectangle {
+                Layout.preferredHeight: 36
+                Layout.preferredWidth: 140
+                radius: 12
+                color: hidManager.deviceConnected ? Qt.rgba(167/255, 200/255, 255/255, 0.15) : surfaceContainerHigh
+                border.color: hidManager.deviceConnected ? Qt.rgba(167/255, 200/255, 255/255, 0.3) : "transparent"
+                border.width: 1
+                
+                RowLayout {
+                    anchors.centerIn: parent
+                    spacing: 8
+                    
+                    Text {
+                        text: "🔋"
+                        color: hidManager.deviceConnected ? primary : onSurfaceVariant
+                        font.pixelSize: 14
                     }
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 1
-                    color: "#2f3b5a"
-                }
-
-                Repeater {
-                    model: navPages
-
-                    delegate: Button {
-                        id: navBtn
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 52
-                        flat: true
-                        checkable: true
-                        checked: stackLayout.currentIndex === index
-                        hoverEnabled: true
-                        scale: navBtn.checked ? 1.01 : (navBtn.hovered ? 1.004 : 1.0)
-                        Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
-
-                        background: Rectangle {
-                            radius: 14
-                            color: navBtn.checked ? "#242f49" : (navBtn.hovered ? "#162033" : (navBtn.down ? "#111829" : "transparent"))
-                            border.color: navBtn.checked ? accent : "transparent"
-                            border.width: navBtn.checked ? 1 : 0
-
-                            Behavior on color {
-                                ColorAnimation { duration: 140 }
-                            }
-                            Behavior on border.color {
-                                ColorAnimation { duration: 140 }
-                            }
-
-                            Rectangle {
-                                anchors.left: parent.left
-                                anchors.top: parent.top
-                                anchors.bottom: parent.bottom
-                                width: 3
-                                radius: 2
-                                color: accent
-                                opacity: navBtn.checked ? 0.9 : 0
-                            }
-                        }
-
-                        contentItem: ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 11
-                            spacing: 2
-
-                            RowLayout {
-                                spacing: 10
-
-                                Rectangle {
-                                    width: 20
-                                    height: 20
-                                    radius: 8
-                                    color: navBtn.checked ? accent : "#1d2941"
-                                    border.color: navBtn.checked ? accent : borderColor
-                                    border.width: 1
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: navIcon(index)
-                                        color: navBtn.checked ? "#041312" : textSecondary
-                                        font.pixelSize: 11
-                                        font.bold: true
-                                    }
-                                }
-
-                                Text {
-                                    text: modelData.title
-                                    color: navBtn.checked ? textPrimary : textSecondary
-                                    font.pixelSize: 13
-                                    font.bold: navBtn.checked
-                                    font.family: titleFont
-                                }
-                            }
-
-                            Text {
-                                text: modelData.subtitle
-                                color: navBtn.checked ? accent : "#6b7573"
-                                font.pixelSize: 8
-                                font.family: bodyFont
-                            }
-                        }
-
-                        onClicked: stackLayout.currentIndex = index
-                    }
-                }
-
-                Item { Layout.fillHeight: true }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 100
-                    radius: 16
-                    gradient: Gradient {
-                        GradientStop { position: 0; color: "#161d2f" }
-                        GradientStop { position: 1; color: "#12182a" }
-                    }
-                    border.color: borderColor
-                    border.width: 1
-                    clip: true
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 13
-                        spacing: 6
-
-                        RowLayout {
-                            spacing: 8
-
-                                Rectangle {
-                                    width: 16
-                                    height: 16
-                                    radius: 5
-                                    color: "#1d2941"
-                                    border.color: borderColor
-                                    border.width: 1
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: hidManager.deviceConnected ? "●" : "○"
-                                        color: hidManager.deviceConnected ? accent : danger
-                                        font.pixelSize: 8
-                                        font.bold: true
-                                        font.family: titleFont
-                                    }
-                                }
-
-                            Text {
-                                text: hidManager.deviceConnected ? "Dispositivo ativo" : "Sem dispositivo"
-                                color: hidManager.deviceConnected ? accent : danger
-                                font.pixelSize: 11
-                                font.bold: true
-                                font.family: titleFont
-                            }
-                        }
-
-                        Text {
-                            text: connectionLabel(hidManager.connectionMode)
-                            color: textPrimary
-                            font.pixelSize: 16
-                            font.bold: true
-                            font.family: titleFont
-                        }
-
-                        Text {
-                            text: "Bateria " + hidManager.batteryLevel + "%"
-                            color: textSecondary
-                            font.pixelSize: 9
-                            font.family: bodyFont
-                        }
+                    Text {
+                        text: hidManager.deviceConnected ? ("Battery: " + hidManager.batteryLevel + "%") : "Sem conexão"
+                        color: hidManager.deviceConnected ? primary : onSurfaceVariant
+                        font.pixelSize: 14
+                        font.family: bodyFont
                     }
                 }
             }
         }
+    }
 
-        SwipeView {
-            id: stackLayout
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            clip: true
-            interactive: false
-            currentIndex: 0
+    SwipeView {
+        id: stackLayout
+        anchors.fill: parent
+        // Use margins to avoid content behind the floating bar
+        anchors.topMargin: 100
+        anchors.bottomMargin: 140 
+        clip: true
+        interactive: false
+        currentIndex: 0
+
+        Repeater {
+            model: navPages.length
+
+            Item {
+                width: stackLayout.width
+                height: stackLayout.height
+
+                Loader {
+                    anchors.fill: parent
+                    source: appRoot.pageSource(index)
+                }
+            }
+        }
+    }
+
+    // Floating Pill Bar
+    Rectangle {
+        id: floatingBar
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 24
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: navLayout.implicitWidth + 32
+        height: 84
+        color: surfaceContainer // Darkish pill background
+        radius: 24 // rounded rectangle style
+        border.color: Qt.rgba(255/255, 255/255, 255/255, 0.05) // Ghost Border
+        border.width: 1
+
+        RowLayout {
+            id: navLayout
+            anchors.centerIn: parent
+            spacing: 4
 
             Repeater {
-                model: navPages.length
+                model: navPages
 
-                Item {
-                    width: stackLayout.width
-                    height: stackLayout.height
+                delegate: Button {
+                    id: navBtn
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 84
+                    Layout.maximumHeight: 76
+                    flat: true
+                    checkable: true
+                    checked: stackLayout.currentIndex === index
+                    hoverEnabled: true
 
-                    Loader {
-                        anchors.fill: parent
-                        source: appRoot.pageSource(index)
+                    background: Rectangle {
+                        radius: 20
+                        // Active gets a prominent blue block, typical of this design
+                        color: navBtn.checked ? Qt.rgba(167/255, 200/255, 255/255, 0.15) : (navBtn.hovered ? surfaceContainerHigh : "transparent")
+                        
+                        Behavior on color { ColorAnimation { duration: 200 } }
                     }
+
+                    contentItem: ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 6
+                        spacing: 4
+                        
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: navIcon(index)
+                            color: navBtn.checked ? primary : onSurface
+                            font.pixelSize: 22
+                            font.bold: true
+                        }
+                        
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: modelData.title
+                            color: navBtn.checked ? primary : onSurfaceVariant
+                            font.pixelSize: 11
+                            font.family: titleFont
+                            wrapMode: Text.WordWrap
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
+
+                    onClicked: stackLayout.currentIndex = index
                 }
             }
         }
