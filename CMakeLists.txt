@@ -9,7 +9,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Quick QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Core Quick QuickControls2 Widgets)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(HIDAPI REQUIRED hidapi-libusb)
 pkg_check_modules(LIBUSB REQUIRED libusb-1.0)
@@ -18,6 +18,7 @@ include_directories(include)
 
 add_executable(DarmosharkM3
     src/main.cpp
+    src/appcontroller.cpp
     src/hidmanager.cpp
     src/configmanager.cpp
     resources.qrc
@@ -28,6 +29,7 @@ target_link_libraries(DarmosharkM3
     Qt6::Core 
     Qt6::Quick 
     Qt6::QuickControls2
+    Qt6::Widgets
     ${HIDAPI_LIBRARIES}
     ${LIBUSB_LIBRARIES}
 )

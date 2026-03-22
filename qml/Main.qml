@@ -33,6 +33,19 @@ ApplicationWindow {
     property bool configWarningDismissed: false
     property bool modalBlurActive: false
 
+    onClosing: function(close) {
+        if (configManager.minimizeToTrayEnabled && appController.trayAvailable) {
+            close.accepted = false
+            appController.hideToTray()
+        }
+    }
+
+    onVisibilityChanged: {
+        if (visibility === Window.Minimized && configManager.minimizeToTrayEnabled && appController.trayAvailable) {
+            appController.hideToTray()
+        }
+    }
+
     property var navPages: [
         { title: "Início", subtitle: "Visão geral", source: "qrc:/qml/HomeView.qml" },
         { title: "DPI", subtitle: "Sensibilidade", source: "qrc:/qml/DPIView.qml" },

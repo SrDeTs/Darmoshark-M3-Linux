@@ -17,6 +17,10 @@ class ConfigManager : public QObject
     Q_PROPERTY(bool liftOffHigh READ liftOffHigh WRITE setLiftOffHigh NOTIFY configChanged)
     Q_PROPERTY(bool scrollNormal READ scrollNormal WRITE setScrollNormal NOTIFY configChanged)
     Q_PROPERTY(bool esportsOpen READ esportsOpen WRITE setESportsOpen NOTIFY configChanged)
+    Q_PROPERTY(QString theme READ theme WRITE setTheme NOTIFY configChanged)
+    Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY configChanged)
+    Q_PROPERTY(bool autoStartEnabled READ autoStartEnabled WRITE setAutoStartEnabled NOTIFY configChanged)
+    Q_PROPERTY(bool minimizeToTrayEnabled READ minimizeToTrayEnabled WRITE setMinimizeToTrayEnabled NOTIFY configChanged)
 
 public:
     explicit ConfigManager(QObject *parent = nullptr);
@@ -35,6 +39,10 @@ public:
     bool liftOffHigh() const;
     bool scrollNormal() const;
     bool esportsOpen() const;
+    QString theme() const;
+    QString language() const;
+    bool autoStartEnabled() const;
+    bool minimizeToTrayEnabled() const;
 
     Q_INVOKABLE void setDpiCurrentStage(int stage);
     Q_INVOKABLE void setPollingRate(int rate);
@@ -44,6 +52,10 @@ public:
     Q_INVOKABLE void setLiftOffHigh(bool high);
     Q_INVOKABLE void setScrollNormal(bool normal);
     Q_INVOKABLE void setESportsOpen(bool open);
+    Q_INVOKABLE void setTheme(const QString &theme);
+    Q_INVOKABLE void setLanguage(const QString &language);
+    Q_INVOKABLE bool setAutoStartEnabled(bool enabled);
+    Q_INVOKABLE void setMinimizeToTrayEnabled(bool enabled);
     Q_INVOKABLE void setDpiValue(int index, int value);
     Q_INVOKABLE void setDpiColor(int index, const QString &color);
 
@@ -54,6 +66,7 @@ signals:
 private:
     void ensureUiTable();
     void ensureDpiTable();
+    bool updateAutostartFile(bool enabled);
 
     toml::table m_config;
     QString m_savePath;

@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QFile>
@@ -7,8 +7,10 @@
 #include <QDir>
 #include <QTextStream>
 #include <QUrl>
+#include <QWindow>
 #include "hidmanager.h"
 #include "configmanager.h"
+#include "appcontroller.h"
 
 static QString defaultConfigText()
 {
@@ -32,6 +34,9 @@ static QString defaultConfigText()
         "lift_off_high = false\n"
         "scroll_normal = true\n"
         "esports_open = false\n"
+        "language = \"English\"\n"
+        "auto_start_enabled = false\n"
+        "minimize_to_tray_enabled = false\n"
         "\n"
         "[buttons]\n"
         "left = \"Left-Click\"\n"
@@ -59,7 +64,7 @@ static bool writeDefaultConfigFile(const QString &path)
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     app.setOrganizationName("Darmoshark");
     app.setApplicationName("Darmoshark M3 Configurator");
@@ -67,6 +72,7 @@ int main(int argc, char *argv[])
     HidManager hidManager;
     hidManager.scanDevices(); // Scan and auto-connect on startup
     ConfigManager configManager;
+    AppController appController;
 
     QString userConfigPath = QDir::homePath() + "/.config/Darmoshark M3 Linux/config.toml";
     configManager.setSavePath(userConfigPath);
@@ -95,6 +101,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("hidManager", &hidManager);
     engine.rootContext()->setContextProperty("configManager", &configManager);
+    engine.rootContext()->setContextProperty("appController", &appController);
     engine.rootContext()->setContextProperty("configDirectoryUrl", configDirectoryUrl);
     engine.rootContext()->setContextProperty("configCreatedFirstRun", configCreatedFirstRun);
     engine.rootContext()->setContextProperty("configRecoveredFromCorruption", configRecoveredFromCorruption);
@@ -106,6 +113,9 @@ int main(int argc, char *argv[])
                 QCoreApplication::exit(-1);
         }, Qt::QueuedConnection);
     engine.load(url);
+
+    if (!engine.rootObjects().isEmpty())
+        appController.setMainWindow(qobject_cast<QWindow *>(engine.rootObjects().constFirst()));
 
     return app.exec();
 }

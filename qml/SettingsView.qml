@@ -17,10 +17,6 @@ Item {
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
-    property bool autoStartEnabled: false
-    property bool minimizeToTrayEnabled: false
-    property string selectedLanguage: "English"
-
     function applyFactoryReset() {
         if (!configManager.resetToDefaults())
             return
@@ -98,7 +94,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 38
                 model: ["English"]
-                currentIndex: 0
+                currentIndex: Math.max(0, model.indexOf(configManager.language))
 
                 background: Rectangle {
                     radius: 12
@@ -114,6 +110,8 @@ Item {
                     font.family: bodyFont
                     verticalAlignment: Text.AlignVCenter
                 }
+
+                onActivated: configManager.setLanguage(languageSelector.currentText)
             }
 
             Item { Layout.preferredHeight: 28 }
@@ -140,8 +138,8 @@ Item {
                 Item { Layout.fillWidth: true }
 
                 Switch {
-                    checked: autoStartEnabled
-                    onToggled: autoStartEnabled = checked
+                    checked: configManager.autoStartEnabled
+                    onToggled: configManager.setAutoStartEnabled(checked)
                 }
             }
 
@@ -160,8 +158,8 @@ Item {
                 Item { Layout.fillWidth: true }
 
                 Switch {
-                    checked: minimizeToTrayEnabled
-                    onToggled: minimizeToTrayEnabled = checked
+                    checked: configManager.minimizeToTrayEnabled
+                    onToggled: configManager.setMinimizeToTrayEnabled(checked)
                 }
             }
 

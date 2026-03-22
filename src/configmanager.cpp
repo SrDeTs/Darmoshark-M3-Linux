@@ -8,6 +8,7 @@
 #include <QString>
 #include <QVariantList>
 #include <QVariantMap>
+#include <QCoreApplication>
 #include <string>
 
 ConfigManager::ConfigManager(QObject *parent)
@@ -36,6 +37,9 @@ static toml::table buildDefaultConfig()
     ui.insert_or_assign(std::string("lift_off_high"), false);
     ui.insert_or_assign(std::string("scroll_normal"), true);
     ui.insert_or_assign(std::string("esports_open"), false);
+    ui.insert_or_assign(std::string("language"), std::string("English"));
+    ui.insert_or_assign(std::string("auto_start_enabled"), false);
+    ui.insert_or_assign(std::string("minimize_to_tray_enabled"), false);
 
     toml::table buttons;
     buttons.insert_or_assign(std::string("left"), std::string("Left-Click"));
@@ -219,6 +223,27 @@ bool ConfigManager::esportsOpen() const
     return node ? node->value_or(false) : false;
 }
 
+QString ConfigManager::language() const
+{
+    auto *uiTable = m_config["ui"].as_table();
+    auto *node = uiTable ? (*uiTable)["language"].as_string() : nullptr;
+    return node ? QString::fromStdString(node->get()) : QStringLiteral("English");
+}
+
+bool ConfigManager::autoStartEnabled() const
+{
+    auto *uiTable = m_config["ui"].as_table();
+    auto *node = uiTable ? (*uiTable)["auto_start_enabled"].as_boolean() : nullptr;
+    return node ? node->value_or(false) : false;
+}
+
+bool ConfigManager::minimizeToTrayEnabled() const
+{
+    auto *uiTable = m_config["ui"].as_table();
+    auto *node = uiTable ? (*uiTable)["minimize_to_tray_enabled"].as_boolean() : nullptr;
+    return node ? node->value_or(false) : false;
+}
+
 void ConfigManager::setDpiCurrentStage(int stage)
 {
     ensureDpiTable();
@@ -296,6 +321,69 @@ void ConfigManager::setESportsOpen(bool open)
     auto *uiTable = m_config["ui"].as_table();
     if (!uiTable) return;
     uiTable->insert_or_assign(std::string("esports_open"), open);
+    emit configChanged();
+    saveConfig();
+}
+
+void ConfigManager::setLanguage(const QString &language)
+{
+    ensureUiTable();
+    auto *uiTable = m_config["ui"].as_table();
+    if (!uiTable) return;
+    uiTable->insert_or_assign(std::string("language"), language.toStdString());
+    emit configChanged();
+    saveConfig();
+}
+
+bool ConfigManager::updateAutostartFile(bool enabled)
+{
+    const QString autostartDir = QDir::homePath() + QStringLiteral("/.config/autostart");
+    const QString desktopFilePath = autostartDir + QStringLiteral("/DarmosharkM3.desktop");
+
+    if (!enabled) {
+        if (QFile::exists(desktopFilePath))
+            return QFile::remove(desktopFilePath);
+        return true;
+    }
+
+    if (!QDir().mkpath(autostartDir))
+        return false;
+
+    QFile file(desktopFilePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+        return false;
+
+    const QString execPath = QCoreApplication::applicationFilePath();
+    QTextStream out(&file);
+    out << "[Desktop Entry]\n";
+    out << "Type=Application\n";
+    out << "Version=1.0\n";
+    out << "Name=Darmoshark M3 Configurator\n";
+    out << "Comment=Start Darmoshark M3 Configurator on login\n";
+    out << "Exec=\"" << execPath << "\"\n";
+    out << "Terminal=false\n";
+    out << "X-GNOME-Autostart-enabled=true\n";
+    return true;
+}
+
+bool ConfigManager::setAutoStartEnabled(bool enabled)
+{
+    ensureUiTable();
+    auto *uiTable = m_config["ui"].as_table();
+    if (!uiTable) return false;
+    if (!updateAutostartFile(enabled))
+        return false;
+    uiTable->insert_or_assign(std::string("auto_start_enabled"), enabled);
+    emit configChanged();
+    return saveConfig();
+}
+
+void ConfigManager::setMinimizeToTrayEnabled(bool enabled)
+{
+    ensureUiTable();
+    auto *uiTable = m_config["ui"].as_table();
+    if (!uiTable) return;
+    uiTable->insert_or_assign(std::string("minimize_to_tray_enabled"), enabled);
     emit configChanged();
     saveConfig();
 }
