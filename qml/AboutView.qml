@@ -5,10 +5,10 @@ Item {
     id: pageRoot
     clip: true
 
-    property color cardColor: "#2a2c31"
-    property color cardBorder: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.12)
-    property color sectionColor: "#23262c"
-    property color sectionBorder: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.06)
+    property color cardColor: "#191a1a"
+    property color cardBorder: "#1f2020"
+    property color sectionColor: "#2b2c2c"
+    property color sectionBorder: "#1f2020"
     property color textPrimary: "#f4f7ff"
     property color textSecondary: "#a9b6cb"
     property color textMuted: "#74829c"
@@ -27,7 +27,7 @@ Item {
         radius: 28
         color: cardColor
         border.color: cardBorder
-        border.width: 1
+        border.width: 2
 
         ColumnLayout {
             anchors.fill: parent
