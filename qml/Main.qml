@@ -30,6 +30,7 @@ Window {
     property color onSurface: "#e7e5e5"
     property color onSurfaceVariant: "#a1afc6" // Fica um cinza azulado
     property color danger: "#ffb4ab"
+    property bool configWarningDismissed: false
 
     property var navPages: [
         { title: "Início", subtitle: "Visão geral", source: "qrc:/qml/HomeView.qml" },
@@ -238,6 +239,72 @@ Window {
                     }
 
                     onClicked: stackLayout.currentIndex = index
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        z: 100
+        visible: configRecoveredFromCorruption && !appRoot.configWarningDismissed
+        color: Qt.rgba(0, 0, 0, 0.55)
+
+        Rectangle {
+            width: Math.min(parent.width - 64, 520)
+            height: 220
+            anchors.centerIn: parent
+            radius: 24
+            color: surfaceContainerHigh
+            border.color: Qt.rgba(255, 255, 255, 0.08)
+            border.width: 1
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 24
+                spacing: 16
+
+                Text {
+                    text: "Configuração recuperada"
+                    color: onSurface
+                    font.pixelSize: 24
+                    font.family: titleFont
+                    font.bold: true
+                    Layout.fillWidth: true
+                }
+
+                Text {
+                    text: "O arquivo de configuração estava corrompido. O app recriou um arquivo padrão em ~/.config/Darmoshark M3 Linux/config.toml."
+                    color: onSurfaceVariant
+                    font.pixelSize: 14
+                    font.family: bodyFont
+                    wrapMode: Text.WordWrap
+                    Layout.fillWidth: true
+                }
+
+                Item { Layout.fillHeight: true }
+
+                Button {
+                    text: "Entendi"
+                    Layout.alignment: Qt.AlignRight
+                    Layout.preferredWidth: 140
+                    Layout.preferredHeight: 40
+
+                    background: Rectangle {
+                        radius: 14
+                        color: primary
+                    }
+
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#0e0e0e"
+                        font.family: titleFont
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    onClicked: appRoot.configWarningDismissed = true
                 }
             }
         }

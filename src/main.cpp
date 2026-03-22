@@ -41,6 +41,21 @@ static QString defaultConfigText()
     );
 }
 
+static bool writeDefaultConfigFile(const QString &path)
+{
+    QDir().mkpath(QFileInfo(path).absolutePath());
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        qWarning() << "Failed to create default config:" << path;
+        return false;
+    }
+
+    QTextStream out(&file);
+    out << defaultConfigText();
+    return true;
+}
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -51,35 +66,29 @@ int main(int argc, char *argv[])
     HidManager hidManager;
     hidManager.scanDevices(); // Scan and auto-connect on startup
     ConfigManager configManager;
+
     QString userConfigPath = QDir::homePath() + "/.config/Darmoshark M3 Linux/config.toml";
     configManager.setSavePath(userConfigPath);
+    bool configRecoveredFromCorruption = false;
 
-    QString configPath = userConfigPath;
-    if (!QFile::exists(configPath)) {
-        QDir().mkpath(QFileInfo(userConfigPath).absolutePath());
-        QFile defaultFile(userConfigPath);
-        if (defaultFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
-            QTextStream out(&defaultFile);
-            out << defaultConfigText();
-            defaultFile.close();
-            configPath = userConfigPath;
+    if (!QFile::exists(userConfigPath) && !writeDefaultConfigFile(userConfigPath)) {
+        return 1;
+    }
+
+    if (!configManager.loadConfig(userConfigPath)) {
+        configRecoveredFromCorruption = true;
+        if (!writeDefaultConfigFile(userConfigPath) || !configManager.loadConfig(userConfigPath)) {
+            qWarning() << "Unable to initialize user config";
+            return 1;
         }
     }
 
-    if (!configManager.loadConfig(configPath)) {
-        QFile defaultFile(userConfigPath);
-        if (defaultFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
-            QTextStream out(&defaultFile);
-            out << defaultConfigText();
-            defaultFile.close();
-        }
-        configManager.loadConfig(userConfigPath);
-    }
     configManager.saveConfig();
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("hidManager", &hidManager);
     engine.rootContext()->setContextProperty("configManager", &configManager);
+    engine.rootContext()->setContextProperty("configRecoveredFromCorruption", configRecoveredFromCorruption);
 
     const QUrl url(QStringLiteral("qrc:/qml/Main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
