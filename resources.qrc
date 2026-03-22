@@ -4,6 +4,15 @@
         <file>images/BG-M3-Black.png</file>
         <file>images/BG-M3-White.png</file>
         <file>images/BG-White.png</file>
+        <file>images/IconsBar/About.png</file>
+        <file>images/IconsBar/Config.png</file>
+        <file>images/IconsBar/DPI.png</file>
+        <file>images/IconsBar/E-SportMde.png</file>
+        <file>images/IconsBar/Home.png</file>
+        <file>images/IconsBar/Lift Off Distance.png</file>
+        <file>images/IconsBar/Report Rate.png</file>
+        <file>images/IconsBar/ScrollDirection.png</file>
+        <file>images/IconsBar/SensorPerformance.png</file>
         <file>qml/Main.qml</file>
         <file>qml/DPIView.qml</file>
         <file>qml/HomeView.qml</file>

@@ -52,15 +52,15 @@ Window {
     }
 
     function navIcon(index) {
-        if (index === 0) return "⌂"
-        if (index === 1) return "◉"
-        if (index === 2) return "↻"
-        if (index === 3) return "◌"
-        if (index === 4) return "⇳"
-        if (index === 5) return "⇅"
-        if (index === 6) return "⚑"
-        if (index === 7) return "⚙"
-        return "i"
+        if (index === 0) return "qrc:/images/IconsBar/Home.png"
+        if (index === 1) return "qrc:/images/IconsBar/DPI.png"
+        if (index === 2) return "qrc:/images/IconsBar/Report Rate.png"
+        if (index === 3) return "qrc:/images/IconsBar/SensorPerformance.png"
+        if (index === 4) return "qrc:/images/IconsBar/Lift Off Distance.png"
+        if (index === 5) return "qrc:/images/IconsBar/ScrollDirection.png"
+        if (index === 6) return "qrc:/images/IconsBar/E-SportMde.png"
+        if (index === 7) return "qrc:/images/IconsBar/Config.png"
+        return "qrc:/images/IconsBar/About.png"
     }
 
     function pageSource(index) {
@@ -223,12 +223,15 @@ Window {
                         anchors.margins: 6
                         spacing: 4
                         
-                        Text {
+                        Image {
                             Layout.alignment: Qt.AlignHCenter
-                            text: navIcon(index)
-                            color: navBtn.checked ? primary : onSurface
-                            font.pixelSize: 22
-                            font.bold: true
+                            source: navIcon(index)
+                            sourceSize.width: 18
+                            sourceSize.height: 18
+                            fillMode: Image.PreserveAspectFit
+                            smooth: true
+                            mipmap: true
+                            opacity: navBtn.checked ? 1.0 : 0.72
                         }
                         
                         Text {
