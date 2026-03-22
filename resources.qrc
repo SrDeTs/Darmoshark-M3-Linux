@@ -12,5 +12,7 @@
         <file>qml/LiftOffDistanceView.qml</file>
         <file>qml/ScrollDirectionView.qml</file>
         <file>qml/ESportsModeView.qml</file>
+        <file>qml/SettingsView.qml</file>
+        <file>qml/AboutView.qml</file>
     </qresource>
 </RCC>

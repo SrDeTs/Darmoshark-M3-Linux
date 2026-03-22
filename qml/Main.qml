@@ -39,7 +39,9 @@ Window {
         { title: "Sensor", subtitle: "Performance", source: "qrc:/qml/SensorPerformanceView.qml" },
         { title: "LOD", subtitle: "Altura de corte", source: "qrc:/qml/LiftOffDistanceView.qml" },
         { title: "Scroll", subtitle: "Sentido", source: "qrc:/qml/ScrollDirectionView.qml" },
-        { title: "E-Sports", subtitle: "Modo especial", source: "qrc:/qml/ESportsModeView.qml" }
+        { title: "E-Sports", subtitle: "Modo especial", source: "qrc:/qml/ESportsModeView.qml" },
+        { title: "Config", subtitle: "Preferências", source: "qrc:/qml/SettingsView.qml" },
+        { title: "Sobre", subtitle: "Informações", source: "qrc:/qml/AboutView.qml" }
     ]
 
     function connectionLabel(mode) {
@@ -56,7 +58,9 @@ Window {
         if (index === 3) return "◌"
         if (index === 4) return "⇳"
         if (index === 5) return "⇅"
-        return "⚑"
+        if (index === 6) return "⚑"
+        if (index === 7) return "⚙"
+        return "i"
     }
 
     function pageSource(index) {
@@ -199,7 +203,7 @@ Window {
                 delegate: Button {
                     id: navBtn
                     Layout.fillHeight: true
-                    Layout.preferredWidth: 84
+                    Layout.preferredWidth: 88
                     Layout.maximumHeight: 76
                     flat: true
                     checkable: true
