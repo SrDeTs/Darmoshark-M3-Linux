@@ -189,31 +189,23 @@ ApplicationWindow {
         }
     }
 
-    ShaderEffectSource {
-        id: sceneSnapshot
-        anchors.fill: parent
-        sourceItem: appScene
-        recursive: true
-        live: true
-        hideSource: false
-        visible: false
-    }
-
     MultiEffect {
         anchors.fill: parent
-        source: sceneSnapshot
+        source: appScene
         autoPaddingEnabled: false
         blurEnabled: true
-        blurMax: 48
-        blurMultiplier: 1.0
-        blur: 0.95
+        blurMax: 96
+        blurMultiplier: 1.6
+        blur: 1.0
+        brightness: -0.04
+        saturation: -0.1
         visible: appRoot.modalBlurActive
         z: 90
     }
 
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(8 / 255, 10 / 255, 14 / 255, appRoot.modalBlurActive ? 0.22 : 0.0)
+        color: Qt.rgba(8 / 255, 10 / 255, 14 / 255, appRoot.modalBlurActive ? 0.34 : 0.0)
         visible: appRoot.modalBlurActive
         z: 91
     }
