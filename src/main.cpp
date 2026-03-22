@@ -6,6 +6,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QTextStream>
+#include <QUrl>
 #include "hidmanager.h"
 #include "configmanager.h"
 
@@ -69,10 +70,16 @@ int main(int argc, char *argv[])
 
     QString userConfigPath = QDir::homePath() + "/.config/Darmoshark M3 Linux/config.toml";
     configManager.setSavePath(userConfigPath);
+    const QString configDirectoryPath = QFileInfo(userConfigPath).absolutePath();
+    const QUrl configDirectoryUrl = QUrl::fromLocalFile(configDirectoryPath);
+    bool configCreatedFirstRun = false;
     bool configRecoveredFromCorruption = false;
 
-    if (!QFile::exists(userConfigPath) && !writeDefaultConfigFile(userConfigPath)) {
-        return 1;
+    if (!QFile::exists(userConfigPath)) {
+        configCreatedFirstRun = true;
+        if (!writeDefaultConfigFile(userConfigPath)) {
+            return 1;
+        }
     }
 
     if (!configManager.loadConfig(userConfigPath)) {
@@ -88,6 +95,8 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("hidManager", &hidManager);
     engine.rootContext()->setContextProperty("configManager", &configManager);
+    engine.rootContext()->setContextProperty("configDirectoryUrl", configDirectoryUrl);
+    engine.rootContext()->setContextProperty("configCreatedFirstRun", configCreatedFirstRun);
     engine.rootContext()->setContextProperty("configRecoveredFromCorruption", configRecoveredFromCorruption);
 
     const QUrl url(QStringLiteral("qrc:/qml/Main.qml"));

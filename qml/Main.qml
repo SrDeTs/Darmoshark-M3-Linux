@@ -247,7 +247,7 @@ Window {
     Rectangle {
         anchors.fill: parent
         z: 100
-        visible: configRecoveredFromCorruption && !appRoot.configWarningDismissed
+        visible: (configCreatedFirstRun || configRecoveredFromCorruption) && !appRoot.configWarningDismissed
         color: Qt.rgba(0, 0, 0, 0.55)
 
         Rectangle {
@@ -265,7 +265,7 @@ Window {
                 spacing: 16
 
                 Text {
-                    text: "Configuração recuperada"
+                    text: configRecoveredFromCorruption ? "Configuração recuperada" : "Configuração criada"
                     color: onSurface
                     font.pixelSize: 24
                     font.family: titleFont
@@ -274,7 +274,9 @@ Window {
                 }
 
                 Text {
-                    text: "O arquivo de configuração estava corrompido. O app recriou um arquivo padrão em ~/.config/Darmoshark M3 Linux/config.toml."
+                    text: configRecoveredFromCorruption
+                          ? "O arquivo de configuração estava corrompido. O app recriou um padrão em ~/.config/Darmoshark M3 Linux/config.toml."
+                          : "O app criou a configuração inicial em ~/.config/Darmoshark M3 Linux/config.toml."
                     color: onSurfaceVariant
                     font.pixelSize: 14
                     font.family: bodyFont
@@ -284,27 +286,55 @@ Window {
 
                 Item { Layout.fillHeight: true }
 
-                Button {
-                    text: "Entendi"
+                RowLayout {
                     Layout.alignment: Qt.AlignRight
-                    Layout.preferredWidth: 140
-                    Layout.preferredHeight: 40
+                    spacing: 12
 
-                    background: Rectangle {
-                        radius: 14
-                        color: primary
+                    Button {
+                        text: "Abrir pasta"
+                        Layout.preferredWidth: 150
+                        Layout.preferredHeight: 40
+
+                        background: Rectangle {
+                            radius: 14
+                            color: surfaceContainerHigh
+                            border.color: Qt.rgba(255, 255, 255, 0.08)
+                            border.width: 1
+                        }
+
+                        contentItem: Text {
+                            text: parent.text
+                            color: onSurface
+                            font.family: titleFont
+                            font.bold: true
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        onClicked: Qt.openUrlExternally(configDirectoryUrl)
                     }
 
-                    contentItem: Text {
-                        text: parent.text
-                        color: "#0e0e0e"
-                        font.family: titleFont
-                        font.bold: true
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
+                    Button {
+                        text: "Entendi"
+                        Layout.preferredWidth: 140
+                        Layout.preferredHeight: 40
 
-                    onClicked: appRoot.configWarningDismissed = true
+                        background: Rectangle {
+                            radius: 14
+                            color: primary
+                        }
+
+                        contentItem: Text {
+                            text: parent.text
+                            color: "#0e0e0e"
+                            font.family: titleFont
+                            font.bold: true
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        onClicked: appRoot.configWarningDismissed = true
+                    }
                 }
             }
         }
