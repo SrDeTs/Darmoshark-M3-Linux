@@ -68,141 +68,154 @@ ApplicationWindow {
         return navPages[index].source
     }
 
-
-    Image {
-        id: backgroundImage
+    Item {
+        id: appScene
         anchors.fill: parent
-        source: "qrc:/images/BG-M3-Black.png"
-        fillMode: Image.PreserveAspectCrop
-        smooth: true
-        mipmap: true
-        z: -1
+
+        Image {
+            id: backgroundImage
+            anchors.fill: parent
+            source: "qrc:/images/BG-M3-Black.png"
+            fillMode: Image.PreserveAspectCrop
+            smooth: true
+            mipmap: true
+            z: -1
+        }
+
+        SwipeView {
+            id: stackLayout
+            anchors.fill: parent
+            anchors.topMargin: 8
+            anchors.bottomMargin: 136
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            clip: true
+            interactive: false
+            currentIndex: 0
+
+            Repeater {
+                model: navPages.length
+
+                Item {
+                    width: stackLayout.width
+                    height: stackLayout.height
+
+                    Loader {
+                        anchors.fill: parent
+                        source: appRoot.pageSource(index)
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: floatingBar
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 24
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: navLayout.implicitWidth + 32
+            height: 84
+            color: Qt.rgba(16 / 255, 17 / 255, 21 / 255, 0.42)
+            radius: 24
+            border.color: Qt.rgba(255/255, 255/255, 255/255, 0.10)
+            border.width: 1
+
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: 1
+                radius: 23
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.025) }
+                    GradientStop { position: 1.0; color: Qt.rgba(167 / 255, 200 / 255, 255 / 255, 0.025) }
+                }
+            }
+
+            RowLayout {
+                id: navLayout
+                anchors.centerIn: parent
+                spacing: 4
+
+                Repeater {
+                    model: navPages
+
+                    delegate: Button {
+                        id: navBtn
+                        Layout.fillHeight: true
+                        Layout.preferredWidth: 88
+                        Layout.maximumHeight: 76
+                        flat: true
+                        checkable: true
+                        checked: stackLayout.currentIndex === index
+                        hoverEnabled: true
+
+                        background: Rectangle {
+                            radius: 20
+                            color: navBtn.checked ? Qt.rgba(167/255, 200/255, 255/255, 0.15) : (navBtn.hovered ? surfaceContainerHigh : "transparent")
+
+                            Behavior on color { ColorAnimation { duration: 200 } }
+                        }
+
+                        contentItem: ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 6
+                            spacing: 4
+
+                            Image {
+                                Layout.alignment: Qt.AlignHCenter
+                                source: navIcon(index)
+                                sourceSize.width: 18
+                                sourceSize.height: 18
+                                fillMode: Image.PreserveAspectFit
+                                smooth: true
+                                mipmap: true
+                                opacity: navBtn.checked ? 1.0 : 0.72
+                            }
+
+                            Text {
+                                Layout.alignment: Qt.AlignHCenter
+                                text: modelData.title
+                                color: navBtn.checked ? primary : onSurfaceVariant
+                                font.pixelSize: 11
+                                font.family: titleFont
+                                wrapMode: Text.WordWrap
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+                        }
+
+                        onClicked: stackLayout.currentIndex = index
+                    }
+                }
+            }
+        }
+    }
+
+    ShaderEffectSource {
+        id: sceneSnapshot
+        anchors.fill: parent
+        sourceItem: appScene
+        recursive: true
+        live: true
+        hideSource: false
+        visible: false
     }
 
     MultiEffect {
         anchors.fill: parent
-        source: backgroundImage
+        source: sceneSnapshot
         autoPaddingEnabled: false
         blurEnabled: true
         blurMax: 48
         blurMultiplier: 1.0
-        blur: 0.9
+        blur: 0.95
         visible: appRoot.modalBlurActive
-        z: -1
+        z: 90
     }
 
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(8 / 255, 10 / 255, 14 / 255, appRoot.modalBlurActive ? 0.28 : 0.0)
+        color: Qt.rgba(8 / 255, 10 / 255, 14 / 255, appRoot.modalBlurActive ? 0.22 : 0.0)
         visible: appRoot.modalBlurActive
-        z: -1
-    }
-
-    SwipeView {
-        id: stackLayout
-        anchors.fill: parent
-        anchors.topMargin: 8
-        anchors.bottomMargin: 136
-        anchors.leftMargin: 8
-        anchors.rightMargin: 8
-        clip: true
-        interactive: false
-        currentIndex: 0
-
-        Repeater {
-            model: navPages.length
-
-            Item {
-                width: stackLayout.width
-                height: stackLayout.height
-
-                Loader {
-                    anchors.fill: parent
-                    source: appRoot.pageSource(index)
-                }
-            }
-        }
-    }
-
-    Rectangle {
-        id: floatingBar
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 24
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: navLayout.implicitWidth + 32
-        height: 84
-        color: Qt.rgba(16 / 255, 17 / 255, 21 / 255, 0.42)
-        radius: 24
-        border.color: Qt.rgba(255/255, 255/255, 255/255, 0.10)
-        border.width: 1
-
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: 1
-            radius: 23
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.025) }
-                GradientStop { position: 1.0; color: Qt.rgba(167 / 255, 200 / 255, 255 / 255, 0.025) }
-            }
-        }
-
-        RowLayout {
-            id: navLayout
-            anchors.centerIn: parent
-            spacing: 4
-
-            Repeater {
-                model: navPages
-
-                delegate: Button {
-                    id: navBtn
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 88
-                    Layout.maximumHeight: 76
-                    flat: true
-                    checkable: true
-                    checked: stackLayout.currentIndex === index
-                    hoverEnabled: true
-
-                    background: Rectangle {
-                        radius: 20
-                        // Active gets a prominent blue block, typical of this design
-                        color: navBtn.checked ? Qt.rgba(167/255, 200/255, 255/255, 0.15) : (navBtn.hovered ? surfaceContainerHigh : "transparent")
-                        
-                        Behavior on color { ColorAnimation { duration: 200 } }
-                    }
-
-                    contentItem: ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 6
-                        spacing: 4
-                        
-                        Image {
-                            Layout.alignment: Qt.AlignHCenter
-                            source: navIcon(index)
-                            sourceSize.width: 18
-                            sourceSize.height: 18
-                            fillMode: Image.PreserveAspectFit
-                            smooth: true
-                            mipmap: true
-                            opacity: navBtn.checked ? 1.0 : 0.72
-                        }
-                        
-                        Text {
-                            Layout.alignment: Qt.AlignHCenter
-                            text: modelData.title
-                            color: navBtn.checked ? primary : onSurfaceVariant
-                            font.pixelSize: 11
-                            font.family: titleFont
-                            wrapMode: Text.WordWrap
-                            horizontalAlignment: Text.AlignHCenter
-                        }
-                    }
-
-                    onClicked: stackLayout.currentIndex = index
-                }
-            }
-        }
+        z: 91
     }
 
     Rectangle {
