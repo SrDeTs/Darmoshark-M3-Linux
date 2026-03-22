@@ -11,6 +11,8 @@ class HidManager : public QObject
     Q_PROPERTY(QString connectionMode READ connectionMode NOTIFY deviceConnectedChanged)
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
     Q_PROPERTY(bool isCharging READ isCharging NOTIFY batteryLevelChanged)
+    Q_PROPERTY(QString firmwareVersion READ firmwareVersion NOTIFY versionInfoChanged)
+    Q_PROPERTY(QString rfVersion READ rfVersion NOTIFY versionInfoChanged)
 
 public:
     explicit HidManager(QObject *parent = nullptr);
@@ -20,6 +22,8 @@ public:
     QString connectionMode() const;
     int batteryLevel() const { return m_batteryLevel; }
     bool isCharging() const { return m_isCharging; }
+    QString firmwareVersion() const { return m_firmwareVersion; }
+    QString rfVersion() const { return m_rfVersion; }
 
     Q_INVOKABLE void scanDevices();
     Q_INVOKABLE bool connectDevice(unsigned short vid, unsigned short pid);
@@ -36,19 +40,27 @@ public:
     Q_INVOKABLE void applyLiftOffDistance(bool low);
     Q_INVOKABLE void applyScrollDirection(bool forward);
     Q_INVOKABLE void applyESportsMode(bool open);
+    Q_INVOKABLE void refreshVersionInfo();
 
 signals:
     void deviceConnectedChanged();
     void batteryLevelChanged();
+    void versionInfoChanged();
     void deviceFound(const QString &name, int vid, int pid);
 
 private slots:
     void pollStatus();
 
 private:
+    void clearVersionInfo();
+    void setVersionInfo(const QString &firmwareVersion, const QString &rfVersion);
+    QString parseVersionResponse(const unsigned char *buffer, int length) const;
+
     hid_device *m_device = nullptr;
     QTimer *m_pollTimer = nullptr;
     unsigned short m_currentPid = 0;
     int m_batteryLevel = 100;
     bool m_isCharging = false;
+    QString m_firmwareVersion = QStringLiteral("N/D");
+    QString m_rfVersion = QStringLiteral("N/D");
 };

@@ -1,9 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/BB-Black.png</file>
+        <file>images/BG-Black.png</file>
         <file>images/BG-M3-Black.png</file>
         <file>images/BG-M3-White.png</file>
         <file>images/BG-White.png</file>
+        <file>images/LogoDarmoshark.png</file>
         <file>images/IconsBar/About.png</file>
         <file>images/IconsBar/Config.png</file>
         <file>images/IconsBar/DPI.png</file>

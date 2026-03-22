@@ -48,7 +48,7 @@ Item {
 
             Image {
                 Layout.alignment: Qt.AlignHCenter
-                source: "qrc:/images/BB-Black.png"
+                source: "qrc:/images/LogoDarmoshark.png"
                 fillMode: Image.PreserveAspectFit
                 sourceSize.width: 168
                 sourceSize.height: 92
@@ -81,7 +81,30 @@ Item {
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text: "N/D"
+                    text: hidManager.firmwareVersion
+                    color: textSecondary
+                    font.pixelSize: 14
+                    font.family: bodyFont
+                }
+            }
+
+            Item { Layout.preferredHeight: 26 }
+
+            ColumnLayout {
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 8
+
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "RF Version:"
+                    color: textPrimary
+                    font.pixelSize: 16
+                    font.family: titleFont
+                }
+
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: hidManager.rfVersion
                     color: textSecondary
                     font.pixelSize: 14
                     font.family: bodyFont

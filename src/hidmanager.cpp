@@ -1,6 +1,8 @@
 #include "hidmanager.h"
 #include "mouseprotocol.h"
 #include <QDebug>
+#include <QRegularExpression>
+#include <QThread>
 #include <QTimer>
 
 HidManager::HidManager(QObject *parent) : QObject(parent)
@@ -94,6 +96,7 @@ bool HidManager::connectDevice(unsigned short vid, unsigned short pid)
         m_currentPid = pid;
         hid_set_nonblocking(m_device, 1);
         qDebug() << "Successfully connected to" << QString::number(vid, 16) << ":" << QString::number(pid, 16);
+        refreshVersionInfo();
         emit deviceConnectedChanged();
         return true;
     } else {
@@ -109,6 +112,7 @@ void HidManager::disconnectDevice()
         hid_close(m_device);
         m_device = nullptr;
         m_currentPid = 0;
+        clearVersionInfo();
         emit deviceConnectedChanged();
     }
 }
@@ -174,6 +178,49 @@ void HidManager::sendConfigPacket(const QByteArray &data)
     const bool wiredMode = (m_currentPid == 0xff12);
     qDebug() << "Sending config packet using hid_send_feature_report for" << (wiredMode ? "USB" : "2.4G");
     sendFeatureReport(data);
+}
+
+void HidManager::refreshVersionInfo()
+{
+    if (!m_device) {
+        clearVersionInfo();
+        return;
+    }
+
+    QString firmwareVersion = QStringLiteral("N/D");
+    QString rfVersion = QStringLiteral("N/D");
+
+    for (int attempt = 0; attempt < 6; ++attempt) {
+        unsigned char buffer[21] = {0};
+        buffer[0] = 0x51;
+
+        const int res = hid_get_feature_report(m_device, buffer, sizeof(buffer));
+        if (res <= 0) {
+            qWarning() << "hid_get_feature_report(0x51) failed:" << res;
+            QThread::msleep(20);
+            continue;
+        }
+
+        const QString version = parseVersionResponse(buffer, res);
+        if (version.isEmpty()) {
+            QThread::msleep(20);
+            continue;
+        }
+
+        qDebug() << "Version response from report 0x51:" << version;
+        if (version.startsWith(QLatin1Char('e'), Qt::CaseInsensitive)) {
+            rfVersion = version;
+        } else {
+            firmwareVersion = version;
+        }
+
+        if (firmwareVersion != QStringLiteral("N/D") && rfVersion != QStringLiteral("N/D"))
+            break;
+
+        QThread::msleep(20);
+    }
+
+    setVersionInfo(firmwareVersion, rfVersion);
 }
 
 void HidManager::applyDpi(const QVariantList &stages, int current_stage)
@@ -332,4 +379,53 @@ void HidManager::pollStatus()
             }
         }
     }
+}
+
+void HidManager::clearVersionInfo()
+{
+    setVersionInfo(QStringLiteral("N/D"), QStringLiteral("N/D"));
+}
+
+void HidManager::setVersionInfo(const QString &firmwareVersion, const QString &rfVersion)
+{
+    if (m_firmwareVersion == firmwareVersion && m_rfVersion == rfVersion)
+        return;
+
+    m_firmwareVersion = firmwareVersion;
+    m_rfVersion = rfVersion;
+    emit versionInfoChanged();
+}
+
+QString HidManager::parseVersionResponse(const unsigned char *buffer, int length) const
+{
+    if (!buffer || length <= 0)
+        return QString();
+
+    QByteArray ascii;
+    bool started = false;
+
+    for (int i = 0; i < length; ++i) {
+        const unsigned char ch = buffer[i];
+        const bool allowed = (ch >= '0' && ch <= '9')
+            || (ch >= 'a' && ch <= 'z')
+            || (ch >= 'A' && ch <= 'Z')
+            || ch == '.'
+            || ch == '-';
+
+        if (allowed) {
+            started = true;
+            ascii.append(static_cast<char>(ch));
+            continue;
+        }
+
+        if (started)
+            break;
+    }
+
+    const QString candidate = QString::fromLatin1(ascii).trimmed();
+    static const QRegularExpression versionPattern(QStringLiteral("^[A-Za-z]?\\.?\\d+(?:\\.\\d+)*(?:[A-Za-z-]\\d*|[A-Za-z])?$"));
+    if (!versionPattern.match(candidate).hasMatch())
+        return QString();
+
+    return candidate;
 }
