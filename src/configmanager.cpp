@@ -15,6 +15,43 @@ ConfigManager::ConfigManager(QObject *parent)
 {
 }
 
+static toml::table buildDefaultConfig()
+{
+    toml::table config;
+
+    toml::table device;
+    device.insert_or_assign(std::string("name"), std::string("Darmoshark M3"));
+    device.insert_or_assign(std::string("vid"), (int64_t)0x248A);
+    device.insert_or_assign(std::string("pid"), (int64_t)0xFF12);
+
+    toml::table dpi;
+    dpi.insert_or_assign(std::string("current_stage"), (int64_t)1);
+    dpi.insert_or_assign(std::string("stages"), toml::array{ 400, 800, 1600, 3200, 4800 });
+
+    toml::table ui;
+    ui.insert_or_assign(std::string("polling_rate"), (int64_t)1000);
+    ui.insert_or_assign(std::string("ripple_enabled"), false);
+    ui.insert_or_assign(std::string("motion_sync_enabled"), true);
+    ui.insert_or_assign(std::string("angle_snap_enabled"), false);
+    ui.insert_or_assign(std::string("lift_off_high"), false);
+    ui.insert_or_assign(std::string("scroll_normal"), true);
+    ui.insert_or_assign(std::string("esports_open"), false);
+
+    toml::table buttons;
+    buttons.insert_or_assign(std::string("left"), std::string("Left-Click"));
+    buttons.insert_or_assign(std::string("right"), std::string("Right-Click"));
+    buttons.insert_or_assign(std::string("middle"), std::string("Middle-Click"));
+    buttons.insert_or_assign(std::string("forward"), std::string("Forward"));
+    buttons.insert_or_assign(std::string("backward"), std::string("Backward"));
+
+    config.insert_or_assign(std::string("device"), std::move(device));
+    config.insert_or_assign(std::string("dpi"), std::move(dpi));
+    config.insert_or_assign(std::string("ui"), std::move(ui));
+    config.insert_or_assign(std::string("buttons"), std::move(buttons));
+
+    return config;
+}
+
 bool ConfigManager::loadConfig(const QString &path)
 {
     try {
@@ -55,6 +92,14 @@ bool ConfigManager::saveConfig()
 void ConfigManager::setSavePath(const QString &path)
 {
     m_savePath = path;
+}
+
+bool ConfigManager::resetToDefaults()
+{
+    m_config = buildDefaultConfig();
+    emit dpiStagesChanged();
+    emit configChanged();
+    return saveConfig();
 }
 
 void ConfigManager::ensureDpiTable()

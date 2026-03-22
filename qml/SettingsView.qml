@@ -20,6 +20,22 @@ Item {
     property bool minimizeToTrayEnabled: false
     property string selectedLanguage: "English"
 
+    function applyFactoryReset() {
+        if (!configManager.resetToDefaults())
+            return
+
+        if (typeof hidManager !== "undefined" && hidManager.deviceConnected) {
+            hidManager.applyDpi(configManager.dpiStages, configManager.dpiCurrentStage)
+            hidManager.applySettings(configManager.pollingRate)
+            hidManager.applyRipple(configManager.rippleEnabled)
+            hidManager.applyMotionSync(configManager.motionSyncEnabled)
+            hidManager.applyAngleSnap(configManager.angleSnapEnabled)
+            hidManager.applyLiftOffDistance(!configManager.liftOffHigh)
+            hidManager.applyScrollDirection(configManager.scrollNormal)
+            hidManager.applyESportsMode(configManager.esportsOpen)
+        }
+    }
+
     Rectangle {
         width: 360
         height: 470
@@ -167,6 +183,120 @@ Item {
                     font.family: titleFont
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
+                }
+
+                onClicked: resetConfirmPopup.open()
+            }
+        }
+    }
+
+    Popup {
+        id: resetConfirmPopup
+        anchors.centerIn: Overlay.overlay
+        width: 360
+        height: 220
+        modal: true
+        focus: true
+        padding: 0
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        enter: Transition {
+            ParallelAnimation {
+                NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 160; easing.type: Easing.OutCubic }
+                NumberAnimation { property: "scale"; from: 0.94; to: 1.0; duration: 180; easing.type: Easing.OutCubic }
+            }
+        }
+
+        exit: Transition {
+            ParallelAnimation {
+                NumberAnimation { property: "opacity"; from: 1.0; to: 0.0; duration: 120; easing.type: Easing.OutCubic }
+                NumberAnimation { property: "scale"; from: 1.0; to: 0.96; duration: 120; easing.type: Easing.OutCubic }
+            }
+        }
+
+        background: Rectangle {
+            radius: 24
+            color: cardColor
+            border.color: cardBorder
+            border.width: 2
+        }
+
+        contentItem: ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 22
+            spacing: 0
+
+            Text {
+                text: "Resetar configurações?"
+                color: textPrimary
+                font.pixelSize: 24
+                font.family: titleFont
+                font.weight: Font.Medium
+            }
+
+            Item { Layout.preferredHeight: 14 }
+
+            Text {
+                Layout.fillWidth: true
+                text: "Isso vai restaurar DPI, polling rate e outras opções para os valores padrão."
+                color: textSecondary
+                font.pixelSize: 14
+                font.family: bodyFont
+                wrapMode: Text.WordWrap
+            }
+
+            Item { Layout.fillHeight: true }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 10
+
+                Button {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    text: "Cancelar"
+
+                    background: Rectangle {
+                        radius: 12
+                        color: fieldColor
+                    }
+
+                    contentItem: Text {
+                        text: parent.text
+                        color: textPrimary
+                        font.pixelSize: 14
+                        font.family: titleFont
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    onClicked: resetConfirmPopup.close()
+                }
+
+                Button {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    text: "Confirmar"
+
+                    background: Rectangle {
+                        radius: 12
+                        color: accent
+                    }
+
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#101114"
+                        font.pixelSize: 14
+                        font.family: titleFont
+                        font.weight: Font.Medium
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    onClicked: {
+                        resetConfirmPopup.close()
+                        pageRoot.applyFactoryReset()
+                    }
                 }
             }
         }
