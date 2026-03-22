@@ -88,42 +88,6 @@ Item {
             // Controls Row (Toggles / Info)
             RowLayout {
                 Layout.fillWidth: true
-                
-                RowLayout {
-                    spacing: 8
-                    Text {
-                        text: "DPI Stages Ativos"
-                        color: onSurfaceVariant
-                        font.pixelSize: 14
-                        font.family: bodyFont
-                    }
-                    ComboBox {
-                        id: dpiCountSelector
-                        Layout.preferredWidth: 60
-                        Layout.preferredHeight: 28
-                        model: stageCountList()
-                        currentIndex: configManager.dpiStages.length > 0 ? (configManager.dpiStages.length - 1) : 4
-                        background: Rectangle {
-                            radius: 14
-                            color: surfaceContainerHigh
-                        }
-                        contentItem: Text {
-                            text: dpiCountSelector.displayText
-                            color: onSurface
-                            font.bold: true
-                            font.family: bodyFont
-                            verticalAlignment: Text.AlignVCenter
-                            horizontalAlignment: Text.AlignHCenter
-                        }
-                        onActivated: (idx) => {
-                            let newCount = stageCountList()[idx]
-                            let slicedStages = configManager.dpiStages.slice(0, newCount)
-                            let activeStage = dpiRoot.clampActiveStage(slicedStages.length, configManager.dpiCurrentStage)
-                            configManager.setDpiCurrentStage(activeStage)
-                            hidManager.applyDpi(slicedStages, activeStage)
-                        }
-                    }
-                }
 
                 Item { Layout.fillWidth: true }
 
@@ -149,7 +113,7 @@ Item {
                     }
 
                     onClicked: {
-                        let slicedStages = configManager.dpiStages.slice(0, dpiCountSelector.currentIndex + 1)
+                        let slicedStages = configManager.dpiStages
                         let activeStage = dpiRoot.clampActiveStage(slicedStages.length, configManager.dpiCurrentStage)
                         configManager.setDpiCurrentStage(activeStage)
                         hidManager.applyDpi(slicedStages, activeStage)
