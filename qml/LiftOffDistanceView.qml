@@ -15,8 +15,6 @@ Item {
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
-    QtObject { id: lodGroup; property bool high: false } // 'low' is 1mm, 'high' is 2mm
-
     Rectangle {
         width: 320
         height: 120
@@ -44,17 +42,17 @@ Item {
 
                 Text {
                     text: "1mm"
-                    color: !lodGroup.high ? onSurface : onSurfaceVariant
+                    color: !configManager.liftOffHigh ? onSurface : onSurfaceVariant
                     font.pixelSize: 14
                     font.family: bodyFont
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Switch {
-                    checked: lodGroup.high
+                    checked: configManager.liftOffHigh
                     anchors.verticalCenter: parent.verticalCenter
                     onToggled: {
-                        lodGroup.high = checked
+                        configManager.setLiftOffHigh(checked)
                         if (typeof hidManager !== "undefined") {
                             hidManager.applyLiftOffDistance(!checked) // low = !high
                         }
@@ -63,7 +61,7 @@ Item {
 
                 Text {
                     text: "2mm"
-                    color: lodGroup.high ? onSurface : onSurfaceVariant
+                    color: configManager.liftOffHigh ? onSurface : onSurfaceVariant
                     font.pixelSize: 14
                     font.family: bodyFont
                     anchors.verticalCenter: parent.verticalCenter

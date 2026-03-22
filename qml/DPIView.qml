@@ -6,7 +6,6 @@ Item {
     id: dpiRoot
     anchors.fill: parent
 
-    property int currentActiveStage: 0
     property color surfaceContainerLow: "#131313"
     property color surfaceContainer: "#191a1a"
     property color surfaceContainerHigh: "#1f2020"
@@ -30,18 +29,18 @@ Item {
     ]
 
     property int renderStageCount: 6 // Model from screenshot shows 6 stages, though device might use less
-    property int currentDpiValue: configManager.dpiStages[currentActiveStage] ? configManager.dpiStages[currentActiveStage].value : 0
+    property int currentDpiValue: configManager.dpiStages[configManager.dpiCurrentStage] ? configManager.dpiStages[configManager.dpiCurrentStage].value : 0
 
     function stageCountList() { return [1, 2, 3, 4, 5, 6, 7] }
 
-    function clampActiveStage(stageCount) {
+    function clampActiveStage(stageCount, activeStage) {
         if (stageCount <= 0)
             return 0
-        if (currentActiveStage >= stageCount)
+        if (activeStage >= stageCount)
             return stageCount - 1
-        if (currentActiveStage < 0)
+        if (activeStage < 0)
             return 0
-        return currentActiveStage
+        return activeStage
     }
 
     Flickable {
@@ -74,13 +73,13 @@ Item {
                     font.family: titleFont
                 }
 
-                Text {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: configManager.dpiStages[currentActiveStage] ? configManager.dpiStages[currentActiveStage].value.toString() : "0"
-                    color: onSurface
-                    font.pixelSize: 64
-                    font.bold: true
-                    font.family: titleFont
+                    Text {
+                        Layout.alignment: Qt.AlignHCenter
+                        text: configManager.dpiStages[configManager.dpiCurrentStage] ? configManager.dpiStages[configManager.dpiCurrentStage].value.toString() : "0"
+                        color: onSurface
+                        font.pixelSize: 64
+                        font.bold: true
+                        font.family: titleFont
                 }
             }
             
@@ -119,8 +118,9 @@ Item {
                         onActivated: (idx) => {
                             let newCount = stageCountList()[idx]
                             let slicedStages = configManager.dpiStages.slice(0, newCount)
-                            dpiRoot.currentActiveStage = dpiRoot.clampActiveStage(slicedStages.length)
-                            hidManager.applyDpi(slicedStages, dpiRoot.currentActiveStage)
+                            let activeStage = dpiRoot.clampActiveStage(slicedStages.length, configManager.dpiCurrentStage)
+                            configManager.setDpiCurrentStage(activeStage)
+                            hidManager.applyDpi(slicedStages, activeStage)
                         }
                     }
                 }
@@ -150,8 +150,9 @@ Item {
 
                     onClicked: {
                         let slicedStages = configManager.dpiStages.slice(0, dpiCountSelector.currentIndex + 1)
-                        dpiRoot.currentActiveStage = dpiRoot.clampActiveStage(slicedStages.length)
-                        hidManager.applyDpi(slicedStages, dpiRoot.currentActiveStage)
+                        let activeStage = dpiRoot.clampActiveStage(slicedStages.length, configManager.dpiCurrentStage)
+                        configManager.setDpiCurrentStage(activeStage)
+                        hidManager.applyDpi(slicedStages, activeStage)
                     }
                 }
             }
@@ -171,7 +172,7 @@ Item {
                         radius: 16
                         
                         // Highlight Logic: clear visual difference when selected
-                        property bool isSelected: dpiRoot.currentActiveStage === index
+                        property bool isSelected: configManager.dpiCurrentStage === index
                         property color stageColor: dpiRoot.stageColors[index % dpiRoot.stageColors.length]
                         
                         color: isSelected ? dpiRoot.surfaceContainerHigh : dpiRoot.surfaceContainerLow
@@ -183,7 +184,7 @@ Item {
 
                         MouseArea {
                             anchors.fill: parent
-                            onClicked: dpiRoot.currentActiveStage = index
+                            onClicked: configManager.setDpiCurrentStage(index)
                         }
 
                         RowLayout {

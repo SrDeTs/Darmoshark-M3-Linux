@@ -15,21 +15,6 @@ Item {
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
-    QtObject {
-        id: rippleGroup
-        property bool enabled: false
-    }
-
-    QtObject {
-        id: motionSyncGroup
-        property bool enabled: true
-    }
-
-    QtObject {
-        id: angleSnapGroup
-        property bool enabled: false
-    }
-
     Rectangle {
         width: 360
         height: 220
@@ -67,10 +52,10 @@ Item {
                     }
 
                     Switch {
-                        checked: rippleGroup.enabled
+                        checked: configManager.rippleEnabled
                         anchors.verticalCenter: parent.verticalCenter
                         onToggled: {
-                            rippleGroup.enabled = checked
+                            configManager.setRippleEnabled(checked)
                             if (typeof hidManager !== "undefined") {
                                 hidManager.applyRipple(checked)
                             }
@@ -78,8 +63,8 @@ Item {
                     }
 
                     Text {
-                        text: rippleGroup.enabled ? "On" : "Off"
-                        color: rippleGroup.enabled ? onSurface : onSurfaceVariant
+                        text: configManager.rippleEnabled ? "On" : "Off"
+                        color: configManager.rippleEnabled ? onSurface : onSurfaceVariant
                         font.pixelSize: 14
                         font.family: bodyFont
                         anchors.verticalCenter: parent.verticalCenter
@@ -98,10 +83,10 @@ Item {
                     }
 
                     Switch {
-                        checked: motionSyncGroup.enabled
+                        checked: configManager.motionSyncEnabled
                         anchors.verticalCenter: parent.verticalCenter
                         onToggled: {
-                            motionSyncGroup.enabled = checked
+                            configManager.setMotionSyncEnabled(checked)
                             if (typeof hidManager !== "undefined") {
                                 hidManager.applyMotionSync(checked)
                             }
@@ -109,8 +94,8 @@ Item {
                     }
 
                     Text {
-                        text: motionSyncGroup.enabled ? "On" : "Off"
-                        color: motionSyncGroup.enabled ? onSurface : onSurfaceVariant
+                        text: configManager.motionSyncEnabled ? "On" : "Off"
+                        color: configManager.motionSyncEnabled ? onSurface : onSurfaceVariant
                         font.pixelSize: 14
                         font.family: bodyFont
                         anchors.verticalCenter: parent.verticalCenter
@@ -129,10 +114,10 @@ Item {
                     }
 
                     Switch {
-                        checked: angleSnapGroup.enabled
+                        checked: configManager.angleSnapEnabled
                         anchors.verticalCenter: parent.verticalCenter
                         onToggled: {
-                            angleSnapGroup.enabled = checked
+                            configManager.setAngleSnapEnabled(checked)
                             if (typeof hidManager !== "undefined") {
                                 hidManager.applyAngleSnap(checked)
                             }
@@ -140,8 +125,8 @@ Item {
                     }
 
                     Text {
-                        text: angleSnapGroup.enabled ? "On" : "Off"
-                        color: angleSnapGroup.enabled ? onSurface : onSurfaceVariant
+                        text: configManager.angleSnapEnabled ? "On" : "Off"
+                        color: configManager.angleSnapEnabled ? onSurface : onSurfaceVariant
                         font.pixelSize: 14
                         font.family: bodyFont
                         anchors.verticalCenter: parent.verticalCenter

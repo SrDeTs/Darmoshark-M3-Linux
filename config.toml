@@ -1,17 +1,24 @@
-# Darmoshark M3 Configuration
+[buttons]
+backward = 'Backward'
+forward = 'Forward'
+left = 'Left-Click'
+middle = 'Middle-Click'
+right = 'Right-Click'
 
 [device]
-name = "Darmoshark M3"
-vid = 0x248A
+name = 'Darmoshark M3'
 pid = 0xFF12
+vid = 0x248A
 
 [dpi]
-current_stage = 1
-stages = [400, 800, 1600, 3200, 4800]
+current_stage = 4
+stages = [ 400, 800, 1600, 3200, 4800 ]
 
-[buttons]
-left = "Left-Click"
-right = "Right-Click"
-middle = "Middle-Click"
-forward = "Forward"
-backward = "Backward"
+[ui]
+angle_snap_enabled = false
+esports_open = false
+lift_off_high = false
+motion_sync_enabled = true
+polling_rate = 1000
+ripple_enabled = false
+scroll_normal = true

@@ -2,9 +2,44 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QFile>
+#include <QFileInfo>
 #include <QCoreApplication>
+#include <QDir>
+#include <QTextStream>
 #include "hidmanager.h"
 #include "configmanager.h"
+
+static QString defaultConfigText()
+{
+    return QStringLiteral(
+        "# Darmoshark M3 Configuration\n"
+        "\n"
+        "[device]\n"
+        "name = \"Darmoshark M3\"\n"
+        "vid = 0x248A\n"
+        "pid = 0xFF12\n"
+        "\n"
+        "[dpi]\n"
+        "current_stage = 1\n"
+        "stages = [400, 800, 1600, 3200, 4800]\n"
+        "\n"
+        "[ui]\n"
+        "polling_rate = 1000\n"
+        "ripple_enabled = false\n"
+        "motion_sync_enabled = true\n"
+        "angle_snap_enabled = false\n"
+        "lift_off_high = false\n"
+        "scroll_normal = true\n"
+        "esports_open = false\n"
+        "\n"
+        "[buttons]\n"
+        "left = \"Left-Click\"\n"
+        "right = \"Right-Click\"\n"
+        "middle = \"Middle-Click\"\n"
+        "forward = \"Forward\"\n"
+        "backward = \"Backward\"\n"
+    );
+}
 
 int main(int argc, char *argv[])
 {
@@ -16,17 +51,31 @@ int main(int argc, char *argv[])
     HidManager hidManager;
     hidManager.scanDevices(); // Scan and auto-connect on startup
     ConfigManager configManager;
-    QString configPath = "config.toml";
+    QString userConfigPath = QDir::homePath() + "/.config/Darmoshark M3 Linux/config.toml";
+    configManager.setSavePath(userConfigPath);
+
+    QString configPath = userConfigPath;
     if (!QFile::exists(configPath)) {
-        // Try application dir
-        configPath = QCoreApplication::applicationDirPath() + "/config.toml";
+        QDir().mkpath(QFileInfo(userConfigPath).absolutePath());
+        QFile defaultFile(userConfigPath);
+        if (defaultFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+            QTextStream out(&defaultFile);
+            out << defaultConfigText();
+            defaultFile.close();
+            configPath = userConfigPath;
+        }
     }
-    if (!QFile::exists(configPath)) {
-        // Try parent of application dir (common for build folder runs)
-        configPath = QCoreApplication::applicationDirPath() + "/../config.toml";
+
+    if (!configManager.loadConfig(configPath)) {
+        QFile defaultFile(userConfigPath);
+        if (defaultFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+            QTextStream out(&defaultFile);
+            out << defaultConfigText();
+            defaultFile.close();
+        }
+        configManager.loadConfig(userConfigPath);
     }
-    
-    configManager.loadConfig(configPath);
+    configManager.saveConfig();
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("hidManager", &hidManager);

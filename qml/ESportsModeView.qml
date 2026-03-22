@@ -15,8 +15,6 @@ Item {
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
-    QtObject { id: esportsGroup; property bool on: false }
-
     Rectangle {
         width: 320
         height: 120
@@ -44,17 +42,17 @@ Item {
 
                 Text {
                     text: "Off"
-                    color: !esportsGroup.on ? onSurface : onSurfaceVariant
+                    color: !configManager.esportsOpen ? onSurface : onSurfaceVariant
                     font.pixelSize: 14
                     font.family: bodyFont
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Switch {
-                    checked: esportsGroup.on
+                    checked: configManager.esportsOpen
                     anchors.verticalCenter: parent.verticalCenter
                     onToggled: {
-                        esportsGroup.on = checked
+                        configManager.setESportsOpen(checked)
                         if (typeof hidManager !== "undefined") {
                             hidManager.applyESportsMode(checked)
                         }
@@ -63,7 +61,7 @@ Item {
 
                 Text {
                     text: "On"
-                    color: esportsGroup.on ? onSurface : onSurfaceVariant
+                    color: configManager.esportsOpen ? onSurface : onSurfaceVariant
                     font.pixelSize: 14
                     font.family: bodyFont
                     anchors.verticalCenter: parent.verticalCenter

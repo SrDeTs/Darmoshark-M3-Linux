@@ -15,8 +15,6 @@ Item {
     property string titleFont: "Red Hat Display"
     property string bodyFont: "Fira Sans"
 
-    QtObject { id: pollingRateGroup; property int currentValue: 1000 }
-
     function rateDescription(rate) {
         if (rate === 125) return "Máximo alcance"
         if (rate === 500) return "Equilibrado"
@@ -113,21 +111,21 @@ Item {
                                     width: Math.floor((parent.width - 24) / 3)
                                     height: 126
                                     radius: 20
-                                    scale: pollingRateGroup.currentValue === modelData ? 1.012 : (hit.containsMouse ? 1.004 : 1.0)
+                                    scale: configManager.pollingRate === modelData ? 1.012 : (hit.containsMouse ? 1.004 : 1.0)
                                     Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
                                     gradient: Gradient {
-                                        GradientStop { position: 0; color: pollingRateGroup.currentValue === modelData ? "#26334f" : (hit.containsMouse ? "#1b263d" : "#182235") }
-                                        GradientStop { position: 1; color: pollingRateGroup.currentValue === modelData ? "#1d2f4a" : "#11192b" }
+                                        GradientStop { position: 0; color: configManager.pollingRate === modelData ? "#26334f" : (hit.containsMouse ? "#1b263d" : "#182235") }
+                                        GradientStop { position: 1; color: configManager.pollingRate === modelData ? "#1d2f4a" : "#11192b" }
                                     }
-                                    border.color: pollingRateGroup.currentValue === modelData ? accent : border
-                                    border.width: pollingRateGroup.currentValue === modelData ? 1.5 : 1
+                                    border.color: configManager.pollingRate === modelData ? accent : border
+                                    border.width: configManager.pollingRate === modelData ? 1.5 : 1
                                     clip: true
 
                                     MouseArea {
                                         id: hit
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onClicked: pollingRateGroup.currentValue = modelData
+                                        onClicked: configManager.setPollingRate(modelData)
                                     }
 
                                     Column {
@@ -137,7 +135,7 @@ Item {
 
                                         Text {
                                             text: modelData
-                                            color: pollingRateGroup.currentValue === modelData ? accent : textPrimary
+                                            color: configManager.pollingRate === modelData ? accent : textPrimary
                                             font.pixelSize: 28
                                             font.bold: true
                                             font.family: titleFont
@@ -160,7 +158,7 @@ Item {
                                         Text {
                                             width: parent.width
                                             text: rateDescription(modelData)
-                                            color: pollingRateGroup.currentValue === modelData ? accent : textSecondary
+                                            color: configManager.pollingRate === modelData ? accent : textSecondary
                                             font.pixelSize: 10
                                             font.family: bodyFont
                                             wrapMode: Text.WordWrap
@@ -192,7 +190,7 @@ Item {
                                 }
 
                                 Text {
-                                    text: pollingRateGroup.currentValue + " Hz"
+                                    text: configManager.pollingRate + " Hz"
                                     color: textPrimary
                                     font.pixelSize: 34
                                     font.bold: true
@@ -257,7 +255,7 @@ Item {
                                     verticalAlignment: Text.AlignVCenter
                                 }
 
-                                onClicked: hidManager.applySettings(pollingRateGroup.currentValue)
+                                onClicked: hidManager.applySettings(configManager.pollingRate)
                             }
                         }
                     }

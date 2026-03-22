@@ -15,8 +15,6 @@ Item {
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
-    QtObject { id: scrollGroup; property bool normal: true }
-
     Rectangle {
         width: 320
         height: 120
@@ -44,17 +42,17 @@ Item {
 
                 Text {
                     text: "Inverted"
-                    color: !scrollGroup.normal ? onSurface : onSurfaceVariant
+                    color: !configManager.scrollNormal ? onSurface : onSurfaceVariant
                     font.pixelSize: 14
                     font.family: bodyFont
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Switch {
-                    checked: scrollGroup.normal
+                    checked: configManager.scrollNormal
                     anchors.verticalCenter: parent.verticalCenter
                     onToggled: {
-                        scrollGroup.normal = checked
+                        configManager.setScrollNormal(checked)
                         if (typeof hidManager !== "undefined") {
                             hidManager.applyScrollDirection(checked)
                         }
@@ -63,7 +61,7 @@ Item {
 
                 Text {
                     text: "Normal"
-                    color: scrollGroup.normal ? onSurface : onSurfaceVariant
+                    color: configManager.scrollNormal ? onSurface : onSurfaceVariant
                     font.pixelSize: 14
                     font.family: bodyFont
                     anchors.verticalCenter: parent.verticalCenter
