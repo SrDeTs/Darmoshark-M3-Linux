@@ -248,39 +248,92 @@ Window {
         anchors.fill: parent
         z: 100
         visible: (configCreatedFirstRun || configRecoveredFromCorruption) && !appRoot.configWarningDismissed
-        color: Qt.rgba(0, 0, 0, 0.55)
+        color: Qt.rgba(8, 10, 14, 0.62)
 
         Rectangle {
-            width: Math.min(parent.width - 64, 520)
-            height: 220
+            width: Math.min(parent.width - 64, 560)
+            height: 244
             anchors.centerIn: parent
-            radius: 24
-            color: surfaceContainerHigh
-            border.color: Qt.rgba(255, 255, 255, 0.08)
+            radius: 26
+            color: "#151a25"
+            border.color: Qt.rgba(167, 200, 255, 0.18)
             border.width: 1
+
+            Rectangle {
+                anchors.fill: parent
+                radius: parent.radius
+                gradient: Gradient {
+                    GradientStop { position: 0; color: "#171e2b" }
+                    GradientStop { position: 1; color: "#121722" }
+                }
+                opacity: 0.92
+            }
 
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 24
-                spacing: 16
+                spacing: 18
 
-                Text {
-                    text: configRecoveredFromCorruption ? "Configuração recuperada" : "Configuração criada"
-                    color: onSurface
-                    font.pixelSize: 24
-                    font.family: titleFont
-                    font.bold: true
+                RowLayout {
                     Layout.fillWidth: true
+                    spacing: 12
+
+                    Rectangle {
+                        Layout.preferredWidth: 42
+                        Layout.preferredHeight: 42
+                        radius: 14
+                        color: Qt.rgba(167, 200, 255, 0.14)
+                        border.color: Qt.rgba(167, 200, 255, 0.22)
+                        border.width: 1
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: configRecoveredFromCorruption ? "!" : "i"
+                            color: primary
+                            font.pixelSize: 22
+                            font.bold: true
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 3
+
+                        Text {
+                            text: configRecoveredFromCorruption ? "Configuração recuperada" : "Configuração criada"
+                            color: onSurface
+                            font.pixelSize: 24
+                            font.family: titleFont
+                            font.bold: true
+                            Layout.fillWidth: true
+                        }
+
+                        Text {
+                            text: configRecoveredFromCorruption
+                                  ? "O arquivo estava corrompido e foi recriado."
+                                  : "O app criou a configuração inicial."
+                            color: onSurfaceVariant
+                            font.pixelSize: 13
+                            font.family: bodyFont
+                            wrapMode: Text.WordWrap
+                            Layout.fillWidth: true
+                        }
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: Qt.rgba(255, 255, 255, 0.06)
                 }
 
                 Text {
                     text: configRecoveredFromCorruption
-                          ? "O arquivo de configuração estava corrompido. O app recriou um padrão em ~/.config/Darmoshark M3 Linux/config.toml."
-                          : "O app criou a configuração inicial em ~/.config/Darmoshark M3 Linux/config.toml."
+                          ? "Arquivo: ~/.config/Darmoshark M3 Linux/config.toml"
+                          : "Arquivo: ~/.config/Darmoshark M3 Linux/config.toml"
                     color: onSurfaceVariant
-                    font.pixelSize: 14
+                    font.pixelSize: 12
                     font.family: bodyFont
-                    wrapMode: Text.WordWrap
                     Layout.fillWidth: true
                 }
 
@@ -292,13 +345,13 @@ Window {
 
                     Button {
                         text: "Abrir pasta"
-                        Layout.preferredWidth: 150
+                        Layout.preferredWidth: 140
                         Layout.preferredHeight: 40
 
                         background: Rectangle {
-                            radius: 14
+                            radius: 12
                             color: surfaceContainerHigh
-                            border.color: Qt.rgba(255, 255, 255, 0.08)
+                            border.color: Qt.rgba(255, 255, 255, 0.06)
                             border.width: 1
                         }
 
@@ -316,11 +369,11 @@ Window {
 
                     Button {
                         text: "Entendi"
-                        Layout.preferredWidth: 140
+                        Layout.preferredWidth: 128
                         Layout.preferredHeight: 40
 
                         background: Rectangle {
-                            radius: 14
+                            radius: 12
                             color: primary
                         }
 

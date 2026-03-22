@@ -6,14 +6,16 @@ Item {
     id: pageRoot
     clip: true
 
+    property color panel: "#10192c"
+    property color panelSoft: "#151d31"
+    property color panelLine: "#39527f"
+    property color panelLineSoft: "#2a3550"
     property color accent: "#6da8ff"
     property color accentSoft: "#91b8ff"
-    property color border: "#2b3650"
-    property color panelDeep: "#11182a"
     property color textPrimary: "#e8edf6"
     property color textSecondary: "#a1afc6"
-    property string titleFont: "Red Hat Display"
-    property string bodyFont: "Fira Sans"
+    property string titleFont: "Inter"
+    property string bodyFont: "Inter"
 
     function rateDescription(rate) {
         if (rate === 125) return "Máximo alcance"
@@ -21,76 +23,87 @@ Item {
         return "Maior resposta"
     }
 
-    Flickable {
+    Rectangle {
         anchors.fill: parent
-        contentWidth: pageRoot.width
-        contentHeight: contentColumn.height
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
-        flickableDirection: Flickable.VerticalFlick
-        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+        color: "transparent"
 
         Column {
-            id: contentColumn
-            width: pageRoot.width
-            spacing: 16
+            anchors.fill: parent
+            anchors.margins: 8
+            spacing: 14
 
             Rectangle {
                 width: parent.width
-                height: 124
-                radius: 24
-                gradient: Gradient {
-                    GradientStop { position: 0; color: "#151d31" }
-                    GradientStop { position: 1; color: "#11182a" }
-                }
-                border.color: accent
+                height: 92
+                radius: 18
+                color: panel
+                border.color: panelLine
                 border.width: 1
-                clip: true
 
-                Column {
+                RowLayout {
                     anchors.fill: parent
                     anchors.margins: 18
-                    spacing: 6
+                    spacing: 12
 
-                    Text {
-                        text: "REPORT RATE"
-                        color: textSecondary
-                        font.pixelSize: 10
-                        font.bold: true
-                        font.family: titleFont
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+
+                        Text {
+                            text: "REPORT RATE"
+                            color: textSecondary
+                            font.pixelSize: 10
+                            font.bold: true
+                            font.family: titleFont
+                            letterSpacing: 1.1
+                        }
+
+                        Text {
+                            text: "Taxa de resposta"
+                            color: textPrimary
+                            font.pixelSize: 23
+                            font.bold: true
+                            font.family: titleFont
+                        }
                     }
 
-                    Text {
-                        text: "Taxa de resposta"
-                        color: textPrimary
-                        font.pixelSize: 24
-                        font.bold: true
-                        font.family: titleFont
-                    }
+                    Rectangle {
+                        width: 124
+                        height: 34
+                        radius: 17
+                        color: Qt.rgba(109, 168, 255, 0.12)
+                        border.color: Qt.rgba(109, 168, 255, 0.45)
+                        border.width: 1
 
+                        Text {
+                            anchors.centerIn: parent
+                            text: configManager.pollingRate + " Hz"
+                            color: accent
+                            font.pixelSize: 14
+                            font.family: titleFont
+                            font.bold: true
+                        }
+                    }
                 }
             }
 
-            Row {
-                width: parent.width
-                spacing: 16
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing: 12
 
                 Rectangle {
-                    width: Math.round((parent.width - 16) * 0.62)
-                    height: 430
-                    radius: 24
-                    gradient: Gradient {
-                        GradientStop { position: 0; color: "#151d31" }
-                        GradientStop { position: 1; color: "#151d31" }
-                    }
-                    border.color: border
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    radius: 18
+                    color: panel
+                    border.color: panelLine
                     border.width: 1
-                    clip: true
 
-                    Column {
+                    ColumnLayout {
                         anchors.fill: parent
                         anchors.margins: 16
-                        spacing: 14
+                        spacing: 12
 
                         Text {
                             text: "TAXA DE ATUALIZAÇÃO (HZ)"
@@ -98,28 +111,25 @@ Item {
                             font.pixelSize: 10
                             font.bold: true
                             font.family: titleFont
+                            letterSpacing: 0.6
                         }
 
-                        Row {
-                            width: parent.width
-                            spacing: 12
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 10
 
                             Repeater {
                                 model: [125, 500, 1000]
 
                                 delegate: Rectangle {
-                                    width: Math.floor((parent.width - 24) / 3)
-                                    height: 126
-                                    radius: 20
-                                    scale: configManager.pollingRate === modelData ? 1.012 : (hit.containsMouse ? 1.004 : 1.0)
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 98
+                                    radius: 16
+                                    color: configManager.pollingRate === modelData ? Qt.rgba(109, 168, 255, 0.22) : panelSoft
+                                    border.color: configManager.pollingRate === modelData ? accent : panelLineSoft
+                                    border.width: configManager.pollingRate === modelData ? 2 : 1
+                                    scale: hit.containsMouse ? 1.01 : 1.0
                                     Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
-                                    gradient: Gradient {
-                                        GradientStop { position: 0; color: configManager.pollingRate === modelData ? "#26334f" : (hit.containsMouse ? "#1b263d" : "#182235") }
-                                        GradientStop { position: 1; color: configManager.pollingRate === modelData ? "#1d2f4a" : "#11192b" }
-                                    }
-                                    border.color: configManager.pollingRate === modelData ? accent : border
-                                    border.width: configManager.pollingRate === modelData ? 1.5 : 1
-                                    clip: true
 
                                     MouseArea {
                                         id: hit
@@ -130,13 +140,13 @@ Item {
 
                                     Column {
                                         anchors.fill: parent
-                                        anchors.margins: 16
-                                        spacing: 8
+                                        anchors.margins: 14
+                                        spacing: 5
 
                                         Text {
                                             text: modelData
                                             color: configManager.pollingRate === modelData ? accent : textPrimary
-                                            font.pixelSize: 28
+                                            font.pixelSize: 24
                                             font.bold: true
                                             font.family: titleFont
                                         }
@@ -149,19 +159,17 @@ Item {
                                         }
 
                                         Rectangle {
-                                            width: 52
+                                            width: 44
                                             height: 4
                                             radius: 2
-                                            color: modelData === 125 ? "#8da9ff" : (modelData === 500 ? "#7fa7ff" : accent)
+                                            color: configManager.pollingRate === modelData ? accent : panelLineSoft
                                         }
 
                                         Text {
-                                            width: parent.width
                                             text: rateDescription(modelData)
                                             color: configManager.pollingRate === modelData ? accent : textSecondary
                                             font.pixelSize: 10
                                             font.family: bodyFont
-                                            wrapMode: Text.WordWrap
                                         }
                                     }
                                 }
@@ -169,17 +177,17 @@ Item {
                         }
 
                         Rectangle {
-                            width: parent.width
-                            height: 106
-                            radius: 18
-                            color: panelDeep
-                            border.color: border
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 98
+                            radius: 16
+                            color: panelSoft
+                            border.color: panelLineSoft
                             border.width: 1
 
                             Column {
                                 anchors.fill: parent
                                 anchors.margins: 14
-                                spacing: 8
+                                spacing: 6
 
                                 Text {
                                     text: "SELEÇÃO ATUAL"
@@ -192,7 +200,7 @@ Item {
                                 Text {
                                     text: configManager.pollingRate + " Hz"
                                     color: textPrimary
-                                    font.pixelSize: 34
+                                    font.pixelSize: 32
                                     font.bold: true
                                     font.family: titleFont
                                 }
@@ -201,23 +209,20 @@ Item {
                     }
                 }
 
-                Column {
-                    width: Math.round((parent.width - 16) * 0.38)
-                    spacing: 16
+                ColumnLayout {
+                    Layout.preferredWidth: 410
+                    Layout.fillHeight: true
+                    spacing: 12
 
                     Rectangle {
-                        width: parent.width
-                        height: 154
-                        radius: 24
-                        gradient: Gradient {
-                            GradientStop { position: 0; color: "#151d31" }
-                            GradientStop { position: 1; color: "#11182a" }
-                        }
-                        border.color: border
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 152
+                        radius: 18
+                        color: panel
+                        border.color: panelLine
                         border.width: 1
-                        clip: true
 
-                        Column {
+                        ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 16
                             spacing: 10
@@ -232,23 +237,23 @@ Item {
 
                             Button {
                                 text: "ENVIAR TAXA"
-                                width: parent.width
-                                height: 48
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 52
                                 enabled: hidManager.deviceConnected
                                 hoverEnabled: true
-                                scale: parent.enabled && pressed ? 1.01 : (hovered ? 1.005 : 1.0)
+                                scale: pressed ? 0.99 : (hovered ? 1.005 : 1.0)
                                 Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
                                 background: Rectangle {
                                     radius: 14
-                                    color: parent.enabled ? (parent.pressed ? "#6da8ff" : accent) : "#39435c"
-                                    border.color: parent.enabled ? accent : "#5a6480"
+                                    color: parent.enabled ? (parent.pressed ? "#5f95ec" : accent) : panelSoft
+                                    border.color: parent.enabled ? Qt.rgba(145, 184, 255, 0.5) : panelLineSoft
                                     border.width: 1
                                 }
 
                                 contentItem: Text {
                                     text: parent.text
-                                    color: parent.enabled ? "#e8edf6" : "#a1afc6"
+                                    color: parent.enabled ? "#f3f7ff" : textSecondary
                                     font.bold: true
                                     font.family: titleFont
                                     horizontalAlignment: Text.AlignHCenter
@@ -261,16 +266,12 @@ Item {
                     }
 
                     Rectangle {
-                        width: parent.width
-                        height: 124
-                        radius: 24
-                        gradient: Gradient {
-                            GradientStop { position: 0; color: "#151d31" }
-                            GradientStop { position: 1; color: "#11182a" }
-                        }
-                        border.color: accentSoft
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        radius: 18
+                        color: panel
+                        border.color: panelLineSoft
                         border.width: 1
-                        clip: true
 
                         Column {
                             anchors.fill: parent
@@ -285,6 +286,13 @@ Item {
                                 font.family: titleFont
                             }
 
+                            Text {
+                                text: "A taxa é aplicada direto no mouse e preservada no arquivo do usuário."
+                                color: textPrimary
+                                font.pixelSize: 13
+                                font.family: bodyFont
+                                wrapMode: Text.WordWrap
+                            }
                         }
                     }
                 }
