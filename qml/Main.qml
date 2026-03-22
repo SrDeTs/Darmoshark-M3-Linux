@@ -1,9 +1,8 @@
 import QtQuick 2.15
-import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-Window {
+ApplicationWindow {
     id: appRoot
     width: 1360
     height: 820
@@ -68,7 +67,6 @@ Window {
     }
 
 
-    // Rich, Modern Background from Image
     Image {
         anchors.fill: parent
         source: "qrc:/images/BG-M3-Black.png"
@@ -78,88 +76,13 @@ Window {
         z: -1
     }
 
-    // Top Status Bar (Minimal)
-    RowLayout {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 32
-        height: 48
-        spacing: 16
-        z: 10 // Above SwipeView
-
-        Text {
-            text: "Darmoshark M3 - " + navPages[stackLayout.currentIndex].title
-            color: onSurface
-            font.pixelSize: 28
-            font.family: titleFont
-            Layout.alignment: Qt.AlignVCenter
-        }
-
-        Item { Layout.fillWidth: true } // Spacer
-
-        // Device Connection / Profile Node
-        RowLayout {
-            spacing: 12
-            
-            Rectangle {
-                Layout.preferredHeight: 36
-                Layout.preferredWidth: 160
-                radius: 12
-                color: surfaceContainerHigh
-                
-                RowLayout {
-                    anchors.centerIn: parent
-                    spacing: 8
-                    
-                    Text {
-                        text: "⚙"
-                        color: onSurfaceVariant
-                        font.pixelSize: 14
-                    }
-                    Text {
-                        text: "Profile 1" // Placeholder since app lacks profile switching
-                        color: onSurfaceVariant
-                        font.pixelSize: 14
-                        font.family: bodyFont
-                    }
-                }
-            }
-
-            Rectangle {
-                Layout.preferredHeight: 36
-                Layout.preferredWidth: 140
-                radius: 12
-                color: hidManager.deviceConnected ? Qt.rgba(167/255, 200/255, 255/255, 0.15) : surfaceContainerHigh
-                border.color: hidManager.deviceConnected ? Qt.rgba(167/255, 200/255, 255/255, 0.3) : "transparent"
-                border.width: 1
-                
-                RowLayout {
-                    anchors.centerIn: parent
-                    spacing: 8
-                    
-                    Text {
-                        text: "🔋"
-                        color: hidManager.deviceConnected ? primary : onSurfaceVariant
-                        font.pixelSize: 14
-                    }
-                    Text {
-                        text: hidManager.deviceConnected ? ("Battery: " + hidManager.batteryLevel + "%") : "Sem conexão"
-                        color: hidManager.deviceConnected ? primary : onSurfaceVariant
-                        font.pixelSize: 14
-                        font.family: bodyFont
-                    }
-                }
-            }
-        }
-    }
-
     SwipeView {
         id: stackLayout
         anchors.fill: parent
-        // Use margins to avoid content behind the floating bar
-        anchors.topMargin: 100
-        anchors.bottomMargin: 140 
+        anchors.topMargin: 8
+        anchors.bottomMargin: 136
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
         clip: true
         interactive: false
         currentIndex: 0
@@ -179,7 +102,6 @@ Window {
         }
     }
 
-    // Floating Pill Bar
     Rectangle {
         id: floatingBar
         anchors.bottom: parent.bottom
@@ -187,10 +109,20 @@ Window {
         anchors.horizontalCenter: parent.horizontalCenter
         width: navLayout.implicitWidth + 32
         height: 84
-        color: surfaceContainer // Darkish pill background
-        radius: 24 // rounded rectangle style
-        border.color: Qt.rgba(255/255, 255/255, 255/255, 0.05) // Ghost Border
+        color: Qt.rgba(16 / 255, 17 / 255, 21 / 255, 0.42)
+        radius: 24
+        border.color: Qt.rgba(255/255, 255/255, 255/255, 0.10)
         border.width: 1
+
+        Rectangle {
+            anchors.fill: parent
+            anchors.margins: 1
+            radius: 23
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.025) }
+                GradientStop { position: 1.0; color: Qt.rgba(167 / 255, 200 / 255, 255 / 255, 0.025) }
+            }
+        }
 
         RowLayout {
             id: navLayout

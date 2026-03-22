@@ -6,65 +6,157 @@ Item {
     id: pageRoot
     clip: true
 
-    property color surfaceContainerLow: "#191a1a"
-    property color surfaceContainer: "#2b2c2c"
-    property color surfaceContainerHigh: "#1f2020"
-    property color primary: "#a7c8ff"
-    property color onSurface: "#e7e5e5"
-    property color onSurfaceVariant: "#a1afc6"
+    property color lineColor: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.12)
+    property color glassTint: Qt.rgba(13 / 255, 15 / 255, 20 / 255, 0.46)
+    property color textPrimary: "#f4f7ff"
+    property color textSecondary: "#b2bdd1"
+    property color textMuted: "#7e8aa1"
+    property color accent: "#9dc0ff"
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
     Rectangle {
-        width: 320
-        height: 120
-        anchors.centerIn: parent
-        color: surfaceContainerLow
-        radius: 24
-        border.color: surfaceContainerHigh
-        border.width: 2
+        id: controlCard
+        width: 560
+        height: 212
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        anchors.top: parent.top
+        anchors.topMargin: 90
+        radius: 30
+        color: glassTint
+        border.color: lineColor
+        border.width: 1
 
         Column {
-            anchors.centerIn: parent
-            spacing: 24
+            anchors.fill: parent
+            anchors.margins: 22
+            spacing: 16
 
             Text {
                 text: "Scroll Direction"
-                color: onSurface
-                font.pixelSize: 18
+                color: textPrimary
+                font.pixelSize: 28
                 font.family: titleFont
-                anchors.horizontalCenter: parent.horizontalCenter
+                font.weight: Font.DemiBold
             }
 
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 16
+            Text {
+                width: parent.width - 12
+                text: "Escolha o comportamento da roda com um seletor direto e mais limpo."
+                color: textSecondary
+                font.pixelSize: 15
+                wrapMode: Text.WordWrap
+                font.family: bodyFont
+            }
 
-                Text {
-                    text: "Inverted"
-                    color: !configManager.scrollNormal ? onSurface : onSurfaceVariant
-                    font.pixelSize: 14
-                    font.family: bodyFont
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+            Rectangle {
+                width: parent.width
+                height: 78
+                radius: 24
+                color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.04)
+                border.color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.06)
+                border.width: 1
 
-                Switch {
-                    checked: configManager.scrollNormal
-                    anchors.verticalCenter: parent.verticalCenter
-                    onToggled: {
-                        configManager.setScrollNormal(checked)
-                        if (typeof hidManager !== "undefined") {
-                            hidManager.applyScrollDirection(checked)
+                Row {
+                    anchors.fill: parent
+                    anchors.margins: 8
+                    spacing: 8
+
+                    Repeater {
+                        model: [
+                            { label: "Invertido", caption: "Rolagem alternativa", nextState: false, active: !configManager.scrollNormal },
+                            { label: "Normal", caption: "Padrão do mouse", nextState: true, active: configManager.scrollNormal }
+                        ]
+
+                        delegate: Rectangle {
+                            width: 268
+                            height: parent.height
+                            radius: 20
+                            color: modelData.active ? Qt.rgba(157 / 255, 192 / 255, 255 / 255, 0.18) : "transparent"
+                            border.color: modelData.active ? Qt.rgba(157 / 255, 192 / 255, 255 / 255, 0.22) : "transparent"
+                            border.width: 1
+
+                            Column {
+                                anchors.centerIn: parent
+                                spacing: 5
+
+                                Text {
+                                    text: modelData.label
+                                    color: modelData.active ? textPrimary : textSecondary
+                                    font.pixelSize: 22
+                                    font.family: titleFont
+                                    font.weight: Font.DemiBold
+                                }
+
+                                Text {
+                                    text: modelData.caption
+                                    color: modelData.active ? accent : textMuted
+                                    font.pixelSize: 13
+                                    font.family: bodyFont
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    configManager.setScrollNormal(modelData.nextState)
+                                    if (typeof hidManager !== "undefined")
+                                        hidManager.applyScrollDirection(modelData.nextState)
+                                }
+                            }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    Rectangle {
+        width: 240
+        height: 212
+        anchors.left: controlCard.right
+        anchors.leftMargin: 18
+        anchors.top: controlCard.top
+        radius: 30
+        color: Qt.rgba(13 / 255, 15 / 255, 20 / 255, 0.46)
+        border.color: lineColor
+        border.width: 1
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 22
+            spacing: 12
+
+            Text {
+                text: "Estado atual"
+                color: textMuted
+                font.pixelSize: 13
+                font.family: bodyFont
+            }
+
+            Text {
+                text: configManager.scrollNormal ? "Normal" : "Invertido"
+                color: textPrimary
+                font.pixelSize: 38
+                font.family: titleFont
+                font.weight: Font.DemiBold
+            }
+
+            Rectangle {
+                width: 136
+                height: 34
+                radius: 17
+                color: Qt.rgba(157 / 255, 192 / 255, 255 / 255, 0.16)
 
                 Text {
-                    text: "Normal"
-                    color: configManager.scrollNormal ? onSurface : onSurfaceVariant
-                    font.pixelSize: 14
+                    anchors.centerIn: parent
+                    text: configManager.scrollNormal ? "Uso padrão" : "Modo alternativo"
+                    color: accent
+                    font.pixelSize: 12
                     font.family: bodyFont
-                    anchors.verticalCenter: parent.verticalCenter
+                    font.weight: Font.Medium
                 }
             }
         }

@@ -12,6 +12,7 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Quick QuickControls2)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(HIDAPI REQUIRED hidapi-libusb)
+pkg_check_modules(LIBUSB REQUIRED libusb-1.0)
 
 include_directories(include)
 
@@ -28,6 +29,7 @@ target_link_libraries(DarmosharkM3
     Qt6::Quick 
     Qt6::QuickControls2
     ${HIDAPI_LIBRARIES}
+    ${LIBUSB_LIBRARIES}
 )
 
-target_include_directories(DarmosharkM3 PRIVATE ${HIDAPI_INCLUDE_DIRS})
+target_include_directories(DarmosharkM3 PRIVATE ${HIDAPI_INCLUDE_DIRS} ${LIBUSB_INCLUDE_DIRS})

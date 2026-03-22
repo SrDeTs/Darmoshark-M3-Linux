@@ -4,6 +4,7 @@
 #include <QRegularExpression>
 #include <QThread>
 #include <QTimer>
+#include <libusb-1.0/libusb.h>
 
 HidManager::HidManager(QObject *parent) : QObject(parent)
 {
@@ -85,6 +86,7 @@ bool HidManager::connectDevice(unsigned short vid, unsigned short pid)
         qDebug() << "Attempting to open path:" << path;
         m_device = hid_open_path(path.toLatin1().constData());
         if (m_device) {
+            m_devicePath = path;
             qDebug() << "Successfully opened device at path:" << path;
             break;
         }
@@ -111,6 +113,7 @@ void HidManager::disconnectDevice()
     if (m_device) {
         hid_close(m_device);
         m_device = nullptr;
+        m_devicePath.clear();
         m_currentPid = 0;
         clearVersionInfo();
         emit deviceConnectedChanged();
@@ -189,7 +192,6 @@ void HidManager::refreshVersionInfo()
 
     QString firmwareVersion = QStringLiteral("N/D");
     QString rfVersion = QStringLiteral("N/D");
-
     for (int attempt = 0; attempt < 6; ++attempt) {
         unsigned char buffer[21] = {0};
         buffer[0] = 0x51;
@@ -197,8 +199,7 @@ void HidManager::refreshVersionInfo()
         const int res = hid_get_feature_report(m_device, buffer, sizeof(buffer));
         if (res <= 0) {
             qWarning() << "hid_get_feature_report(0x51) failed:" << res;
-            QThread::msleep(20);
-            continue;
+            break;
         }
 
         const QString version = parseVersionResponse(buffer, res);
@@ -220,7 +221,45 @@ void HidManager::refreshVersionInfo()
         QThread::msleep(20);
     }
 
+    if ((firmwareVersion == QStringLiteral("N/D") || rfVersion == QStringLiteral("N/D"))
+        && !m_devicePath.isEmpty()) {
+        const bool wasPolling = m_pollTimer && m_pollTimer->isActive();
+        if (wasPolling)
+            m_pollTimer->stop();
+
+        hid_close(m_device);
+        m_device = nullptr;
+
+        const bool libusbReadOk = readVersionInfoViaLibusb(firmwareVersion, rfVersion);
+        const bool reopenOk = reopenHidDevice();
+        if (!reopenOk) {
+            qWarning() << "Failed to reopen HID device after libusb version read";
+        } else if (libusbReadOk) {
+            qDebug() << "Version info read via libusb:" << firmwareVersion << rfVersion;
+        }
+
+        if (wasPolling && m_pollTimer)
+            m_pollTimer->start();
+    }
+
+    if (firmwareVersion == QStringLiteral("N/D") && rfVersion == QStringLiteral("N/D")) {
+        qWarning() << "Unable to read version info from connected device";
+    }
+
     setVersionInfo(firmwareVersion, rfVersion);
+}
+
+bool HidManager::reopenHidDevice()
+{
+    if (m_device || m_devicePath.isEmpty())
+        return m_device != nullptr;
+
+    m_device = hid_open_path(m_devicePath.toLatin1().constData());
+    if (!m_device)
+        return false;
+
+    hid_set_nonblocking(m_device, 1);
+    return true;
 }
 
 void HidManager::applyDpi(const QVariantList &stages, int current_stage)
@@ -307,11 +346,22 @@ void HidManager::applyScrollDirection(bool forward)
 
     const bool wiredMode = (m_currentPid == 0xff12);
     auto packet = DarmosharkProtocol::createScrollDirectionPacket(forward, wiredMode);
+    auto followupPacket = DarmosharkProtocol::createScrollDirectionFollowupPacket(forward, wiredMode);
+    auto refreshPacket = DarmosharkProtocol::createScrollDirectionRefreshPacket(wiredMode);
     QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
+    QByteArray followupData(reinterpret_cast<const char*>(followupPacket.data()), followupPacket.size());
+    QByteArray refreshData(reinterpret_cast<const char*>(refreshPacket.data()), refreshPacket.size());
 
     qDebug() << "Applying Scroll Direction:" << (forward ? "Forward" : "Reverse")
              << "wiredMode:" << wiredMode;
-    sendConfigPacket(data);
+    sendFeatureReport(data);
+    writeReport(data);
+    if (!wiredMode) {
+        qDebug() << "Sending Scroll Direction follow-up packet";
+        writeReport(followupData);
+    }
+    qDebug() << "Refreshing Scroll Direction state";
+    writeReport(refreshData);
 }
 
 void HidManager::applyESportsMode(bool open)
@@ -401,8 +451,8 @@ QString HidManager::parseVersionResponse(const unsigned char *buffer, int length
     if (!buffer || length <= 0)
         return QString();
 
-    QByteArray ascii;
-    bool started = false;
+    QByteArray normalized;
+    normalized.reserve(length);
 
     for (int i = 0; i < length; ++i) {
         const unsigned char ch = buffer[i];
@@ -412,20 +462,185 @@ QString HidManager::parseVersionResponse(const unsigned char *buffer, int length
             || ch == '.'
             || ch == '-';
 
-        if (allowed) {
-            started = true;
-            ascii.append(static_cast<char>(ch));
+        normalized.append(allowed ? static_cast<char>(ch) : ' ');
+    }
+
+    static const QRegularExpression versionPattern(QStringLiteral("([A-Za-z]?\\.?\\d+(?:\\.\\d+)+(?:[A-Za-z-]\\d*|[A-Za-z])?)"));
+    const QString text = QString::fromLatin1(normalized);
+    QRegularExpressionMatchIterator it = versionPattern.globalMatch(text);
+    QString bestMatch;
+
+    while (it.hasNext()) {
+        const QRegularExpressionMatch match = it.next();
+        const QString candidate = match.captured(1).trimmed();
+        if (candidate.length() < 5)
+            continue;
+
+        if (bestMatch.isEmpty() || candidate.length() > bestMatch.length())
+            bestMatch = candidate;
+    }
+
+    return bestMatch;
+}
+
+bool HidManager::readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfVersion) const
+{
+    libusb_context *context = nullptr;
+    if (libusb_init(&context) != 0)
+        return false;
+
+    libusb_device_handle *handle = libusb_open_device_with_vid_pid(context, 0x248a, m_currentPid);
+    if (!handle) {
+        libusb_exit(context);
+        return false;
+    }
+
+    const uint16_t reportValue = static_cast<uint16_t>((3u << 8) | 0x51u);
+    const uint16_t firmwareReportValue = static_cast<uint16_t>((3u << 8) | 0x82u);
+    const uint16_t interfaceNumber = static_cast<uint16_t>(m_currentPid == 0xff12 ? 2 : 1);
+    const unsigned char requestType = 0xA1;
+    const unsigned char setRequestType = 0x21;
+    const unsigned char interruptInEndpoint = 0x82;
+    const int interfaceIndex = static_cast<int>(interfaceNumber);
+    bool detachedKernelDriver = false;
+    bool success = false;
+
+    const int kernelActive = libusb_kernel_driver_active(handle, interfaceIndex);
+    if (kernelActive == 1) {
+        const int detachRes = libusb_detach_kernel_driver(handle, interfaceIndex);
+        if (detachRes == 0) {
+            detachedKernelDriver = true;
+        } else {
+            qWarning() << "libusb_detach_kernel_driver failed:" << detachRes;
+        }
+    }
+
+    const int claimRes = libusb_claim_interface(handle, interfaceIndex);
+    if (claimRes != 0) {
+        qWarning() << "libusb_claim_interface failed:" << claimRes;
+        if (detachedKernelDriver)
+            libusb_attach_kernel_driver(handle, interfaceIndex);
+        libusb_close(handle);
+        libusb_exit(context);
+        return false;
+    }
+
+    if (firmwareVersion == QStringLiteral("N/D")) {
+        const QList<QByteArray> firmwareReports = {
+            QByteArray::fromHex("8201080000000300ffff00000000"),
+            QByteArray::fromHex("8201080000000300000001000000"),
+            QByteArray::fromHex("8201080000000300010000000000")
+        };
+
+        for (const QByteArray &report : firmwareReports) {
+            const int transferred = libusb_control_transfer(
+                handle,
+                setRequestType,
+                0x09,
+                firmwareReportValue,
+                interfaceNumber,
+                reinterpret_cast<unsigned char *>(const_cast<char *>(report.constData())),
+                report.size(),
+                1000
+            );
+
+            if (transferred < 0) {
+                qWarning() << "libusb SET_REPORT(0x82) failed:" << transferred;
+                continue;
+            }
+
+            QThread::msleep(20);
+        }
+
+        for (int attempt = 0; attempt < 8; ++attempt) {
+            unsigned char interruptBuffer[64] = {0};
+            int actualLength = 0;
+            const int interruptRes = libusb_interrupt_transfer(
+                handle,
+                interruptInEndpoint,
+                interruptBuffer,
+                sizeof(interruptBuffer),
+                &actualLength,
+                100
+            );
+
+            if (interruptRes != 0 || actualLength <= 0)
+                continue;
+
+            if (interruptBuffer[0] != 0x84)
+                continue;
+
+            const QString version = parseVersionResponse(interruptBuffer, actualLength);
+            if (version.isEmpty())
+                continue;
+
+            firmwareVersion = version;
+            success = true;
+            qDebug() << "Firmware version response from libusb interrupt sequence:" << firmwareVersion;
+            break;
+        }
+    }
+
+    unsigned char setBuffer[21] = {0};
+    setBuffer[0] = 0x51;
+    setBuffer[1] = 0x04;
+    setBuffer[2] = 0xaa;
+    const int setTransferred = libusb_control_transfer(
+        handle,
+        setRequestType,
+        0x09,
+        reportValue,
+        interfaceNumber,
+        setBuffer,
+        sizeof(setBuffer),
+        1000
+    );
+    if (setTransferred < 0)
+        qWarning() << "libusb SET_REPORT(0x51) failed:" << setTransferred;
+
+    for (int attempt = 0; attempt < 6; ++attempt) {
+        unsigned char buffer[21] = {0};
+        const int transferred = libusb_control_transfer(
+            handle,
+            requestType,
+            0x01,
+            reportValue,
+            interfaceNumber,
+            buffer,
+            sizeof(buffer),
+            1000
+        );
+
+        if (transferred <= 0) {
+            qWarning() << "libusb GET_REPORT(0x51) failed:" << transferred;
+            QThread::msleep(20);
             continue;
         }
 
-        if (started)
+        const QString version = parseVersionResponse(buffer, transferred);
+        if (version.isEmpty()) {
+            QThread::msleep(20);
+            continue;
+        }
+
+        if (version.startsWith(QLatin1Char('e'), Qt::CaseInsensitive)) {
+            rfVersion = version;
+        } else {
+            firmwareVersion = version;
+        }
+
+        success = true;
+        if (firmwareVersion != QStringLiteral("N/D") && rfVersion != QStringLiteral("N/D"))
             break;
+
+        QThread::msleep(20);
     }
 
-    const QString candidate = QString::fromLatin1(ascii).trimmed();
-    static const QRegularExpression versionPattern(QStringLiteral("^[A-Za-z]?\\.?\\d+(?:\\.\\d+)*(?:[A-Za-z-]\\d*|[A-Za-z])?$"));
-    if (!versionPattern.match(candidate).hasMatch())
-        return QString();
+    libusb_release_interface(handle, interfaceIndex);
+    if (detachedKernelDriver)
+        libusb_attach_kernel_driver(handle, interfaceIndex);
 
-    return candidate;
+    libusb_close(handle);
+    libusb_exit(context);
+    return success;
 }

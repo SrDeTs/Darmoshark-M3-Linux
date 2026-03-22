@@ -55,9 +55,12 @@ private:
     void clearVersionInfo();
     void setVersionInfo(const QString &firmwareVersion, const QString &rfVersion);
     QString parseVersionResponse(const unsigned char *buffer, int length) const;
+    bool readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfVersion) const;
+    bool reopenHidDevice();
 
     hid_device *m_device = nullptr;
     QTimer *m_pollTimer = nullptr;
+    QString m_devicePath;
     unsigned short m_currentPid = 0;
     int m_batteryLevel = 100;
     bool m_isCharging = false;
