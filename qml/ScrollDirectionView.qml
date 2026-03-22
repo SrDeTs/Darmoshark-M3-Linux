@@ -6,8 +6,9 @@ Item {
     id: pageRoot
     clip: true
 
-    property color lineColor: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.12)
-    property color glassTint: Qt.rgba(13 / 255, 15 / 255, 20 / 255, 0.46)
+    property color lineColor: "#1f2020"
+    property color glassTint: "#191a1a"
+    property color sectionTint: "#2b2c2c"
     property color textPrimary: "#f4f7ff"
     property color textSecondary: "#b2bdd1"
     property color textMuted: "#7e8aa1"
@@ -26,7 +27,7 @@ Item {
         radius: 30
         color: glassTint
         border.color: lineColor
-        border.width: 1
+        border.width: 2
 
         Column {
             anchors.fill: parent
@@ -54,8 +55,8 @@ Item {
                 width: parent.width
                 height: 78
                 radius: 24
-                color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.04)
-                border.color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.06)
+                color: sectionTint
+                border.color: lineColor
                 border.width: 1
 
                 Row {
@@ -120,9 +121,9 @@ Item {
         anchors.leftMargin: 18
         anchors.top: controlCard.top
         radius: 30
-        color: Qt.rgba(13 / 255, 15 / 255, 20 / 255, 0.46)
+        color: glassTint
         border.color: lineColor
-        border.width: 1
+        border.width: 2
 
         Column {
             anchors.fill: parent

@@ -6,7 +6,7 @@ Item {
     id: dpiRoot
     anchors.fill: parent
 
-    property color surfaceContainerLow: "#131313"
+    property color surfaceContainerLow: "#191a1a"
     property color surfaceContainer: "#191a1a"
     property color surfaceContainerHigh: "#1f2020"
     property color surfaceBright: "#2b2c2c"

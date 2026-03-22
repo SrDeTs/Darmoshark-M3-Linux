@@ -6,9 +6,9 @@ Item {
     id: pageRoot
     clip: true
 
-    property color panel: "#2a2c33"
-    property color panelSoft: "#1f2026"
-    property color panelLine: "#7892cb"
+    property color panel: "#191a1a"
+    property color panelSoft: "#2b2c2c"
+    property color panelLine: "#1f2020"
     property color accent: "#6f9fe8"
     property color accentSoft: "#8db7ff"
     property color textPrimary: "#e8edf6"
@@ -41,18 +41,9 @@ Item {
             anchors.leftMargin: 24
             anchors.topMargin: 96
             radius: 24
-            color: Qt.rgba(42 / 255, 44 / 255, 51 / 255, 0.9)
-            border.color: Qt.rgba(120 / 255, 146 / 255, 203 / 255, 0.95)
-            border.width: 1
-
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: 4
-                radius: 20
-                color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.02)
-                border.color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.04)
-                border.width: 1
-            }
+            color: panel
+            border.color: panelLine
+            border.width: 2
 
             Column {
                 anchors.fill: parent
