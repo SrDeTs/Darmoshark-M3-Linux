@@ -260,10 +260,12 @@ ApplicationWindow {
                         }
 
                         contentItem: ColumnLayout {
+                            id: navContent
                             anchors.centerIn: parent
                             width: 22
                             height: 22
                             spacing: 0
+                            scale: 1.0
 
                             Image {
                                 Layout.alignment: Qt.AlignHCenter
@@ -279,7 +281,32 @@ ApplicationWindow {
                             }
                         }
 
-                        onClicked: appRoot.navigateTo(index)
+                        SequentialAnimation {
+                            id: clickPulse
+
+                            NumberAnimation {
+                                target: navContent
+                                property: "scale"
+                                from: 1.0
+                                to: 0.82
+                                duration: 80
+                                easing.type: Easing.OutCubic
+                            }
+
+                            NumberAnimation {
+                                target: navContent
+                                property: "scale"
+                                from: 0.82
+                                to: 1.0
+                                duration: 170
+                                easing.type: Easing.OutBack
+                            }
+                        }
+
+                        onClicked: {
+                            clickPulse.restart()
+                            appRoot.navigateTo(index)
+                        }
                     }
                 }
             }
