@@ -1,8 +1,8 @@
 # Maintainer: Michael <michael@example.com>
-pkgname=darmoshark-m3-configurator
+pkgname=darmoshark-m3
 pkgver=0.1
 pkgrel=1
-pkgdesc="Linux configurator for Darmoshark M3/N3/M3S mice"
+pkgdesc="Linux software for Darmoshark M3/N3/M3S mice"
 arch=('x86_64')
 url="http://www.darmoshark.cn/"
 license=('GPL')

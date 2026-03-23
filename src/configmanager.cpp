@@ -93,7 +93,7 @@ static QString desktopEntryTemplate()
     return QStringLiteral(
         "[Desktop Entry]\n"
         "Type=Application\n"
-        "Name=Darmoshark M3 Configurator\n"
+        "Name=Darmoshark M3\n"
         "Comment=Configure Darmoshark M3 series mice on Linux\n"
         "Exec=DarmosharkM3\n"
         "Icon=com.darmoshark.m3\n"

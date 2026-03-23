@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Darmoshark M3 Configurator
+Name=Darmoshark M3
 Comment=Configure Darmoshark M3 series mice on Linux
 Exec=DarmosharkM3
 Icon=com.darmoshark.m3

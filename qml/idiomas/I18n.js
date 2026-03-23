@@ -78,7 +78,7 @@ var dictionaries = {
         "main.config_created_desc": "O app criou a configuração inicial."
     },
     "en-US": {
-        "app.title": "Darmoshark M3 Configurator",
+        "app.title": "Darmoshark M3",
         "nav.home": "Home",
         "nav.home_subtitle": "Overview",
         "nav.dpi": "DPI",
@@ -117,7 +117,7 @@ var dictionaries = {
         "settings.reset_desc": "This will restore DPI, polling rate and other options to their default values.",
         "settings.cancel": "Cancel",
         "settings.confirm": "Confirm",
-        "about.subtitle": "M3 Configurator",
+        "about.subtitle": "M3",
         "about.firmware": "Firmware",
         "about.rf_version": "RF Version",
         "about.app_version": "App Version",

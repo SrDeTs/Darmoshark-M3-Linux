@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     app.setOrganizationName("Darmoshark");
-    app.setApplicationName("Darmoshark M3 Configurator");
+    app.setApplicationName("Darmoshark M3");
 
     QString lockDirectory = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation);
     if (lockDirectory.isEmpty())
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     QLockFile singleInstanceLock(lockDirectory + "/DarmosharkM3.lock");
     singleInstanceLock.setStaleLockTime(0);
     if (!singleInstanceLock.tryLock(100)) {
-        qInfo() << "Darmoshark M3 Configurator is already running";
+        qInfo() << "Darmoshark M3 is already running";
         return 0;
     }
 
