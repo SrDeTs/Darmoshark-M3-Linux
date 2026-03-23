@@ -354,14 +354,20 @@ void HidManager::applyScrollDirection(bool forward)
 
     const bool wiredMode = (m_currentPid == 0xff12);
     auto packet = DarmosharkProtocol::createScrollDirectionPacket(forward, wiredMode);
-    auto followupPacket = DarmosharkProtocol::createScrollDirectionFollowupPacket(forward, wiredMode);
-    auto refreshPacket = DarmosharkProtocol::createScrollDirectionRefreshPacket(wiredMode);
     QByteArray data(reinterpret_cast<const char*>(packet.data()), packet.size());
-    QByteArray followupData(reinterpret_cast<const char*>(followupPacket.data()), followupPacket.size());
-    QByteArray refreshData(reinterpret_cast<const char*>(refreshPacket.data()), refreshPacket.size());
 
     qDebug() << "Applying Scroll Direction:" << (forward ? "Forward" : "Reverse")
              << "wiredMode:" << wiredMode;
+    if (wiredMode) {
+        sendFeatureReport(data);
+        return;
+    }
+
+    auto followupPacket = DarmosharkProtocol::createScrollDirectionFollowupPacket(forward, wiredMode);
+    auto refreshPacket = DarmosharkProtocol::createScrollDirectionRefreshPacket(wiredMode);
+    QByteArray followupData(reinterpret_cast<const char*>(followupPacket.data()), followupPacket.size());
+    QByteArray refreshData(reinterpret_cast<const char*>(refreshPacket.data()), refreshPacket.size());
+
     sendFeatureReport(data);
     writeReport(data);
     if (!wiredMode) {

@@ -17,6 +17,16 @@ Item {
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
+    function selectScrollDirection(normal) {
+        console.log("ScrollDirectionView.selectScrollDirection", normal)
+        if (configManager.scrollNormal === normal)
+            return
+
+        configManager.setScrollNormal(normal)
+        if (typeof hidManager !== "undefined")
+            hidManager.applyScrollDirection(normal)
+    }
+
     Rectangle {
         id: controlCard
         width: 450
@@ -90,11 +100,7 @@ Item {
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    configManager.setScrollNormal(modelData.nextState)
-                                    if (typeof hidManager !== "undefined")
-                                        hidManager.applyScrollDirection(modelData.nextState)
-                                }
+                                onClicked: pageRoot.selectScrollDirection(modelData.nextState)
                             }
                         }
                     }

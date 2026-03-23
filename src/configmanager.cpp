@@ -397,6 +397,7 @@ void ConfigManager::setScrollNormal(bool normal)
     ensureUiTable();
     auto *uiTable = m_config["ui"].as_table();
     if (!uiTable) return;
+    qDebug() << "ConfigManager::setScrollNormal" << normal;
     uiTable->insert_or_assign(std::string("scroll_normal"), normal);
     emit configChanged();
     saveConfig();

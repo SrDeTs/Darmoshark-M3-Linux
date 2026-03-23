@@ -171,6 +171,20 @@ std::vector<uint8_t> createLiftOffDistancePacket(bool low) {
 // Scroll Direction packet captured from the Windows driver.
 // Forward = normal scrolling, Reverse = inverted scrolling.
 std::vector<uint8_t> createScrollDirectionPacket(bool forward, bool wiredMode) {
+    if (wiredMode) {
+        std::vector<uint8_t> packet(21, 0x00);
+        packet[0] = 0x51;
+        packet[1] = 0x42;
+        packet[2] = 0x02;
+        packet[3] = 0x02;
+        packet[4] = 0x02;
+        packet[5] = 0x02;
+        packet[6] = 0x00;
+        packet[7] = forward ? 0x01 : 0x02;
+        packet[8] = 0x01;
+        return packet;
+    }
+
     std::vector<uint8_t> packet(21, 0x00);
     packet[0] = 0x09;
     packet[1] = 0x00;
@@ -205,6 +219,9 @@ std::vector<uint8_t> createScrollDirectionPacket(bool forward, bool wiredMode) {
 }
 
 std::vector<uint8_t> createScrollDirectionFollowupPacket(bool forward, bool wiredMode) {
+    if (wiredMode)
+        return {};
+
     std::vector<uint8_t> packet(21, 0x00);
     packet[0] = 0x09;
     packet[1] = 0x00;
@@ -239,6 +256,9 @@ std::vector<uint8_t> createScrollDirectionFollowupPacket(bool forward, bool wire
 }
 
 std::vector<uint8_t> createScrollDirectionRefreshPacket(bool wiredMode) {
+    if (wiredMode)
+        return {};
+
     std::vector<uint8_t> packet(21, 0x00);
     packet[0] = 0x09;
     packet[1] = 0x00;
