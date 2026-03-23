@@ -12,12 +12,12 @@ source=()
 sha256sums=()
 
 build() {
-    cmake -B build -S . \
+    cmake -B "$srcdir/build" -S "$startdir" \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX=/usr
-    cmake --build build
+    cmake --build "$srcdir/build"
 }
 
 package() {
-    DESTDIR="$pkgdir" cmake --install build
+    DESTDIR="$pkgdir" cmake --install "$srcdir/build"
 }
