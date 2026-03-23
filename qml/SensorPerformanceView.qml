@@ -140,7 +140,7 @@ Item {
 
     Column {
         anchors.right: parent.right
-        anchors.rightMargin: 380
+        anchors.rightMargin: 430
         anchors.top: parent.top
         anchors.topMargin: 260
         spacing: 14
