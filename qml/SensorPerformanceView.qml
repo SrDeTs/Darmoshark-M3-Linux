@@ -84,102 +84,102 @@ Item {
 
     Column {
         anchors.left: parent.left
-        anchors.leftMargin: 44
+        anchors.leftMargin: 48
         anchors.top: parent.top
-        anchors.topMargin: 96
+        anchors.topMargin: 160
         spacing: 14
 
-        Row {
-            spacing: 14
+        Repeater {
+            model: sensorOptions
 
-            Repeater {
-                model: sensorOptions
+            delegate: Rectangle {
+                width: 230
+                height: 122
+                radius: 24
+                color: cardColor
+                border.color: cardBorder
+                border.width: 2
 
-                delegate: Rectangle {
-                    width: 214
-                    height: 122
-                    radius: 24
-                    color: cardColor
-                    border.color: cardBorder
-                    border.width: 2
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 16
+                    spacing: 12
 
-                    Column {
-                        anchors.fill: parent
-                        anchors.margins: 16
+                    Text {
+                        text: pageRoot.optionTitle(index)
+                        color: textPrimary
+                        font.pixelSize: 20
+                        font.family: titleFont
+                        font.weight: Font.Medium
+                    }
+
+                    RowLayout {
+                        width: parent.width
                         spacing: 12
 
-                        Text {
-                            text: pageRoot.optionTitle(index)
-                            color: textPrimary
-                            font.pixelSize: 20
-                            font.family: titleFont
-                            font.weight: Font.Medium
+                        SettingsSwitch {
+                            checked: pageRoot.optionEnabled(index)
+                            Layout.alignment: Qt.AlignVCenter
+                            onToggled: pageRoot.setOptionEnabled(index, checked)
                         }
 
-                        RowLayout {
-                            width: parent.width
-                            spacing: 12
+                        Item { Layout.fillWidth: true }
 
-                            SettingsSwitch {
-                                checked: pageRoot.optionEnabled(index)
-                                Layout.alignment: Qt.AlignVCenter
-                                onToggled: pageRoot.setOptionEnabled(index, checked)
-                            }
-
-                            Item { Layout.fillWidth: true }
-
-                            Text {
-                                text: pageRoot.optionEnabled(index) ? I18n.tr(configManager.language, "esports.on") : I18n.tr(configManager.language, "esports.off")
-                                color: pageRoot.optionEnabled(index) ? textPrimary : textMuted
-                                font.pixelSize: 14
-                                font.family: bodyFont
-                                Layout.alignment: Qt.AlignVCenter
-                            }
+                        Text {
+                            text: pageRoot.optionEnabled(index) ? I18n.tr(configManager.language, "esports.on") : I18n.tr(configManager.language, "esports.off")
+                            color: pageRoot.optionEnabled(index) ? textPrimary : textMuted
+                            font.pixelSize: 14
+                            font.family: bodyFont
+                            Layout.alignment: Qt.AlignVCenter
                         }
                     }
                 }
             }
         }
+    }
 
-        Row {
-            spacing: 14
+    Column {
+        anchors.right: parent.right
+        anchors.rightMargin: 56
+        anchors.top: parent.top
+        anchors.topMargin: 160
+        spacing: 14
 
-            Repeater {
-                model: sensorOptions
+        Repeater {
+            model: sensorOptions
 
-                delegate: Rectangle {
-                    width: 214
-                    height: 112
-                    radius: 24
-                    color: cardColor
-                    border.color: cardBorder
-                    border.width: 2
+            delegate: Rectangle {
+                width: 230
+                height: 122
+                radius: 24
+                color: cardColor
+                border.color: cardBorder
+                border.width: 2
 
-                    Column {
-                        anchors.fill: parent
-                        anchors.leftMargin: 16
-                        anchors.rightMargin: 16
-                        anchors.topMargin: 14
-                        anchors.bottomMargin: 14
-                        spacing: 8
+                Column {
+                    anchors.fill: parent
+                    anchors.leftMargin: 16
+                    anchors.rightMargin: 16
+                    anchors.topMargin: 14
+                    anchors.bottomMargin: 14
+                    spacing: 8
 
-                        Text {
-                            text: I18n.tr(configManager.language, "common.how_it_works")
-                            color: textPrimary
-                            font.pixelSize: 16
-                            font.family: titleFont
-                            font.weight: Font.Medium
-                        }
+                    Text {
+                        text: I18n.tr(configManager.language, "common.how_it_works")
+                        color: textPrimary
+                        font.pixelSize: 16
+                        font.family: titleFont
+                        font.weight: Font.Medium
+                    }
 
-                        Text {
-                            width: parent.width
-                            text: pageRoot.optionDescription(index)
-                            color: textSecondary
-                            font.pixelSize: 12
-                            font.family: bodyFont
-                            wrapMode: Text.WordWrap
-                            lineHeight: 1.2
-                        }
+                    Text {
+                        width: parent.width
+                        text: pageRoot.optionDescription(index)
+                        color: textSecondary
+                        font.pixelSize: 12
+                        font.family: bodyFont
+                        wrapMode: Text.WordWrap
+                        lineHeight: 1.2
                     }
                 }
             }
