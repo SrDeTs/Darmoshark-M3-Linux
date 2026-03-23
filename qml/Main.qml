@@ -239,7 +239,7 @@ ApplicationWindow {
                     delegate: Button {
                         id: navBtn
                         Layout.fillHeight: true
-                        Layout.preferredWidth: 88
+                        Layout.preferredWidth: 68
                         Layout.maximumHeight: 76
                         flat: true
                         checkable: true
@@ -247,19 +247,28 @@ ApplicationWindow {
                         hoverEnabled: true
 
                         background: Rectangle {
-                            radius: 20
+                            width: (navBtn.checked || navBtn.hovered) ? 42 : 0
+                            height: (navBtn.checked || navBtn.hovered) ? 42 : 0
+                            anchors.centerIn: parent
+                            radius: navBtn.checked ? 16 : 20
                             color: navBtn.checked ? Qt.rgba(167/255, 200/255, 255/255, 0.15) : (navBtn.hovered ? surfaceContainerHigh : "transparent")
 
                             Behavior on color { ColorAnimation { duration: 200 } }
+                            Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                            Behavior on height { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                            Behavior on radius { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                         }
 
                         contentItem: ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 6
-                            spacing: 4
+                            anchors.centerIn: parent
+                            width: 22
+                            height: 22
+                            spacing: 0
 
                             Image {
                                 Layout.alignment: Qt.AlignHCenter
+                                Layout.preferredWidth: 18
+                                Layout.preferredHeight: 18
                                 source: navIcon(index)
                                 sourceSize.width: 18
                                 sourceSize.height: 18
@@ -267,16 +276,6 @@ ApplicationWindow {
                                 smooth: true
                                 mipmap: true
                                 opacity: navBtn.checked ? 1.0 : 0.72
-                            }
-
-                            Text {
-                                Layout.alignment: Qt.AlignHCenter
-                                text: I18n.tr(configManager.language, modelData.titleKey)
-                                color: navBtn.checked ? primary : onSurfaceVariant
-                                font.pixelSize: 11
-                                font.family: titleFont
-                                wrapMode: Text.WordWrap
-                                horizontalAlignment: Text.AlignHCenter
                             }
                         }
 
