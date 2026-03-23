@@ -171,117 +171,28 @@ std::vector<uint8_t> createLiftOffDistancePacket(bool low) {
 // Scroll Direction packet captured from the Windows driver.
 // Forward = normal scrolling, Reverse = inverted scrolling.
 std::vector<uint8_t> createScrollDirectionPacket(bool forward, bool wiredMode) {
-    if (wiredMode) {
-        std::vector<uint8_t> packet(21, 0x00);
-        packet[0] = 0x51;
-        packet[1] = 0x42;
-        packet[2] = 0x02;
-        packet[3] = 0x02;
-        packet[4] = 0x02;
-        packet[5] = 0x02;
-        packet[6] = 0x00;
-        packet[7] = forward ? 0x01 : 0x02;
-        packet[8] = 0x01;
-        return packet;
-    }
-
     std::vector<uint8_t> packet(21, 0x00);
-    packet[0] = 0x09;
-    packet[1] = 0x00;
-    packet[2] = 0x01;
-    packet[3] = wiredMode ? 0x01 : 0x02;
-    packet[4] = 0x00;
-    packet[5] = wiredMode ? 0x02 : 0x03;
+    packet[0] = 0x51;
+    packet[1] = 0x42;
+    packet[2] = 0x02;
+    packet[3] = 0x02;
+    packet[4] = 0x02;
+    packet[5] = 0x02;
     packet[6] = 0x00;
-    packet[7] = 0x82;
+    packet[7] = forward ? 0x01 : 0x02;
     packet[8] = 0x01;
-    packet[9] = 0x08;
-    packet[10] = 0x00;
-    packet[11] = 0x00;
-    packet[12] = 0x00;
-    packet[13] = wiredMode ? 0x01 : 0x03;
-    packet[14] = 0x00;
-
-    if (wiredMode) {
-        packet[15] = forward ? 0x01 : 0x02;
-        packet[16] = 0x00;
-        packet[17] = 0x00;
-    } else {
-        packet[15] = forward ? 0x00 : 0x01;
-        packet[16] = 0x00;
-        packet[17] = forward ? 0x01 : 0x00;
-    }
-
-    packet[18] = 0x00;
-    packet[19] = 0x00;
-    packet[20] = 0x00;
     return packet;
 }
 
 std::vector<uint8_t> createScrollDirectionFollowupPacket(bool forward, bool wiredMode) {
-    if (wiredMode)
-        return {};
-
-    std::vector<uint8_t> packet(21, 0x00);
-    packet[0] = 0x09;
-    packet[1] = 0x00;
-    packet[2] = 0x01;
-    packet[3] = wiredMode ? 0x01 : 0x02;
-    packet[4] = 0x00;
-    packet[5] = wiredMode ? 0x02 : 0x03;
-    packet[6] = 0x00;
-    packet[7] = 0x82;
-    packet[8] = 0x01;
-    packet[9] = 0x08;
-    packet[10] = 0x00;
-    packet[11] = 0x00;
-    packet[12] = 0x00;
-    packet[13] = wiredMode ? 0x01 : 0x03;
-    packet[14] = 0x00;
-
-    if (wiredMode) {
-        packet[15] = forward ? 0x01 : 0x02;
-        packet[16] = 0x00;
-        packet[17] = 0x00;
-    } else {
-        packet[15] = forward ? 0x01 : 0x00;
-        packet[16] = 0x00;
-        packet[17] = forward ? 0x00 : 0x01;
-    }
-
-    packet[18] = 0x00;
-    packet[19] = 0x00;
-    packet[20] = 0x00;
-    return packet;
+    Q_UNUSED(forward);
+    Q_UNUSED(wiredMode);
+    return {};
 }
 
 std::vector<uint8_t> createScrollDirectionRefreshPacket(bool wiredMode) {
-    if (wiredMode)
-        return {};
-
-    std::vector<uint8_t> packet(21, 0x00);
-    packet[0] = 0x09;
-    packet[1] = 0x00;
-    packet[2] = 0x00;
-    packet[3] = wiredMode ? 0x01 : 0x02;
-    packet[4] = 0x00;
-    packet[5] = wiredMode ? 0x02 : 0x03;
-    packet[6] = 0x00;
-    packet[7] = 0x82;
-    packet[8] = 0x01;
-    packet[9] = 0x00;
-    packet[10] = 0x00;
-    packet[11] = 0x00;
-    packet[12] = 0x00;
-    packet[13] = 0x00;
-    packet[14] = 0x3c;
-    packet[15] = 0x00;
-    packet[16] = 0x00;
-    packet[17] = 0x00;
-    packet[18] = 0x06;
-    packet[19] = 0x00;
-    packet[20] = 0x00;
-    return packet;
+    Q_UNUSED(wiredMode);
+    return {};
 }
 
 // E-Sports Mode packet captured from the Windows driver.

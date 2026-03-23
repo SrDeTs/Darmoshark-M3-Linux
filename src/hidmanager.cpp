@@ -358,24 +358,7 @@ void HidManager::applyScrollDirection(bool forward)
 
     qDebug() << "Applying Scroll Direction:" << (forward ? "Forward" : "Reverse")
              << "wiredMode:" << wiredMode;
-    if (wiredMode) {
-        sendFeatureReport(data);
-        return;
-    }
-
-    auto followupPacket = DarmosharkProtocol::createScrollDirectionFollowupPacket(forward, wiredMode);
-    auto refreshPacket = DarmosharkProtocol::createScrollDirectionRefreshPacket(wiredMode);
-    QByteArray followupData(reinterpret_cast<const char*>(followupPacket.data()), followupPacket.size());
-    QByteArray refreshData(reinterpret_cast<const char*>(refreshPacket.data()), refreshPacket.size());
-
     sendFeatureReport(data);
-    writeReport(data);
-    if (!wiredMode) {
-        qDebug() << "Sending Scroll Direction follow-up packet";
-        writeReport(followupData);
-    }
-    qDebug() << "Refreshing Scroll Direction state";
-    writeReport(refreshData);
 }
 
 void HidManager::applyESportsMode(bool open)
