@@ -84,9 +84,9 @@ Item {
 
     Column {
         anchors.left: parent.left
-        anchors.leftMargin: 48
+        anchors.leftMargin: 445
         anchors.top: parent.top
-        anchors.topMargin: 160
+        anchors.topMargin: 260
         spacing: 14
 
         Repeater {
@@ -140,9 +140,9 @@ Item {
 
     Column {
         anchors.right: parent.right
-        anchors.rightMargin: 56
+        anchors.rightMargin: 380
         anchors.top: parent.top
-        anchors.topMargin: 160
+        anchors.topMargin: 260
         spacing: 14
 
         Repeater {
