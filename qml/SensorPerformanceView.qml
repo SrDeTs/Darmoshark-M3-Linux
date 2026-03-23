@@ -95,8 +95,8 @@ Item {
                 model: sensorOptions
 
                 delegate: Rectangle {
-                    width: 196
-                    height: 132
+                    width: 214
+                    height: 122
                     radius: 24
                     color: cardColor
                     border.color: cardBorder
@@ -105,7 +105,7 @@ Item {
                     Column {
                         anchors.fill: parent
                         anchors.margins: 16
-                        spacing: 14
+                        spacing: 12
 
                         Text {
                             text: pageRoot.optionTitle(index)
@@ -135,25 +135,6 @@ Item {
                                 Layout.alignment: Qt.AlignVCenter
                             }
                         }
-
-                        Rectangle {
-                            width: 72
-                            height: 26
-                            radius: 13
-                            color: pageRoot.optionEnabled(index) ? Qt.rgba(157 / 255, 192 / 255, 255 / 255, 0.16) : sectionColor
-                            border.color: pageRoot.optionEnabled(index)
-                                          ? Qt.rgba(157 / 255, 192 / 255, 255 / 255, 0.26)
-                                          : "transparent"
-                            border.width: pageRoot.optionEnabled(index) ? 1 : 0
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: pageRoot.optionEnabled(index) ? I18n.tr(configManager.language, "sensor.enabled") : I18n.tr(configManager.language, "sensor.disabled")
-                                color: pageRoot.optionEnabled(index) ? accent : textSecondary
-                                font.pixelSize: 11
-                                font.family: bodyFont
-                            }
-                        }
                     }
                 }
             }
@@ -166,8 +147,8 @@ Item {
                 model: sensorOptions
 
                 delegate: Rectangle {
-                    width: 196
-                    height: 108
+                    width: 214
+                    height: 112
                     radius: 24
                     color: cardColor
                     border.color: cardBorder
