@@ -6,9 +6,9 @@ xdata = pkgtype=pkg
 pkgver = 0.2-1
 pkgdesc = Linux software for Darmoshark M3/N3/M3S mice
 url = http://www.darmoshark.cn/
-builddate = 1774290319
+builddate = 1774299093
 packager = Unknown Packager
-size = 10578177
+size = 10582273
 arch = x86_64
 license = GPL
 depend = qt6-base
