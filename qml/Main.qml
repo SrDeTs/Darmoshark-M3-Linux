@@ -33,8 +33,12 @@ ApplicationWindow {
     property bool configWarningDismissed: false
     property bool modalBlurActive: false
     property bool themeTransitionRunning: false
+    property bool pageTransitionRunning: false
     property string activeBackgroundSource: backgroundSource()
     property string incomingBackgroundSource: ""
+    property int currentPageIndex: 0
+    property int nextPageIndex: -1
+    property int pageTransitionDirection: 1
 
     onClosing: function(close) {
         if (configManager.minimizeToTrayEnabled && appController.trayAvailable) {
@@ -84,6 +88,12 @@ ApplicationWindow {
         return navPages[index].source
     }
 
+    function selectedNavIndex() {
+        if (pageTransitionRunning && nextPageIndex >= 0)
+            return nextPageIndex
+        return currentPageIndex
+    }
+
     function backgroundSource() {
         if (configManager.theme === "White")
             return "qrc:/images/BG-M3-White.png"
@@ -101,6 +111,23 @@ ApplicationWindow {
         themeIncoming.scale = 1.035
         themeOverlay.opacity = 0.0
         themeTransition.restart()
+    }
+
+    function navigateTo(index) {
+        if (index === currentPageIndex || pageTransitionRunning)
+            return
+
+        nextPageIndex = index
+        pageTransitionDirection = index > currentPageIndex ? 1 : -1
+        incomingPageLayer.x = 40 * pageTransitionDirection
+        incomingPageLayer.opacity = 0.0
+        incomingPageLayer.scale = 0.992
+        currentPageLayer.x = 0
+        currentPageLayer.opacity = 1.0
+        currentPageLayer.scale = 1.0
+        incomingPageLoader.source = pageSource(index)
+        pageTransitionRunning = true
+        pageTransition.restart()
     }
 
     Connections {
@@ -148,28 +175,35 @@ ApplicationWindow {
             z: 0
         }
 
-        SwipeView {
-            id: stackLayout
+        Item {
+            id: pageViewport
             anchors.fill: parent
             anchors.topMargin: 8
             anchors.bottomMargin: 136
             anchors.leftMargin: 8
             anchors.rightMargin: 8
             clip: true
-            interactive: false
-            currentIndex: 0
 
-            Repeater {
-                model: navPages.length
+            Item {
+                id: currentPageLayer
+                anchors.fill: parent
 
-                Item {
-                    width: stackLayout.width
-                    height: stackLayout.height
+                Loader {
+                    id: currentPageLoader
+                    anchors.fill: parent
+                    source: appRoot.pageSource(appRoot.currentPageIndex)
+                }
+            }
 
-                    Loader {
-                        anchors.fill: parent
-                        source: appRoot.pageSource(index)
-                    }
+            Item {
+                id: incomingPageLayer
+                anchors.fill: parent
+                opacity: 0.0
+                visible: opacity > 0.0 || appRoot.pageTransitionRunning
+
+                Loader {
+                    id: incomingPageLoader
+                    anchors.fill: parent
                 }
             }
         }
@@ -208,7 +242,7 @@ ApplicationWindow {
                         Layout.maximumHeight: 76
                         flat: true
                         checkable: true
-                        checked: stackLayout.currentIndex === index
+                        checked: appRoot.selectedNavIndex() === index
                         hoverEnabled: true
 
                         background: Rectangle {
@@ -245,10 +279,81 @@ ApplicationWindow {
                             }
                         }
 
-                        onClicked: stackLayout.currentIndex = index
+                        onClicked: appRoot.navigateTo(index)
                     }
                 }
             }
+        }
+    }
+
+    ParallelAnimation {
+        id: pageTransition
+
+        ParallelAnimation {
+            NumberAnimation {
+                target: currentPageLayer
+                property: "x"
+                from: 0
+                to: -34 * appRoot.pageTransitionDirection
+                duration: 240
+                easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                target: currentPageLayer
+                property: "opacity"
+                from: 1.0
+                to: 0.0
+                duration: 220
+                easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                target: currentPageLayer
+                property: "scale"
+                from: 1.0
+                to: 0.992
+                duration: 240
+                easing.type: Easing.OutCubic
+            }
+        }
+
+        ParallelAnimation {
+            NumberAnimation {
+                target: incomingPageLayer
+                property: "x"
+                from: 40 * appRoot.pageTransitionDirection
+                to: 0
+                duration: 340
+                easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                target: incomingPageLayer
+                property: "opacity"
+                from: 0.0
+                to: 1.0
+                duration: 300
+                easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                target: incomingPageLayer
+                property: "scale"
+                from: 0.992
+                to: 1.0
+                duration: 340
+                easing.type: Easing.OutCubic
+            }
+        }
+
+        onFinished: {
+            appRoot.currentPageIndex = appRoot.nextPageIndex
+            appRoot.nextPageIndex = -1
+            appRoot.pageTransitionRunning = false
+            currentPageLayer.x = 0
+            currentPageLayer.opacity = 1.0
+            currentPageLayer.scale = 1.0
+            incomingPageLayer.x = 0
+            incomingPageLayer.opacity = 0.0
+            incomingPageLayer.scale = 1.0
+            incomingPageLoader.source = ""
         }
     }
 
