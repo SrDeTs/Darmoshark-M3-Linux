@@ -10,15 +10,29 @@ finish-args:
   - --device=all
   - --share=network
 modules:
+  - name: libusb
+    buildsystem: autotools
+    config-opts:
+      - --disable-static
+    sources:
+      - type: archive
+        url: https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2
+        sha256: ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575
+
   - name: hidapi
     buildsystem: cmake
+    config-opts:
+      - -DHIDAPI_WITH_LIBUSB=ON
+      - -DHIDAPI_WITH_HIDRAW=OFF
     sources:
       - type: archive
         url: https://github.com/libusb/hidapi/archive/refs/tags/hidapi-0.14.0.tar.gz
-        sha256: 0ae6e344e6878b61e27fc2946c76c023d5a4847e174b0cc6c2ec0f39386d70fb
+        sha256: a5714234abe6e1f53647dd8cba7d69f65f71c558b7896ed218864ffcf405bcbd
 
   - name: darmoshark-m3
     buildsystem: cmake
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
     sources:
       - type: dir
         path: .

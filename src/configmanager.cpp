@@ -9,6 +9,7 @@
 #include <QVariantList>
 #include <QVariantMap>
 #include <QCoreApplication>
+#include <QStandardPaths>
 #include <string>
 
 ConfigManager::ConfigManager(QObject *parent)
@@ -55,6 +56,76 @@ static toml::table buildDefaultConfig()
     config.insert_or_assign(std::string("buttons"), std::move(buttons));
 
     return config;
+}
+
+static toml::array *ensureStageConfigsArray(toml::table &config)
+{
+    auto *dpiTable = config["dpi"].as_table();
+    if (!dpiTable) {
+        config.insert_or_assign(std::string("dpi"), toml::table{});
+        dpiTable = config["dpi"].as_table();
+    }
+
+    auto *stageConfigs = (*dpiTable)["stage_configs"].as_array();
+    if (stageConfigs)
+        return stageConfigs;
+
+    toml::array migratedConfigs;
+    auto *legacyStages = (*dpiTable)["stages"].as_array();
+    if (legacyStages) {
+        for (auto &item : *legacyStages) {
+            toml::table stageConfig;
+            stageConfig.insert_or_assign(
+                std::string("value"),
+                item.as_integer() ? item.as_integer()->get() : static_cast<int64_t>(0)
+            );
+            stageConfig.insert_or_assign(std::string("color"), std::string("#ffffff"));
+            migratedConfigs.push_back(std::move(stageConfig));
+        }
+    }
+
+    dpiTable->insert_or_assign(std::string("stage_configs"), std::move(migratedConfigs));
+    return (*dpiTable)["stage_configs"].as_array();
+}
+
+static QString desktopEntryTemplate()
+{
+    return QStringLiteral(
+        "[Desktop Entry]\n"
+        "Type=Application\n"
+        "Name=Darmoshark M3 Configurator\n"
+        "Comment=Configure Darmoshark M3 series mice on Linux\n"
+        "Exec=DarmosharkM3\n"
+        "Icon=com.darmoshark.m3\n"
+        "Terminal=false\n"
+        "Categories=Settings;Utility;\n"
+        "StartupNotify=true\n"
+    );
+}
+
+static QString resolveInstalledDesktopEntryPath()
+{
+    const QString desktopFileName = QStringLiteral("com.darmoshark.m3.desktop");
+    const QStringList appLocations = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+
+    for (const QString &location : appLocations) {
+        const QString candidate = QDir(location).filePath(desktopFileName);
+        if (QFile::exists(candidate))
+            return candidate;
+    }
+
+    const QStringList fallbackLocations = {
+        QStringLiteral("/usr/local/share/applications"),
+        QStringLiteral("/usr/share/applications")
+    };
+
+    for (const QString &location : fallbackLocations) {
+        const QString candidate = QDir(location).filePath(desktopFileName);
+        if (QFile::exists(candidate))
+            return candidate;
+    }
+
+    return QString();
 }
 
 bool ConfigManager::loadConfig(const QString &path)
@@ -372,7 +443,7 @@ void ConfigManager::setLanguage(const QString &language)
 bool ConfigManager::updateAutostartFile(bool enabled)
 {
     const QString autostartDir = QDir::homePath() + QStringLiteral("/.config/autostart");
-    const QString desktopFilePath = autostartDir + QStringLiteral("/DarmosharkM3.desktop");
+    const QString desktopFilePath = autostartDir + QStringLiteral("/com.darmoshark.m3.desktop");
 
     if (!enabled) {
         if (QFile::exists(desktopFilePath))
@@ -387,15 +458,21 @@ bool ConfigManager::updateAutostartFile(bool enabled)
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
         return false;
 
-    const QString execPath = QCoreApplication::applicationFilePath();
     QTextStream out(&file);
-    out << "[Desktop Entry]\n";
-    out << "Type=Application\n";
-    out << "Version=1.0\n";
-    out << "Name=Darmoshark M3 Configurator\n";
-    out << "Comment=Start Darmoshark M3 Configurator on login\n";
-    out << "Exec=\"" << execPath << "\"\n";
-    out << "Terminal=false\n";
+    const QString installedDesktopEntryPath = resolveInstalledDesktopEntryPath();
+    if (!installedDesktopEntryPath.isEmpty()) {
+        QFile desktopEntryFile(installedDesktopEntryPath);
+        if (desktopEntryFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            out << desktopEntryFile.readAll();
+            if (!out.atEnd())
+                out << "\n";
+        } else {
+            out << desktopEntryTemplate();
+        }
+    } else {
+        out << desktopEntryTemplate();
+    }
+
     out << "X-GNOME-Autostart-enabled=true\n";
     return true;
 }
@@ -424,22 +501,7 @@ void ConfigManager::setMinimizeToTrayEnabled(bool enabled)
 
 void ConfigManager::setDpiValue(int index, int value)
 {
-    auto stageConfigs = m_config["dpi"]["stage_configs"].as_array();
-    if (!stageConfigs) {
-        // Migrate legacy to new format if needed
-        toml::array legArr;
-        auto legacyStages = m_config["dpi"]["stages"].as_array();
-        if (legacyStages) {
-            for (auto& item : *legacyStages) {
-                toml::table t;
-                t.insert_or_assign(std::string("value"), item.as_integer() ? item.as_integer()->get() : (int64_t)0);
-                t.insert_or_assign(std::string("color"), std::string("#ffffff"));
-                legArr.push_back(std::move(t));
-            }
-        }
-        m_config["dpi"].as_table()->insert_or_assign(std::string("stage_configs"), std::move(legArr));
-        stageConfigs = m_config["dpi"]["stage_configs"].as_array();
-    }
+    auto *stageConfigs = ensureStageConfigsArray(m_config);
 
     if (stageConfigs && index >= 0 && index < (int)stageConfigs->size()) {
         auto* table = (*stageConfigs)[index].as_table();
@@ -453,7 +515,7 @@ void ConfigManager::setDpiValue(int index, int value)
 
 void ConfigManager::setDpiColor(int index, const QString &color)
 {
-    auto stageConfigs = m_config["dpi"]["stage_configs"].as_array();
+    auto *stageConfigs = ensureStageConfigsArray(m_config);
     if (stageConfigs && index >= 0 && index < (int)stageConfigs->size()) {
         auto* table = (*stageConfigs)[index].as_table();
         if (table) {

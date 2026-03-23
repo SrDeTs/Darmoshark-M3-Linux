@@ -6,10 +6,10 @@ pkgdesc="Linux configurator for Darmoshark M3/N3/M3S mice"
 arch=('x86_64')
 url="http://www.darmoshark.cn/"
 license=('GPL')
-depends=('qt6-base' 'qt6-declarative' 'hidapi' 'tomlplusplus')
-makedepends=('cmake' 'qt6-tools')
-source=("99-darmoshark.rules")
-sha256sums=('SKIP')
+depends=('qt6-base' 'qt6-declarative' 'hidapi' 'libusb' 'tomlplusplus')
+makedepends=('cmake' 'pkgconf' 'qt6-tools')
+source=()
+sha256sums=()
 
 build() {
     cmake -B build -S . \

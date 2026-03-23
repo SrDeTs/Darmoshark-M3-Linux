@@ -166,7 +166,7 @@ ApplicationWindow {
     Connections {
         target: configManager
 
-        function onThemeChanged() {
+        function onConfigChanged() {
             appRoot.updateThemeBackground()
         }
     }
