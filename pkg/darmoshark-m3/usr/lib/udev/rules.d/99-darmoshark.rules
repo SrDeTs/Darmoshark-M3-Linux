@@ -1,5 +1,0 @@
-# Darmoshark M3 HID devices
-# Wired and Wireless (2.4G)
-KERNEL=="hidraw*", ATTRS{idVendor}=="248a", TAG+="uaccess", MODE="0666"
-SUBSYSTEM=="usb", ATTRS{idVendor}=="248a", TAG+="uaccess", MODE="0666"
-SUBSYSTEM=="hid", ATTRS{idVendor}=="248a", TAG+="uaccess", MODE="0666"
