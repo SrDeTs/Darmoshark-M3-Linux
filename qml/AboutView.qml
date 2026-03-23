@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import "idiomas/I18n.js" as I18n
 Item {
     id: pageRoot
     clip: true
@@ -59,7 +60,7 @@ Item {
 
             Text {
                 Layout.alignment: Qt.AlignHCenter
-                text: "M3 Configurator"
+                text: I18n.tr(configManager.language, "about.subtitle")
                 color: textMuted
                 font.pixelSize: 14
                 font.family: bodyFont
@@ -69,9 +70,9 @@ Item {
 
             Repeater {
                 model: [
-                    { title: "Firmware", value: hidManager.firmwareVersion, side: "Mouse" },
-                    { title: "RF Version", value: hidManager.rfVersion, side: "Dongle" },
-                    { title: "App Version", value: "v0.1", side: "Linux" }
+                    { title: I18n.tr(configManager.language, "about.firmware"), value: hidManager.firmwareVersion, side: I18n.tr(configManager.language, "about.mouse") },
+                    { title: I18n.tr(configManager.language, "about.rf_version"), value: hidManager.rfVersion, side: I18n.tr(configManager.language, "about.dongle") },
+                    { title: I18n.tr(configManager.language, "about.app_version"), value: "v0.1", side: I18n.tr(configManager.language, "about.linux") }
                 ]
 
                 delegate: Rectangle {

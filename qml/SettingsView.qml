@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
+import "idiomas/I18n.js" as I18n
 
 Item {
     id: pageRoot
@@ -16,11 +17,20 @@ Item {
     property color accent: "#a7c8ff"
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
+    property var languageItems: [
+        { value: "pt-BR", label: I18n.tr(configManager.language, "settings.language_pt_br") },
+        { value: "en-US", label: I18n.tr(configManager.language, "settings.language_en_us") }
+    ]
+    property var themeItems: [
+        { value: "Dark", label: I18n.tr(configManager.language, "settings.theme_dark") },
+        { value: "White", label: I18n.tr(configManager.language, "settings.theme_white") }
+    ]
 
     component SettingsComboBox: ComboBox {
         id: comboRoot
         Layout.fillWidth: true
         Layout.preferredHeight: 40
+        textRole: "label"
 
         delegate: ItemDelegate {
             width: ListView.view ? ListView.view.width : comboRoot.width
@@ -37,7 +47,7 @@ Item {
             contentItem: Text {
                 leftPadding: 12
                 rightPadding: 12
-                text: modelData
+                text: typeof modelData === "object" ? modelData[comboRoot.textRole] : modelData
                 color: textPrimary
                 font.pixelSize: 14
                 font.family: bodyFont
@@ -143,7 +153,7 @@ Item {
             spacing: 0
 
             Text {
-                text: "General Settings"
+                text: I18n.tr(configManager.language, "settings.general")
                 color: textPrimary
                 font.pixelSize: 24
                 font.family: titleFont
@@ -153,7 +163,7 @@ Item {
             Item { Layout.preferredHeight: 22 }
 
             Text {
-                text: "App Updates"
+                text: I18n.tr(configManager.language, "settings.app_updates")
                 color: textPrimary
                 font.pixelSize: 16
                 font.family: titleFont
@@ -163,7 +173,7 @@ Item {
 
             Text {
                 Layout.fillWidth: true
-                text: "App updates and release reminders will be added in a future update."
+                text: I18n.tr(configManager.language, "settings.app_updates_desc")
                 color: textMuted
                 font.pixelSize: 13
                 font.family: bodyFont
@@ -173,7 +183,7 @@ Item {
             Item { Layout.preferredHeight: 22 }
 
             Text {
-                text: "Language"
+                text: I18n.tr(configManager.language, "settings.language")
                 color: textPrimary
                 font.pixelSize: 16
                 font.family: titleFont
@@ -183,16 +193,16 @@ Item {
 
             SettingsComboBox {
                 id: languageSelector
-                model: ["English"]
-                currentIndex: Math.max(0, model.indexOf(configManager.language))
+                model: pageRoot.languageItems
+                currentIndex: I18n.languageCode(configManager.language) === "en-US" ? 1 : 0
 
-                onActivated: configManager.setLanguage(languageSelector.currentText)
+                onActivated: configManager.setLanguage(pageRoot.languageItems[languageSelector.currentIndex].value)
             }
 
             Item { Layout.preferredHeight: 18 }
 
             Text {
-                text: "Theme"
+                text: I18n.tr(configManager.language, "settings.theme")
                 color: textPrimary
                 font.pixelSize: 16
                 font.family: titleFont
@@ -202,16 +212,16 @@ Item {
 
             SettingsComboBox {
                 id: themeSelector
-                model: ["Dark", "White"]
-                currentIndex: Math.max(0, model.indexOf(configManager.theme))
+                model: pageRoot.themeItems
+                currentIndex: configManager.theme === "White" ? 1 : 0
 
-                onActivated: configManager.setTheme(themeSelector.currentText)
+                onActivated: configManager.setTheme(pageRoot.themeItems[themeSelector.currentIndex].value)
             }
 
             Item { Layout.preferredHeight: 24 }
 
             Text {
-                text: "Startup settings"
+                text: I18n.tr(configManager.language, "settings.startup")
                 color: textPrimary
                 font.pixelSize: 16
                 font.family: titleFont
@@ -224,7 +234,7 @@ Item {
                 Layout.preferredHeight: 28
 
                 Text {
-                    text: "Auto-Start"
+                    text: I18n.tr(configManager.language, "settings.auto_start")
                     color: textPrimary
                     font.pixelSize: 14
                     font.family: bodyFont
@@ -246,7 +256,7 @@ Item {
                 Layout.preferredHeight: 28
 
                 Text {
-                    text: "Minimize to Tray"
+                    text: I18n.tr(configManager.language, "settings.minimize_to_tray")
                     color: textPrimary
                     font.pixelSize: 14
                     font.family: bodyFont
@@ -266,7 +276,7 @@ Item {
             Button {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 38
-                text: "Reset to Factory Defaults"
+                text: I18n.tr(configManager.language, "settings.reset")
 
                 background: Rectangle {
                     radius: 12
@@ -329,7 +339,7 @@ Item {
             spacing: 0
 
             Text {
-                text: "Resetar configurações?"
+                text: I18n.tr(configManager.language, "settings.reset_title")
                 color: textPrimary
                 font.pixelSize: 24
                 font.family: titleFont
@@ -340,7 +350,7 @@ Item {
 
             Text {
                 Layout.fillWidth: true
-                text: "Isso vai restaurar DPI, polling rate e outras opções para os valores padrão."
+                text: I18n.tr(configManager.language, "settings.reset_desc")
                 color: textSecondary
                 font.pixelSize: 14
                 font.family: bodyFont
@@ -356,7 +366,7 @@ Item {
                 Button {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 40
-                    text: "Cancelar"
+                    text: I18n.tr(configManager.language, "settings.cancel")
 
                     background: Rectangle {
                         radius: 12
@@ -378,7 +388,7 @@ Item {
                 Button {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 40
-                    text: "Confirmar"
+                    text: I18n.tr(configManager.language, "settings.confirm")
 
                     background: Rectangle {
                         radius: 12

@@ -38,7 +38,7 @@ static toml::table buildDefaultConfig()
     ui.insert_or_assign(std::string("scroll_normal"), true);
     ui.insert_or_assign(std::string("esports_open"), false);
     ui.insert_or_assign(std::string("theme"), std::string("Dark"));
-    ui.insert_or_assign(std::string("language"), std::string("English"));
+    ui.insert_or_assign(std::string("language"), std::string("pt-BR"));
     ui.insert_or_assign(std::string("auto_start_enabled"), false);
     ui.insert_or_assign(std::string("minimize_to_tray_enabled"), false);
 
@@ -235,7 +235,15 @@ QString ConfigManager::language() const
 {
     auto *uiTable = m_config["ui"].as_table();
     auto *node = uiTable ? (*uiTable)["language"].as_string() : nullptr;
-    return node ? QString::fromStdString(node->get()) : QStringLiteral("English");
+    if (!node)
+        return QStringLiteral("pt-BR");
+
+    const QString value = QString::fromStdString(node->get());
+    if (value == QStringLiteral("English") || value == QStringLiteral("en-US") || value == QStringLiteral("Inglês"))
+        return QStringLiteral("en-US");
+    if (value == QStringLiteral("Português (Brasil)") || value == QStringLiteral("Portuguese (Brazil)") || value == QStringLiteral("pt-BR"))
+        return QStringLiteral("pt-BR");
+    return QStringLiteral("pt-BR");
 }
 
 bool ConfigManager::autoStartEnabled() const
@@ -348,7 +356,15 @@ void ConfigManager::setLanguage(const QString &language)
     ensureUiTable();
     auto *uiTable = m_config["ui"].as_table();
     if (!uiTable) return;
-    uiTable->insert_or_assign(std::string("language"), language.toStdString());
+
+    QString normalized = QStringLiteral("pt-BR");
+    if (language == QStringLiteral("English") || language == QStringLiteral("en-US") || language == QStringLiteral("Inglês")) {
+        normalized = QStringLiteral("en-US");
+    } else if (language == QStringLiteral("Português (Brasil)") || language == QStringLiteral("Portuguese (Brazil)") || language == QStringLiteral("pt-BR")) {
+        normalized = QStringLiteral("pt-BR");
+    }
+
+    uiTable->insert_or_assign(std::string("language"), normalized.toStdString());
     emit configChanged();
     saveConfig();
 }

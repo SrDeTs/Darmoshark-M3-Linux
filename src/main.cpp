@@ -36,7 +36,7 @@ static QString defaultConfigText()
         "lift_off_high = false\n"
         "scroll_normal = true\n"
         "esports_open = false\n"
-        "language = \"English\"\n"
+        "language = \"pt-BR\"\n"
         "auto_start_enabled = false\n"
         "minimize_to_tray_enabled = false\n"
         "\n"

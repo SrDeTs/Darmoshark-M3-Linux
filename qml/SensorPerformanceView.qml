@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import "idiomas/I18n.js" as I18n
 
 Item {
     id: pageRoot
@@ -19,23 +20,39 @@ Item {
     ListModel {
         id: sensorOptions
         ListElement {
-            title: "Ripple"
+            title: ""
             statusOn: "On"
             statusOff: "Off"
-            description: "Reduz pequenas vibracoes do sensor em movimentos finos."
+            description: ""
         }
         ListElement {
-            title: "Motion Sync"
+            title: ""
             statusOn: "On"
             statusOff: "Off"
-            description: "Sincroniza melhor os dados do sensor com os relatorios enviados."
+            description: ""
         }
         ListElement {
-            title: "Angle Snap"
+            title: ""
             statusOn: "On"
             statusOff: "Off"
-            description: "Ajuda a corrigir linhas retas automaticamente em movimentos diagonais."
+            description: ""
         }
+    }
+
+    function optionTitle(index) {
+        if (index === 0)
+            return I18n.tr(configManager.language, "sensor.ripple")
+        if (index === 1)
+            return I18n.tr(configManager.language, "sensor.motion_sync")
+        return I18n.tr(configManager.language, "sensor.angle_snap")
+    }
+
+    function optionDescription(index) {
+        if (index === 0)
+            return I18n.tr(configManager.language, "sensor.ripple_desc")
+        if (index === 1)
+            return I18n.tr(configManager.language, "sensor.motion_sync_desc")
+        return I18n.tr(configManager.language, "sensor.angle_snap_desc")
     }
 
     function optionEnabled(index) {
@@ -91,7 +108,7 @@ Item {
                         spacing: 14
 
                         Text {
-                            text: model.title
+                            text: pageRoot.optionTitle(index)
                             color: textPrimary
                             font.pixelSize: 20
                             font.family: titleFont
@@ -111,7 +128,7 @@ Item {
                             Item { Layout.fillWidth: true }
 
                             Text {
-                                text: pageRoot.optionEnabled(index) ? model.statusOn : model.statusOff
+                                text: pageRoot.optionEnabled(index) ? I18n.tr(configManager.language, "esports.on") : I18n.tr(configManager.language, "esports.off")
                                 color: pageRoot.optionEnabled(index) ? textPrimary : textMuted
                                 font.pixelSize: 14
                                 font.family: bodyFont
@@ -131,7 +148,7 @@ Item {
 
                             Text {
                                 anchors.centerIn: parent
-                                text: pageRoot.optionEnabled(index) ? "Ativado" : "Desligado"
+                                text: pageRoot.optionEnabled(index) ? I18n.tr(configManager.language, "sensor.enabled") : I18n.tr(configManager.language, "sensor.disabled")
                                 color: pageRoot.optionEnabled(index) ? accent : textSecondary
                                 font.pixelSize: 11
                                 font.family: bodyFont
@@ -165,7 +182,7 @@ Item {
                         spacing: 8
 
                         Text {
-                            text: "Como funciona"
+                            text: I18n.tr(configManager.language, "common.how_it_works")
                             color: textPrimary
                             font.pixelSize: 16
                             font.family: titleFont
@@ -174,7 +191,7 @@ Item {
 
                         Text {
                             width: parent.width
-                            text: model.description
+                            text: pageRoot.optionDescription(index)
                             color: textSecondary
                             font.pixelSize: 12
                             font.family: bodyFont

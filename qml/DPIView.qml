@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import "idiomas/I18n.js" as I18n
 
 Item {
     id: dpiRoot
@@ -67,7 +68,7 @@ Item {
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text: "Current DPI"
+                    text: I18n.tr(configManager.language, "dpi.current")
                     color: onSurfaceVariant
                     font.pixelSize: 16
                     font.family: titleFont
@@ -92,7 +93,7 @@ Item {
                 Item { Layout.fillWidth: true }
 
                 Button {
-                    text: "APLICAR"
+                    text: I18n.tr(configManager.language, "dpi.apply")
                     Layout.preferredWidth: 120
                     Layout.preferredHeight: 36
                     enabled: hidManager.deviceConnected
@@ -170,7 +171,7 @@ Item {
                                 }
 
                                 Text {
-                                    text: "Stage " + (index + 1)
+                                    text: I18n.tr(configManager.language, "dpi.stage") + " " + (index + 1)
                                     color: stageRow.isSelected ? onSurface : onSurfaceVariant
                                     font.pixelSize: 14
                                     font.bold: stageRow.isSelected

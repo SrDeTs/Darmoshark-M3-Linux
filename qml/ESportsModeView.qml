@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import "idiomas/I18n.js" as I18n
 
 Item {
     id: pageRoot
@@ -33,7 +34,7 @@ Item {
             spacing: 14
 
             Text {
-                text: "E-Sports Mode"
+                text: I18n.tr(configManager.language, "esports.title")
                 color: textPrimary
                 font.pixelSize: 24
                 font.family: titleFont
@@ -55,8 +56,8 @@ Item {
 
                     Repeater {
                         model: [
-                            { label: "Off", enabledState: false, active: !configManager.esportsOpen },
-                            { label: "On", enabledState: true, active: configManager.esportsOpen }
+                            { label: I18n.tr(configManager.language, "esports.off"), enabledState: false, active: !configManager.esportsOpen },
+                            { label: I18n.tr(configManager.language, "esports.on"), enabledState: true, active: configManager.esportsOpen }
                         ]
 
                         delegate: Item {
@@ -121,7 +122,7 @@ Item {
             spacing: 8
 
             Text {
-                text: "Como funciona"
+                text: I18n.tr(configManager.language, "common.how_it_works")
                 color: textPrimary
                 font.pixelSize: 18
                 font.family: titleFont
@@ -132,7 +133,7 @@ Item {
                 width: parent.width
                 wrapMode: Text.WordWrap
                 maximumLineCount: 3
-                text: "Ativa um perfil mais focado em desempenho competitivo, reduzindo recursos secundários quando esse modo estiver ligado."
+                text: I18n.tr(configManager.language, "esports.about_desc")
                 color: textSecondary
                 font.pixelSize: 14
                 font.family: bodyFont

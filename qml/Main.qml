@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Effects
+import "idiomas/I18n.js" as I18n
 
 ApplicationWindow {
     id: appRoot
@@ -10,7 +11,7 @@ ApplicationWindow {
     minimumWidth: 1180
     minimumHeight: 720
     visible: true
-    title: qsTr("Darmoshark M3 Configurator")
+    title: I18n.tr(configManager.language, "app.title")
     color: "#0e0e0e"
 
     // Obsidian Glide Design System Colors
@@ -54,15 +55,15 @@ ApplicationWindow {
     }
 
     property var navPages: [
-        { title: "Início", subtitle: "Visão geral", source: "qrc:/qml/HomeView.qml" },
-        { title: "DPI", subtitle: "Sensibilidade", source: "qrc:/qml/DPIView.qml" },
-        { title: "Report Rate", subtitle: "Polling rate", source: "qrc:/qml/ReportRateView.qml" },
-        { title: "Sensor", subtitle: "Performance", source: "qrc:/qml/SensorPerformanceView.qml" },
-        { title: "LOD", subtitle: "Altura de corte", source: "qrc:/qml/LiftOffDistanceView.qml" },
-        { title: "Scroll", subtitle: "Sentido", source: "qrc:/qml/ScrollDirectionView.qml" },
-        { title: "E-Sports", subtitle: "Modo especial", source: "qrc:/qml/ESportsModeView.qml" },
-        { title: "Config", subtitle: "Preferências", source: "qrc:/qml/SettingsView.qml" },
-        { title: "Sobre", subtitle: "Informações", source: "qrc:/qml/AboutView.qml" }
+        { titleKey: "nav.home", subtitleKey: "nav.home_subtitle", source: "qrc:/qml/HomeView.qml" },
+        { titleKey: "nav.dpi", subtitleKey: "nav.dpi_subtitle", source: "qrc:/qml/DPIView.qml" },
+        { titleKey: "nav.report_rate", subtitleKey: "nav.report_rate_subtitle", source: "qrc:/qml/ReportRateView.qml" },
+        { titleKey: "nav.sensor", subtitleKey: "nav.sensor_subtitle", source: "qrc:/qml/SensorPerformanceView.qml" },
+        { titleKey: "nav.lod", subtitleKey: "nav.lod_subtitle", source: "qrc:/qml/LiftOffDistanceView.qml" },
+        { titleKey: "nav.scroll", subtitleKey: "nav.scroll_subtitle", source: "qrc:/qml/ScrollDirectionView.qml" },
+        { titleKey: "nav.esports", subtitleKey: "nav.esports_subtitle", source: "qrc:/qml/ESportsModeView.qml" },
+        { titleKey: "nav.config", subtitleKey: "nav.config_subtitle", source: "qrc:/qml/SettingsView.qml" },
+        { titleKey: "nav.about", subtitleKey: "nav.about_subtitle", source: "qrc:/qml/AboutView.qml" }
     ]
 
     function connectionLabel(mode) {
@@ -270,7 +271,7 @@ ApplicationWindow {
 
                             Text {
                                 Layout.alignment: Qt.AlignHCenter
-                                text: modelData.title
+                                text: I18n.tr(configManager.language, modelData.titleKey)
                                 color: navBtn.checked ? primary : onSurfaceVariant
                                 font.pixelSize: 11
                                 font.family: titleFont
@@ -485,7 +486,9 @@ ApplicationWindow {
                         spacing: 3
 
                         Text {
-                            text: configRecoveredFromCorruption ? "Configuração recuperada" : "Configuração criada"
+                            text: configRecoveredFromCorruption
+                                  ? I18n.tr(configManager.language, "main.config_recovered")
+                                  : I18n.tr(configManager.language, "main.config_created")
                             color: onSurface
                             font.pixelSize: 24
                             font.family: titleFont
@@ -495,8 +498,8 @@ ApplicationWindow {
 
                         Text {
                             text: configRecoveredFromCorruption
-                                  ? "O arquivo estava corrompido e foi recriado."
-                                  : "O app criou a configuração inicial."
+                                  ? I18n.tr(configManager.language, "main.config_recovered_desc")
+                                  : I18n.tr(configManager.language, "main.config_created_desc")
                             color: onSurfaceVariant
                             font.pixelSize: 13
                             font.family: bodyFont
@@ -529,7 +532,7 @@ ApplicationWindow {
                     spacing: 12
 
                     Button {
-                        text: "Abrir pasta"
+                        text: I18n.tr(configManager.language, "common.open_folder")
                         Layout.preferredWidth: 140
                         Layout.preferredHeight: 40
 
@@ -553,7 +556,7 @@ ApplicationWindow {
                     }
 
                     Button {
-                        text: "Entendi"
+                        text: I18n.tr(configManager.language, "common.ok_got_it")
                         Layout.preferredWidth: 128
                         Layout.preferredHeight: 40
 
