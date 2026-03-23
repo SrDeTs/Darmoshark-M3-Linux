@@ -2,6 +2,7 @@
 #include <QStringList>
 #include <QVariantList>
 #include <QTimer>
+#include <QVector>
 #include <hidapi/hidapi.h>
 
 class HidManager : public QObject
@@ -52,6 +53,8 @@ private slots:
     void pollStatus();
 
 private:
+    bool parseBatteryStatusReport(const unsigned char *buffer, int length, int &batteryLevel, bool &charging) const;
+    int stabilizedBatteryLevel(int rawLevel);
     void clearVersionInfo();
     void setVersionInfo(const QString &firmwareVersion, const QString &rfVersion);
     QString parseVersionResponse(const unsigned char *buffer, int length) const;
@@ -64,6 +67,7 @@ private:
     unsigned short m_currentPid = 0;
     int m_batteryLevel = 100;
     bool m_isCharging = false;
+    QVector<int> m_recentBatterySamples;
     QString m_firmwareVersion = QStringLiteral("N/D");
     QString m_rfVersion = QStringLiteral("N/D");
 };

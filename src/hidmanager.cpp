@@ -4,6 +4,7 @@
 #include <QRegularExpression>
 #include <QThread>
 #include <QTimer>
+#include <algorithm>
 #include <libusb-1.0/libusb.h>
 
 HidManager::HidManager(QObject *parent) : QObject(parent)
@@ -115,6 +116,7 @@ void HidManager::disconnectDevice()
         m_device = nullptr;
         m_devicePath.clear();
         m_currentPid = 0;
+        m_recentBatterySamples.clear();
         clearVersionInfo();
         emit deviceConnectedChanged();
     }
@@ -399,36 +401,85 @@ void HidManager::pollStatus()
         return;
     }
 
-    // Read response (non-blocking)
-    unsigned char readBuf[65];
-    int res = hid_read(m_device, readBuf, 65);
-    if (res > 0) {
-        // Log raw response for debugging
+    int latestBattery = -1;
+    bool latestCharging = m_isCharging;
+
+    for (int attempt = 0; attempt < 3; ++attempt) {
+        unsigned char readBuf[65] = {0};
+        const int res = (attempt == 0)
+            ? hid_read_timeout(m_device, readBuf, sizeof(readBuf), 45)
+            : hid_read(m_device, readBuf, sizeof(readBuf));
+
+        if (res < 0) {
+            qWarning() << "Device disconnected based on read error";
+            disconnectDevice();
+            return;
+        }
+
+        if (res == 0)
+            continue;
+
         QString hex;
-        for (int i = 0; i < qMin(res, 16); ++i) hex += QString("%1 ").arg(readBuf[i], 2, 16, QChar('0'));
+        for (int i = 0; i < qMin(res, 16); ++i)
+            hex += QString("%1 ").arg(readBuf[i], 2, 16, QChar('0'));
         qDebug() << "HID Status Response:" << hex.trimmed();
 
-        // Compx/Darmoshark status response:
-        // If starting with 0x54, it's a specific status report (likely wireless)
-        // If 0x04 0x11, it's a standard Compx status report
-        if (readBuf[0] == 0x54 || (readBuf[0] == 0x04 && readBuf[1] == 0x11)) {
-            int newBattery = readBuf[5];
-            // In 0x04 0x11: [4] = charging (0x01).
-            // In 0x54: [4] is usually 0x00 in wireless, 0x01 in wired/charging.
-            bool newCharging = (readBuf[4] == 0x01);
-            
-            if (newBattery >= 0 && newBattery <= 100) {
-                if (newBattery != m_batteryLevel) {
-                    m_batteryLevel = newBattery;
-                    emit batteryLevelChanged();
-                }
-                if (newCharging != m_isCharging) {
-                    m_isCharging = newCharging;
-                    emit batteryLevelChanged();
-                }
-            }
+        int parsedBattery = -1;
+        bool parsedCharging = false;
+        if (parseBatteryStatusReport(readBuf, res, parsedBattery, parsedCharging)) {
+            latestBattery = parsedBattery;
+            latestCharging = parsedCharging;
         }
     }
+
+    if (latestBattery < 0)
+        return;
+
+    const int newBattery = stabilizedBatteryLevel(latestBattery);
+    bool changed = false;
+
+    if (newBattery != m_batteryLevel) {
+        m_batteryLevel = newBattery;
+        changed = true;
+    }
+
+    if (latestCharging != m_isCharging) {
+        m_isCharging = latestCharging;
+        changed = true;
+    }
+
+    if (changed)
+        emit batteryLevelChanged();
+}
+
+bool HidManager::parseBatteryStatusReport(const unsigned char *buffer, int length, int &batteryLevel, bool &charging) const
+{
+    if (!buffer || length < 6)
+        return false;
+
+    const bool isWirelessStatus = (buffer[0] == 0x54);
+    const bool isCompxStatus = (length >= 6 && buffer[0] == 0x04 && buffer[1] == 0x11);
+    if (!isWirelessStatus && !isCompxStatus)
+        return false;
+
+    const int rawBattery = static_cast<int>(buffer[5]);
+    if (rawBattery < 0 || rawBattery > 100)
+        return false;
+
+    batteryLevel = rawBattery;
+    charging = (buffer[4] == 0x01);
+    return true;
+}
+
+int HidManager::stabilizedBatteryLevel(int rawLevel)
+{
+    m_recentBatterySamples.append(rawLevel);
+    while (m_recentBatterySamples.size() > 3)
+        m_recentBatterySamples.removeFirst();
+
+    QVector<int> sorted = m_recentBatterySamples;
+    std::sort(sorted.begin(), sorted.end());
+    return sorted.at(sorted.size() / 2);
 }
 
 void HidManager::clearVersionInfo()
