@@ -5,6 +5,8 @@
 #include <QFileInfo>
 #include <QCoreApplication>
 #include <QDir>
+#include <QLockFile>
+#include <QStandardPaths>
 #include <QTextStream>
 #include <QUrl>
 #include <QWindow>
@@ -68,6 +70,19 @@ int main(int argc, char *argv[])
 
     app.setOrganizationName("Darmoshark");
     app.setApplicationName("Darmoshark M3 Configurator");
+
+    QString lockDirectory = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation);
+    if (lockDirectory.isEmpty())
+        lockDirectory = QDir::tempPath();
+
+    QDir().mkpath(lockDirectory);
+
+    QLockFile singleInstanceLock(lockDirectory + "/DarmosharkM3.lock");
+    singleInstanceLock.setStaleLockTime(0);
+    if (!singleInstanceLock.tryLock(100)) {
+        qInfo() << "Darmoshark M3 Configurator is already running";
+        return 0;
+    }
 
     HidManager hidManager;
     hidManager.scanDevices(); // Scan and auto-connect on startup
