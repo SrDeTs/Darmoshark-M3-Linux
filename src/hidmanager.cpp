@@ -101,6 +101,7 @@ bool HidManager::connectDevice(unsigned short vid, unsigned short pid)
         qDebug() << "Successfully connected to" << QString::number(vid, 16) << ":" << QString::number(pid, 16);
         refreshVersionInfo();
         emit deviceConnectedChanged();
+        pollStatus();
         return true;
     } else {
         qWarning() << "Failed to open device" << QString::number(vid, 16) << ":" << QString::number(pid, 16)
@@ -117,7 +118,12 @@ void HidManager::disconnectDevice()
         m_devicePath.clear();
         m_currentPid = 0;
         m_recentBatterySamples.clear();
+        const bool batteryStateChanged = (m_batteryLevel != -1) || m_isCharging;
+        m_batteryLevel = -1;
+        m_isCharging = false;
         clearVersionInfo();
+        if (batteryStateChanged)
+            emit batteryLevelChanged();
         emit deviceConnectedChanged();
     }
 }
@@ -386,6 +392,31 @@ void HidManager::pollStatus()
         return;
     }
 
+    if (m_currentPid == 0xff30 || m_currentPid == 0xff31) {
+        int wirelessBattery = -1;
+        bool wirelessCharging = m_isCharging;
+        if (requestWirelessStatus(wirelessBattery, wirelessCharging)) {
+            bool changed = false;
+
+            if (wirelessBattery >= 0) {
+                const int newBattery = stabilizedBatteryLevel(wirelessBattery);
+                if (newBattery != m_batteryLevel) {
+                    m_batteryLevel = newBattery;
+                    changed = true;
+                }
+            }
+
+            if (wirelessCharging != m_isCharging) {
+                m_isCharging = wirelessCharging;
+                changed = true;
+            }
+
+            if (changed)
+                emit batteryLevelChanged();
+            return;
+        }
+    }
+
     // Send status request (Compx standard: 04 11 02 02 ...)
     unsigned char buf[65] = {0};
     buf[0] = 0x04;
@@ -469,6 +500,92 @@ bool HidManager::parseBatteryStatusReport(const unsigned char *buffer, int lengt
     batteryLevel = rawBattery;
     charging = (buffer[4] == 0x01);
     return true;
+}
+
+bool HidManager::parseWirelessStatusReport(const unsigned char *buffer, int length, int &batteryLevel, bool &charging) const
+{
+    if (!buffer || length < 3)
+        return false;
+
+    if (buffer[0] != 0x54)
+        return false;
+
+    // Captured from the original Windows software on the wireless interface:
+    // 54 e2 01 01 00 44 ...
+    //                     ^^ battery percentage, descending over time.
+    if (buffer[1] == 0xE2) {
+        if (length < 6)
+            return false;
+
+        const int rawBattery = static_cast<int>(buffer[5]);
+        if (rawBattery < 0 || rawBattery > 100)
+            return false;
+
+        batteryLevel = rawBattery;
+        charging = false;
+        return true;
+    }
+
+    // Report 0xE4 appears to carry status/charge state notifications.
+    if (buffer[1] == 0xE4) {
+        const int state = static_cast<int>(buffer[2]);
+        charging = (state == 0x01);
+        batteryLevel = -1;
+        return true;
+    }
+
+    return false;
+}
+
+bool HidManager::requestWirelessStatus(int &batteryLevel, bool &charging)
+{
+    if (!m_device)
+        return false;
+
+    unsigned char query[21] = {0};
+    query[0] = 0x51;
+    query[1] = 0x0C;
+    query[2] = 0x02;
+
+    const int sendRes = hid_send_feature_report(m_device, query, sizeof(query));
+    if (sendRes < 0) {
+        qWarning() << "Wireless status query failed:" << QString::fromWCharArray(hid_error(m_device));
+        return false;
+    }
+
+    bool gotAnyStatus = false;
+
+    for (int attempt = 0; attempt < 8; ++attempt) {
+        unsigned char readBuf[64] = {0};
+        const int res = hid_read_timeout(m_device, readBuf, sizeof(readBuf), 25);
+
+        if (res < 0) {
+            qWarning() << "Wireless status read failed:" << QString::fromWCharArray(hid_error(m_device));
+            return false;
+        }
+
+        if (res == 0)
+            continue;
+
+        int parsedBattery = -1;
+        bool parsedCharging = charging;
+        if (parseWirelessStatusReport(readBuf, res, parsedBattery, parsedCharging)) {
+            QString hex;
+            for (int i = 0; i < res; ++i)
+                hex += QString("%1 ").arg(readBuf[i], 2, 16, QChar('0'));
+            qDebug() << "Wireless status report:" << hex.trimmed();
+
+            charging = parsedCharging;
+            gotAnyStatus = true;
+
+            if (parsedBattery >= 0) {
+                batteryLevel = parsedBattery;
+                return true;
+            }
+        }
+    }
+
+    return gotAnyStatus;
 }
 
 int HidManager::stabilizedBatteryLevel(int rawLevel)

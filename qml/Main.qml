@@ -51,8 +51,8 @@ ApplicationWindow {
         }
     }
 
-    onVisibilityChanged: {
-        if (visibility === Window.Minimized && configManager.minimizeToTrayEnabled && appController.trayAvailable) {
+    onVisibilityChanged: function() {
+        if (appRoot.visibility === Window.Minimized && configManager.minimizeToTrayEnabled && appController.trayAvailable) {
             appController.hideToTray()
         }
     }
@@ -105,6 +105,9 @@ ApplicationWindow {
     }
 
     function batterySpriteIndex() {
+        if (!hidManager.batteryKnown)
+            return 0
+
         if (hidManager.isCharging)
             return 12
 
@@ -375,7 +378,7 @@ ApplicationWindow {
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: hidManager.batteryLevel + "%"
+                    text: hidManager.batteryKnown ? (hidManager.batteryLevel + "%") : "--"
                     color: onSurface
                     font.pixelSize: 17
                     font.family: titleFont

@@ -20,7 +20,7 @@ Item {
         width: 450
         height: 126
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: 72
         anchors.top: parent.top
         anchors.topMargin: 96
         radius: 24
@@ -105,7 +105,7 @@ Item {
         width: 450
         height: 128
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: 72
         anchors.top: lodCard.bottom
         anchors.topMargin: 14
         radius: 24

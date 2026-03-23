@@ -22,9 +22,9 @@ Item {
         width: 346
         height: 540
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: 330
         anchors.top: parent.top
-        anchors.topMargin: 90
+        anchors.topMargin: 185
         radius: 28
         color: cardColor
         border.color: cardBorder
@@ -72,7 +72,7 @@ Item {
                 model: [
                     { title: I18n.tr(configManager.language, "about.firmware"), value: hidManager.firmwareVersion, side: I18n.tr(configManager.language, "about.mouse") },
                     { title: I18n.tr(configManager.language, "about.rf_version"), value: hidManager.rfVersion, side: I18n.tr(configManager.language, "about.dongle") },
-                    { title: I18n.tr(configManager.language, "about.app_version"), value: "v0.1", side: I18n.tr(configManager.language, "about.linux") }
+                    { title: I18n.tr(configManager.language, "about.app_version"), value: "v" + appVersion, side: I18n.tr(configManager.language, "about.linux") }
                 ]
 
                 delegate: Rectangle {

@@ -3,10 +3,10 @@
 pkgname = darmoshark-m3
 pkgbase = darmoshark-m3
 xdata = pkgtype=pkg
-pkgver = 0.1-1
+pkgver = 0.2-1
 pkgdesc = Linux software for Darmoshark M3/N3/M3S mice
 url = http://www.darmoshark.cn/
-builddate = 1774286503
+builddate = 1774290319
 packager = Unknown Packager
 size = 10578177
 arch = x86_64

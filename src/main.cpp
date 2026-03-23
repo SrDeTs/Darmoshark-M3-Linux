@@ -10,6 +10,9 @@
 #include <QTextStream>
 #include <QUrl>
 #include <QWindow>
+#include <QFont>
+#include <QFontDatabase>
+#include <QByteArray>
 #include "hidmanager.h"
 #include "configmanager.h"
 #include "appcontroller.h"
@@ -67,10 +70,26 @@ static bool writeDefaultConfigFile(const QString &path)
 
 int main(int argc, char *argv[])
 {
+    const QByteArray platformTheme = qgetenv("QT_QPA_PLATFORMTHEME").trimmed();
+    if (platformTheme == "qt6ct") {
+        qunsetenv("QT_QPA_PLATFORMTHEME");
+    }
+
     QApplication app(argc, argv);
+
+    QFont appFont = app.font();
+    if (appFont.family().trimmed().isEmpty()) {
+        const QStringList families = QFontDatabase::families();
+        const QString fallbackFamily = families.contains(QStringLiteral("Inter"))
+            ? QStringLiteral("Inter")
+            : QStringLiteral("Sans Serif");
+        appFont.setFamily(fallbackFamily);
+    }
+    app.setFont(appFont);
 
     app.setOrganizationName("Darmoshark");
     app.setApplicationName("Darmoshark M3");
+    app.setApplicationVersion(QStringLiteral(APP_VERSION));
 
     QString lockDirectory = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation);
     if (lockDirectory.isEmpty())
@@ -118,6 +137,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("hidManager", &hidManager);
     engine.rootContext()->setContextProperty("configManager", &configManager);
     engine.rootContext()->setContextProperty("appController", &appController);
+    engine.rootContext()->setContextProperty("appVersion", app.applicationVersion());
     engine.rootContext()->setContextProperty("configDirectoryUrl", configDirectoryUrl);
     engine.rootContext()->setContextProperty("configCreatedFirstRun", configCreatedFirstRun);
     engine.rootContext()->setContextProperty("configRecoveredFromCorruption", configRecoveredFromCorruption);

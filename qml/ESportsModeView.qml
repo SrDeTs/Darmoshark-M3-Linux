@@ -20,9 +20,9 @@ Item {
         width: 450
         height: 126
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: 245
         anchors.top: parent.top
-        anchors.topMargin: 96
+        anchors.topMargin: 280
         radius: 24
         color: glassTint
         border.color: lineColor
@@ -105,7 +105,7 @@ Item {
         width: 450
         height: 128
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: 245
         anchors.top: esportsCard.bottom
         anchors.topMargin: 14
         radius: 24

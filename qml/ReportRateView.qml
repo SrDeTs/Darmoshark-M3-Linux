@@ -40,7 +40,7 @@ Item {
             height: 132
             anchors.left: parent.left
             anchors.top: parent.top
-            anchors.leftMargin: 24
+            anchors.leftMargin: 72
             anchors.topMargin: 96
             radius: 24
             color: panel
@@ -118,7 +118,7 @@ Item {
             width: 450
             height: 128
             anchors.left: parent.left
-            anchors.leftMargin: 24
+            anchors.leftMargin: 72
             anchors.top: rateCard.bottom
             anchors.topMargin: 14
             radius: 24

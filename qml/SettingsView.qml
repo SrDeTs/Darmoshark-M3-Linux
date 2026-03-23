@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
+import "components"
 import "idiomas/I18n.js" as I18n
 
 Item {
@@ -81,6 +82,10 @@ Item {
             font.pixelSize: 14
             font.family: bodyFont
             verticalAlignment: Text.AlignVCenter
+
+            function positionToRectangle() {
+                return Qt.rect(0, 0, 0, 0)
+            }
         }
 
         background: Rectangle {
@@ -136,12 +141,12 @@ Item {
     }
 
     Rectangle {
-        width: 360
+        width: 430
         height: 520
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: 240
         anchors.top: parent.top
-        anchors.topMargin: 32
+        anchors.topMargin: 185
         radius: 28
         color: cardColor
         border.color: cardBorder
@@ -243,7 +248,7 @@ Item {
 
                 Item { Layout.fillWidth: true }
 
-                Switch {
+                SettingsSwitch {
                     checked: configManager.autoStartEnabled
                     onToggled: configManager.setAutoStartEnabled(checked)
                 }
@@ -265,7 +270,7 @@ Item {
 
                 Item { Layout.fillWidth: true }
 
-                Switch {
+                SettingsSwitch {
                     checked: configManager.minimizeToTrayEnabled
                     onToggled: configManager.setMinimizeToTrayEnabled(checked)
                 }
@@ -307,9 +312,9 @@ Item {
         padding: 0
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-        onVisibleChanged: {
-            if (Window.window)
-                Window.window.modalBlurActive = visible
+        onVisibleChanged: function() {
+            if (pageRoot.Window.window)
+                pageRoot.Window.window.modalBlurActive = visible
         }
 
         enter: Transition {

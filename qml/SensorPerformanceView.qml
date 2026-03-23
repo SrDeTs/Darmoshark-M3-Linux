@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import "components"
 import "idiomas/I18n.js" as I18n
 
 Item {
@@ -83,7 +84,7 @@ Item {
 
     Column {
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: 44
         anchors.top: parent.top
         anchors.topMargin: 96
         spacing: 14
@@ -119,7 +120,7 @@ Item {
                             width: parent.width
                             spacing: 12
 
-                            Switch {
+                            SettingsSwitch {
                                 checked: pageRoot.optionEnabled(index)
                                 Layout.alignment: Qt.AlignVCenter
                                 onToggled: pageRoot.setOptionEnabled(index, checked)

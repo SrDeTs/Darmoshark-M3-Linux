@@ -11,6 +11,7 @@ class HidManager : public QObject
     Q_PROPERTY(bool deviceConnected READ isDeviceConnected NOTIFY deviceConnectedChanged)
     Q_PROPERTY(QString connectionMode READ connectionMode NOTIFY deviceConnectedChanged)
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
+    Q_PROPERTY(bool batteryKnown READ batteryKnown NOTIFY batteryLevelChanged)
     Q_PROPERTY(bool isCharging READ isCharging NOTIFY batteryLevelChanged)
     Q_PROPERTY(QString firmwareVersion READ firmwareVersion NOTIFY versionInfoChanged)
     Q_PROPERTY(QString rfVersion READ rfVersion NOTIFY versionInfoChanged)
@@ -22,6 +23,7 @@ public:
     bool isDeviceConnected() const { return m_device != nullptr; }
     QString connectionMode() const;
     int batteryLevel() const { return m_batteryLevel; }
+    bool batteryKnown() const { return m_batteryLevel >= 0; }
     bool isCharging() const { return m_isCharging; }
     QString firmwareVersion() const { return m_firmwareVersion; }
     QString rfVersion() const { return m_rfVersion; }
@@ -54,6 +56,8 @@ private slots:
 
 private:
     bool parseBatteryStatusReport(const unsigned char *buffer, int length, int &batteryLevel, bool &charging) const;
+    bool parseWirelessStatusReport(const unsigned char *buffer, int length, int &batteryLevel, bool &charging) const;
+    bool requestWirelessStatus(int &batteryLevel, bool &charging);
     int stabilizedBatteryLevel(int rawLevel);
     void clearVersionInfo();
     void setVersionInfo(const QString &firmwareVersion, const QString &rfVersion);
@@ -65,7 +69,7 @@ private:
     QTimer *m_pollTimer = nullptr;
     QString m_devicePath;
     unsigned short m_currentPid = 0;
-    int m_batteryLevel = 100;
+    int m_batteryLevel = -1;
     bool m_isCharging = false;
     QVector<int> m_recentBatterySamples;
     QString m_firmwareVersion = QStringLiteral("N/D");
