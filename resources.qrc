@@ -26,6 +26,7 @@
         <file>qml/SettingsView.qml</file>
         <file>qml/AboutView.qml</file>
         <file>qml/components/SettingsSwitch.qml</file>
+        <file>qml/components/ThemeBackgroundTransition.qml</file>
         <file>qml/idiomas/I18n.js</file>
     </qresource>
 </RCC>

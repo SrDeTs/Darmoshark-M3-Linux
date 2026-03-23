@@ -201,7 +201,9 @@ Item {
                 model: pageRoot.languageItems
                 currentIndex: I18n.languageCode(configManager.language) === "en-US" ? 1 : 0
 
-                onActivated: configManager.setLanguage(pageRoot.languageItems[languageSelector.currentIndex].value)
+                onActivated: function(index) {
+                    configManager.setLanguage(pageRoot.languageItems[index].value)
+                }
             }
 
             Item { Layout.preferredHeight: 18 }
@@ -220,7 +222,9 @@ Item {
                 model: pageRoot.themeItems
                 currentIndex: configManager.theme === "White" ? 1 : 0
 
-                onActivated: configManager.setTheme(pageRoot.themeItems[themeSelector.currentIndex].value)
+                onActivated: function(index) {
+                    configManager.setTheme(pageRoot.themeItems[index].value)
+                }
             }
 
             Item { Layout.preferredHeight: 24 }

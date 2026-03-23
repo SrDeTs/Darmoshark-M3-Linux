@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Effects
+import "components"
 import "idiomas/I18n.js" as I18n
 
 ApplicationWindow {
@@ -35,8 +36,8 @@ ApplicationWindow {
     property bool modalBlurActive: false
     property bool themeTransitionRunning: false
     property bool pageTransitionRunning: false
-    property string activeBackgroundSource: backgroundSource()
-    property string incomingBackgroundSource: ""
+    property string activeBackgroundSource: ""
+    property int themeTransitionDirection: 1
     property int currentPageIndex: 0
     property int nextPageIndex: -1
     property int pageTransitionDirection: 1
@@ -138,15 +139,13 @@ ApplicationWindow {
 
     function updateThemeBackground() {
         var nextSource = backgroundSource()
+        console.log("updateThemeBackground", configManager.theme, activeBackgroundSource, nextSource, themeTransitionRunning)
         if (nextSource === activeBackgroundSource || themeTransitionRunning)
             return
 
-        incomingBackgroundSource = nextSource
+        themeTransitionDirection = configManager.theme === "White" ? 1 : -1
         themeTransitionRunning = true
-        themeIncoming.opacity = 0.0
-        themeIncoming.scale = 1.035
-        themeOverlay.opacity = 0.0
-        themeTransition.restart()
+        themeBackground.startTransition(nextSource, configManager.theme === "White", themeTransitionDirection)
     }
 
     function navigateTo(index) {
@@ -174,41 +173,23 @@ ApplicationWindow {
         }
     }
 
+    Component.onCompleted: {
+        activeBackgroundSource = backgroundSource()
+    }
+
     Item {
         id: appScene
         anchors.fill: parent
 
-        Image {
-            id: backgroundBase
+        ThemeBackgroundTransition {
+            id: themeBackground
             anchors.fill: parent
-            source: activeBackgroundSource
-            fillMode: Image.PreserveAspectCrop
-            smooth: true
-            mipmap: true
-            z: -1
-        }
+            activeSource: appRoot.activeBackgroundSource
 
-        Image {
-            id: themeIncoming
-            anchors.fill: parent
-            source: incomingBackgroundSource
-            fillMode: Image.PreserveAspectCrop
-            smooth: true
-            mipmap: true
-            opacity: 0.0
-            scale: 1.0
-            visible: opacity > 0.0 || appRoot.themeTransitionRunning
-            z: -1
-        }
-
-        Rectangle {
-            id: themeOverlay
-            anchors.fill: parent
-            color: configManager.theme === "White"
-                   ? Qt.rgba(248 / 255, 250 / 255, 255 / 255, 0.12)
-                   : Qt.rgba(11 / 255, 13 / 255, 18 / 255, 0.22)
-            opacity: 0.0
-            z: 0
+            onTransitionFinished: function(nextSource) {
+                appRoot.activeBackgroundSource = nextSource
+                appRoot.themeTransitionRunning = false
+            }
         }
 
         Item {
@@ -456,57 +437,6 @@ ApplicationWindow {
             incomingPageLayer.opacity = 0.0
             incomingPageLayer.scale = 1.0
             incomingPageLoader.source = ""
-        }
-    }
-
-    ParallelAnimation {
-        id: themeTransition
-
-        SequentialAnimation {
-            NumberAnimation {
-                target: themeOverlay
-                property: "opacity"
-                from: 0.0
-                to: 1.0
-                duration: 180
-                easing.type: Easing.OutCubic
-            }
-            PauseAnimation { duration: 40 }
-            NumberAnimation {
-                target: themeOverlay
-                property: "opacity"
-                from: 1.0
-                to: 0.0
-                duration: 320
-                easing.type: Easing.InOutCubic
-            }
-        }
-
-        NumberAnimation {
-            target: themeIncoming
-            property: "opacity"
-            from: 0.0
-            to: 1.0
-            duration: 420
-            easing.type: Easing.InOutCubic
-        }
-
-        NumberAnimation {
-            target: themeIncoming
-            property: "scale"
-            from: 1.035
-            to: 1.0
-            duration: 520
-            easing.type: Easing.OutCubic
-        }
-
-        onFinished: {
-            appRoot.activeBackgroundSource = appRoot.incomingBackgroundSource
-            appRoot.incomingBackgroundSource = ""
-            appRoot.themeTransitionRunning = false
-            themeIncoming.opacity = 0.0
-            themeIncoming.scale = 1.0
-            themeOverlay.opacity = 0.0
         }
     }
 

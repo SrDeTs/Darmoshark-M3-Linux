@@ -418,6 +418,7 @@ void ConfigManager::setTheme(const QString &theme)
     ensureUiTable();
     auto *uiTable = m_config["ui"].as_table();
     if (!uiTable) return;
+    qDebug() << "ConfigManager::setTheme" << theme;
     uiTable->insert_or_assign(std::string("theme"), theme.toStdString());
     emit configChanged();
     saveConfig();
