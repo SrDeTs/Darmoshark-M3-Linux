@@ -37,6 +37,7 @@ static toml::table buildDefaultConfig()
     ui.insert_or_assign(std::string("lift_off_high"), false);
     ui.insert_or_assign(std::string("scroll_normal"), true);
     ui.insert_or_assign(std::string("esports_open"), false);
+    ui.insert_or_assign(std::string("theme"), std::string("Dark"));
     ui.insert_or_assign(std::string("language"), std::string("English"));
     ui.insert_or_assign(std::string("auto_start_enabled"), false);
     ui.insert_or_assign(std::string("minimize_to_tray_enabled"), false);
@@ -223,6 +224,13 @@ bool ConfigManager::esportsOpen() const
     return node ? node->value_or(false) : false;
 }
 
+QString ConfigManager::theme() const
+{
+    auto *uiTable = m_config["ui"].as_table();
+    auto *node = uiTable ? (*uiTable)["theme"].as_string() : nullptr;
+    return node ? QString::fromStdString(node->get()) : QStringLiteral("Dark");
+}
+
 QString ConfigManager::language() const
 {
     auto *uiTable = m_config["ui"].as_table();
@@ -321,6 +329,16 @@ void ConfigManager::setESportsOpen(bool open)
     auto *uiTable = m_config["ui"].as_table();
     if (!uiTable) return;
     uiTable->insert_or_assign(std::string("esports_open"), open);
+    emit configChanged();
+    saveConfig();
+}
+
+void ConfigManager::setTheme(const QString &theme)
+{
+    ensureUiTable();
+    auto *uiTable = m_config["ui"].as_table();
+    if (!uiTable) return;
+    uiTable->insert_or_assign(std::string("theme"), theme.toStdString());
     emit configChanged();
     saveConfig();
 }

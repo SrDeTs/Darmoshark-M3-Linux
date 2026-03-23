@@ -32,6 +32,9 @@ ApplicationWindow {
     property color danger: "#ffb4ab"
     property bool configWarningDismissed: false
     property bool modalBlurActive: false
+    property bool themeTransitionRunning: false
+    property string activeBackgroundSource: backgroundSource()
+    property string incomingBackgroundSource: ""
 
     onClosing: function(close) {
         if (configManager.minimizeToTrayEnabled && appController.trayAvailable) {
@@ -81,18 +84,68 @@ ApplicationWindow {
         return navPages[index].source
     }
 
+    function backgroundSource() {
+        if (configManager.theme === "White")
+            return "qrc:/images/BG-M3-White.png"
+        return "qrc:/images/BG-M3-Black.png"
+    }
+
+    function updateThemeBackground() {
+        var nextSource = backgroundSource()
+        if (nextSource === activeBackgroundSource || themeTransitionRunning)
+            return
+
+        incomingBackgroundSource = nextSource
+        themeTransitionRunning = true
+        themeIncoming.opacity = 0.0
+        themeIncoming.scale = 1.035
+        themeOverlay.opacity = 0.0
+        themeTransition.restart()
+    }
+
+    Connections {
+        target: configManager
+
+        function onThemeChanged() {
+            appRoot.updateThemeBackground()
+        }
+    }
+
     Item {
         id: appScene
         anchors.fill: parent
 
         Image {
-            id: backgroundImage
+            id: backgroundBase
             anchors.fill: parent
-            source: "qrc:/images/BG-M3-Black.png"
+            source: activeBackgroundSource
             fillMode: Image.PreserveAspectCrop
             smooth: true
             mipmap: true
             z: -1
+        }
+
+        Image {
+            id: themeIncoming
+            anchors.fill: parent
+            source: incomingBackgroundSource
+            fillMode: Image.PreserveAspectCrop
+            smooth: true
+            mipmap: true
+            opacity: 0.0
+            scale: 1.0
+            visible: opacity > 0.0 || appRoot.themeTransitionRunning
+            z: -1
+        }
+
+        Rectangle {
+            id: themeOverlay
+            anchors.fill: parent
+            color: configManager.theme === "White"
+                   ? Qt.rgba(248 / 255, 250 / 255, 255 / 255, 0.12)
+                   : Qt.rgba(11 / 255, 13 / 255, 18 / 255, 0.22)
+            opacity: 0.0
+            z: 0
         }
 
         SwipeView {
@@ -128,19 +181,16 @@ ApplicationWindow {
             anchors.horizontalCenter: parent.horizontalCenter
             width: navLayout.implicitWidth + 32
             height: 84
-            color: Qt.rgba(16 / 255, 17 / 255, 21 / 255, 0.42)
+            color: "#191a1a"
             radius: 24
-            border.color: Qt.rgba(255/255, 255/255, 255/255, 0.10)
+            border.color: "#1f2020"
             border.width: 1
 
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: 1
                 radius: 23
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.025) }
-                    GradientStop { position: 1.0; color: Qt.rgba(167 / 255, 200 / 255, 255 / 255, 0.025) }
-                }
+                color: "#191a1a"
             }
 
             RowLayout {
@@ -199,6 +249,57 @@ ApplicationWindow {
                     }
                 }
             }
+        }
+    }
+
+    ParallelAnimation {
+        id: themeTransition
+
+        SequentialAnimation {
+            NumberAnimation {
+                target: themeOverlay
+                property: "opacity"
+                from: 0.0
+                to: 1.0
+                duration: 180
+                easing.type: Easing.OutCubic
+            }
+            PauseAnimation { duration: 40 }
+            NumberAnimation {
+                target: themeOverlay
+                property: "opacity"
+                from: 1.0
+                to: 0.0
+                duration: 320
+                easing.type: Easing.InOutCubic
+            }
+        }
+
+        NumberAnimation {
+            target: themeIncoming
+            property: "opacity"
+            from: 0.0
+            to: 1.0
+            duration: 420
+            easing.type: Easing.InOutCubic
+        }
+
+        NumberAnimation {
+            target: themeIncoming
+            property: "scale"
+            from: 1.035
+            to: 1.0
+            duration: 520
+            easing.type: Easing.OutCubic
+        }
+
+        onFinished: {
+            appRoot.activeBackgroundSource = appRoot.incomingBackgroundSource
+            appRoot.incomingBackgroundSource = ""
+            appRoot.themeTransitionRunning = false
+            themeIncoming.opacity = 0.0
+            themeIncoming.scale = 1.0
+            themeOverlay.opacity = 0.0
         }
     }
 
