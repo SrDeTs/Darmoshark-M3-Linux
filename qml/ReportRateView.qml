@@ -34,6 +34,7 @@ Item {
         color: "transparent"
 
         Rectangle {
+            id: rateCard
             width: 450
             height: 132
             anchors.left: parent.left
@@ -108,6 +109,47 @@ Item {
                             }
                         }
                     }
+                }
+            }
+        }
+
+        Rectangle {
+            width: 450
+            height: 128
+            anchors.left: parent.left
+            anchors.leftMargin: 24
+            anchors.top: rateCard.bottom
+            anchors.topMargin: 14
+            radius: 24
+            color: panel
+            border.color: panelLine
+            border.width: 2
+
+            Column {
+                anchors.fill: parent
+                anchors.leftMargin: 18
+                anchors.rightMargin: 18
+                anchors.topMargin: 14
+                anchors.bottomMargin: 16
+                spacing: 8
+
+                Text {
+                    text: "Como funciona"
+                    color: textPrimary
+                    font.pixelSize: 18
+                    font.family: titleFont
+                    font.weight: Font.Medium
+                }
+
+                Text {
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 3
+                    text: "Valores mais altos reduzem a latência e deixam a resposta mais rápida, mas podem consumir mais energia durante o uso."
+                    color: textSecondary
+                    font.pixelSize: 14
+                    font.family: bodyFont
+                    lineHeight: 1.25
                 }
             }
         }
