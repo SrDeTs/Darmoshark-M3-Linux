@@ -18,36 +18,36 @@ Item {
 
     Rectangle {
         id: controlCard
-        width: 620
-        height: 212
+        width: 450
+        height: 126
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
-        anchors.topMargin: 90
-        radius: 30
+        anchors.topMargin: 96
+        radius: 24
         color: glassTint
         border.color: lineColor
         border.width: 2
 
         Column {
             anchors.fill: parent
-            anchors.margins: 22
-            spacing: 16
+            anchors.margins: 18
+            spacing: 14
 
             Text {
                 text: "Scroll Direction"
                 color: textPrimary
-                font.pixelSize: 28
+                font.pixelSize: 24
                 font.family: titleFont
-                font.weight: Font.DemiBold
+                font.weight: Font.Medium
             }
 
             Rectangle {
                 width: parent.width
-                height: 52
+                height: 44
                 radius: 22
                 color: sectionTint
-                border.color: lineColor
+                border.color: Qt.rgba(255 / 255, 255 / 255, 255 / 255, 0.03)
                 border.width: 1
 
                 RowLayout {
@@ -81,7 +81,7 @@ Item {
                                 anchors.centerIn: parent
                                 text: modelData.label
                                 color: modelData.active ? "#eef5ff" : textSecondary
-                                font.pixelSize: 15
+                                font.pixelSize: 14
                                 font.family: bodyFont
                                 font.weight: modelData.active ? Font.Medium : Font.Normal
                             }
@@ -98,6 +98,47 @@ Item {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    Rectangle {
+        width: 450
+        height: 128
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        anchors.top: controlCard.bottom
+        anchors.topMargin: 14
+        radius: 24
+        color: glassTint
+        border.color: lineColor
+        border.width: 2
+
+        Column {
+            anchors.fill: parent
+            anchors.leftMargin: 18
+            anchors.rightMargin: 18
+            anchors.topMargin: 14
+            anchors.bottomMargin: 16
+            spacing: 8
+
+            Text {
+                text: "Como funciona"
+                color: textPrimary
+                font.pixelSize: 18
+                font.family: titleFont
+                font.weight: Font.Medium
+            }
+
+            Text {
+                width: parent.width
+                wrapMode: Text.WordWrap
+                text: "Normal mantém a rolagem padrão do mouse. Invertido troca o sentido da roda, como em alguns touchpads e sistemas com scroll reverso."
+                color: textSecondary
+                font.pixelSize: 14
+                font.family: bodyFont
+                lineHeight: 1.25
+                maximumLineCount: 3
             }
         }
     }

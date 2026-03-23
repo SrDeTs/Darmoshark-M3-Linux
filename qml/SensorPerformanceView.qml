@@ -16,120 +16,178 @@ Item {
     property string bodyFont: "Inter"
 
     Rectangle {
-        width: 360
-        height: 220
-        anchors.centerIn: parent
+        width: 450
+        height: 274
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        anchors.top: parent.top
+        anchors.topMargin: 96
         color: surfaceContainerLow
         radius: 24
         border.color: surfaceContainerHigh
         border.width: 2
 
         Column {
-            anchors.centerIn: parent
+            anchors.fill: parent
+            anchors.margins: 18
             spacing: 18
 
             Text {
                 text: "Sensor Performance"
                 color: onSurface
-                font.pixelSize: 18
+                font.pixelSize: 24
                 font.family: titleFont
-                anchors.horizontalCenter: parent.horizontalCenter
+                font.weight: Font.Medium
             }
 
             Column {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 10
+                width: parent.width
+                spacing: 14
 
-                Row {
-                    spacing: 16
+                Column {
+                    width: parent.width
+                    spacing: 4
 
-                    Text {
-                        text: "Ripple"
-                        color: onSurface
-                        font.pixelSize: 14
-                        font.family: bodyFont
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
+                    RowLayout {
+                        width: parent.width
+                        spacing: 16
 
-                    Switch {
-                        checked: configManager.rippleEnabled
-                        anchors.verticalCenter: parent.verticalCenter
-                        onToggled: {
-                            configManager.setRippleEnabled(checked)
-                            if (typeof hidManager !== "undefined") {
-                                hidManager.applyRipple(checked)
+                        Text {
+                            text: "Ripple"
+                            color: onSurface
+                            font.pixelSize: 14
+                            font.family: bodyFont
+                            Layout.preferredWidth: 92
+                            Layout.alignment: Qt.AlignVCenter
+                        }
+
+                        Switch {
+                            checked: configManager.rippleEnabled
+                            Layout.alignment: Qt.AlignVCenter
+                            onToggled: {
+                                configManager.setRippleEnabled(checked)
+                                if (typeof hidManager !== "undefined") {
+                                    hidManager.applyRipple(checked)
+                                }
                             }
+                        }
+
+                        Item { Layout.fillWidth: true }
+
+                        Text {
+                            text: configManager.rippleEnabled ? "On" : "Off"
+                            color: configManager.rippleEnabled ? onSurface : onSurfaceVariant
+                            font.pixelSize: 14
+                            font.family: bodyFont
+                            Layout.alignment: Qt.AlignVCenter
                         }
                     }
 
                     Text {
-                        text: configManager.rippleEnabled ? "On" : "Off"
-                        color: configManager.rippleEnabled ? onSurface : onSurfaceVariant
-                        font.pixelSize: 14
+                        width: parent.width
+                        text: "Reduz pequenas vibrações do sensor em movimentos finos."
+                        color: onSurfaceVariant
+                        font.pixelSize: 12
                         font.family: bodyFont
-                        anchors.verticalCenter: parent.verticalCenter
+                        wrapMode: Text.WordWrap
                     }
                 }
 
-                Row {
-                    spacing: 16
+                Column {
+                    width: parent.width
+                    spacing: 4
 
-                    Text {
-                        text: "Motion Sync"
-                        color: onSurface
-                        font.pixelSize: 14
-                        font.family: bodyFont
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
+                    RowLayout {
+                        width: parent.width
+                        spacing: 16
 
-                    Switch {
-                        checked: configManager.motionSyncEnabled
-                        anchors.verticalCenter: parent.verticalCenter
-                        onToggled: {
-                            configManager.setMotionSyncEnabled(checked)
-                            if (typeof hidManager !== "undefined") {
-                                hidManager.applyMotionSync(checked)
+                        Text {
+                            text: "Motion Sync"
+                            color: onSurface
+                            font.pixelSize: 14
+                            font.family: bodyFont
+                            Layout.preferredWidth: 92
+                            Layout.alignment: Qt.AlignVCenter
+                        }
+
+                        Switch {
+                            checked: configManager.motionSyncEnabled
+                            Layout.alignment: Qt.AlignVCenter
+                            onToggled: {
+                                configManager.setMotionSyncEnabled(checked)
+                                if (typeof hidManager !== "undefined") {
+                                    hidManager.applyMotionSync(checked)
+                                }
                             }
+                        }
+
+                        Item { Layout.fillWidth: true }
+
+                        Text {
+                            text: configManager.motionSyncEnabled ? "On" : "Off"
+                            color: configManager.motionSyncEnabled ? onSurface : onSurfaceVariant
+                            font.pixelSize: 14
+                            font.family: bodyFont
+                            Layout.alignment: Qt.AlignVCenter
                         }
                     }
 
                     Text {
-                        text: configManager.motionSyncEnabled ? "On" : "Off"
-                        color: configManager.motionSyncEnabled ? onSurface : onSurfaceVariant
-                        font.pixelSize: 14
+                        width: parent.width
+                        text: "Sincroniza melhor os dados do sensor com os relatórios enviados."
+                        color: onSurfaceVariant
+                        font.pixelSize: 12
                         font.family: bodyFont
-                        anchors.verticalCenter: parent.verticalCenter
+                        wrapMode: Text.WordWrap
                     }
                 }
 
-                Row {
-                    spacing: 16
+                Column {
+                    width: parent.width
+                    spacing: 4
 
-                    Text {
-                        text: "Angle Snap"
-                        color: onSurface
-                        font.pixelSize: 14
-                        font.family: bodyFont
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
+                    RowLayout {
+                        width: parent.width
+                        spacing: 16
 
-                    Switch {
-                        checked: configManager.angleSnapEnabled
-                        anchors.verticalCenter: parent.verticalCenter
-                        onToggled: {
-                            configManager.setAngleSnapEnabled(checked)
-                            if (typeof hidManager !== "undefined") {
-                                hidManager.applyAngleSnap(checked)
+                        Text {
+                            text: "Angle Snap"
+                            color: onSurface
+                            font.pixelSize: 14
+                            font.family: bodyFont
+                            Layout.preferredWidth: 92
+                            Layout.alignment: Qt.AlignVCenter
+                        }
+
+                        Switch {
+                            checked: configManager.angleSnapEnabled
+                            Layout.alignment: Qt.AlignVCenter
+                            onToggled: {
+                                configManager.setAngleSnapEnabled(checked)
+                                if (typeof hidManager !== "undefined") {
+                                    hidManager.applyAngleSnap(checked)
+                                }
                             }
+                        }
+
+                        Item { Layout.fillWidth: true }
+
+                        Text {
+                            text: configManager.angleSnapEnabled ? "On" : "Off"
+                            color: configManager.angleSnapEnabled ? onSurface : onSurfaceVariant
+                            font.pixelSize: 14
+                            font.family: bodyFont
+                            Layout.alignment: Qt.AlignVCenter
                         }
                     }
 
                     Text {
-                        text: configManager.angleSnapEnabled ? "On" : "Off"
-                        color: configManager.angleSnapEnabled ? onSurface : onSurfaceVariant
-                        font.pixelSize: 14
+                        width: parent.width
+                        text: "Ajuda a corrigir linhas retas automaticamente em movimentos diagonais."
+                        color: onSurfaceVariant
+                        font.pixelSize: 12
                         font.family: bodyFont
-                        anchors.verticalCenter: parent.verticalCenter
+                        wrapMode: Text.WordWrap
                     }
                 }
             }
