@@ -26,6 +26,9 @@
         <file>qml/SettingsView.qml</file>
         <file>qml/AboutView.qml</file>
         <file>qml/components/ConnectionStatusBadge.qml</file>
+        <file>qml/components/BatteryStatusBadge.qml</file>
+        <file>qml/components/NavigationDock.qml</file>
+        <file>qml/components/PageViewport.qml</file>
         <file>qml/components/SettingsSwitch.qml</file>
         <file>qml/components/ThemeBackgroundTransition.qml</file>
         <file>qml/idiomas/I18n.js</file>

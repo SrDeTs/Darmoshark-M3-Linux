@@ -148,13 +148,13 @@ ApplicationWindow {
 
         nextPageIndex = index
         pageTransitionDirection = index > currentPageIndex ? 1 : -1
-        incomingPageLayer.x = 40 * pageTransitionDirection
-        incomingPageLayer.opacity = 0.0
-        incomingPageLayer.scale = 0.992
-        currentPageLayer.x = 0
-        currentPageLayer.opacity = 1.0
-        currentPageLayer.scale = 1.0
-        incomingPageLoader.source = pageSource(index)
+        pageViewport.incomingPageLayer.x = 40 * pageTransitionDirection
+        pageViewport.incomingPageLayer.opacity = 0.0
+        pageViewport.incomingPageLayer.scale = 0.992
+        pageViewport.currentPageLayer.x = 0
+        pageViewport.currentPageLayer.opacity = 1.0
+        pageViewport.currentPageLayer.scale = 1.0
+        pageViewport.incomingPageLoader.source = pageSource(index)
         pageTransitionRunning = true
         pageTransition.restart()
     }
@@ -187,210 +187,50 @@ ApplicationWindow {
             }
         }
 
-        Item {
+        PageViewport {
             id: pageViewport
             anchors.fill: parent
             anchors.topMargin: 8
             anchors.bottomMargin: 136
             anchors.leftMargin: 8
             anchors.rightMargin: 8
-            clip: true
-            enabled: !appRoot.controlsLocked
-            opacity: appRoot.controlsLocked ? 0.42 : 1.0
+            controlsLocked: appRoot.controlsLocked
+            pageTransitionRunning: appRoot.pageTransitionRunning
+            incomingOpacity: pageViewport.incomingPageLayer.opacity
 
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 220
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            Item {
-                id: currentPageLayer
-                anchors.fill: parent
-
-                Loader {
-                    id: currentPageLoader
-                    anchors.fill: parent
-                    source: appRoot.pageSource(appRoot.currentPageIndex)
-                }
-            }
-
-            Item {
-                id: incomingPageLayer
-                anchors.fill: parent
-                opacity: 0.0
-                visible: opacity > 0.0 || appRoot.pageTransitionRunning
-
-                Loader {
-                    id: incomingPageLoader
-                    anchors.fill: parent
-                }
+            Component.onCompleted: {
+                pageViewport.currentPageLoader.source = appRoot.pageSource(appRoot.currentPageIndex)
             }
         }
 
-        Rectangle {
-            id: disconnectedLockOverlay
-            anchors.fill: pageViewport
-            color: Qt.rgba(8 / 255, 10 / 255, 14 / 255, 0.10)
-            opacity: appRoot.controlsLocked ? 1.0 : 0.0
-            visible: opacity > 0.0
-            z: 2
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 220
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                enabled: appRoot.controlsLocked
-            }
-        }
-
-        Rectangle {
+        NavigationDock {
             id: floatingBar
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 24
             anchors.horizontalCenter: parent.horizontalCenter
-            width: navLayout.implicitWidth + 32
-            height: 84
-            color: "#191a1a"
-            radius: 24
-            border.color: "#1f2020"
-            border.width: 1
-
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: 1
-                radius: 23
-                color: "#191a1a"
-            }
-
-            RowLayout {
-                id: navLayout
-                anchors.centerIn: parent
-                spacing: 4
-
-                Repeater {
-                    model: navPages
-
-                    delegate: Button {
-                        id: navBtn
-                        Layout.fillHeight: true
-                        Layout.preferredWidth: 68
-                        Layout.maximumHeight: 76
-                        flat: true
-                        checkable: true
-                        checked: appRoot.selectedNavIndex() === index
-                        hoverEnabled: true
-
-                        background: Rectangle {
-                            width: (navBtn.checked || navBtn.hovered) ? 42 : 0
-                            height: (navBtn.checked || navBtn.hovered) ? 42 : 0
-                            anchors.centerIn: parent
-                            radius: navBtn.checked ? 16 : 20
-                            color: navBtn.checked ? Qt.rgba(167/255, 200/255, 255/255, 0.15) : (navBtn.hovered ? surfaceContainerHigh : "transparent")
-
-                            Behavior on color { ColorAnimation { duration: 200 } }
-                            Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                            Behavior on height { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                            Behavior on radius { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                        }
-
-                        contentItem: ColumnLayout {
-                            id: navContent
-                            anchors.centerIn: parent
-                            width: 22
-                            height: 22
-                            spacing: 0
-                            scale: 1.0
-
-                            Image {
-                                Layout.alignment: Qt.AlignHCenter
-                                Layout.preferredWidth: 18
-                                Layout.preferredHeight: 18
-                                source: navIcon(index)
-                                sourceSize.width: 18
-                                sourceSize.height: 18
-                                fillMode: Image.PreserveAspectFit
-                                smooth: true
-                                mipmap: true
-                                opacity: navBtn.checked ? 1.0 : 0.72
-                            }
-                        }
-
-                        SequentialAnimation {
-                            id: clickPulse
-
-                            NumberAnimation {
-                                target: navContent
-                                property: "scale"
-                                from: 1.0
-                                to: 0.82
-                                duration: 80
-                                easing.type: Easing.OutCubic
-                            }
-
-                            NumberAnimation {
-                                target: navContent
-                                property: "scale"
-                                from: 0.82
-                                to: 1.0
-                                duration: 170
-                                easing.type: Easing.OutBack
-                            }
-                        }
-
-                        onClicked: {
-                            clickPulse.restart()
-                            appRoot.navigateTo(index)
-                        }
-                    }
-                }
+            navPages: appRoot.navPages
+            selectedIndex: appRoot.selectedNavIndex()
+            surfaceContainer: appRoot.surfaceContainer
+            surfaceContainerHigh: appRoot.surfaceContainerHigh
+            iconResolver: appRoot.navIcon
+            onNavigateRequested: function(index) {
+                appRoot.navigateTo(index)
             }
         }
 
-        Rectangle {
+        BatteryStatusBadge {
             id: batteryBadge
             anchors.top: parent.top
             anchors.topMargin: 24
             anchors.right: parent.right
             anchors.rightMargin: 24
-            width: 118
-            height: 84
-            radius: 20
-            color: "#191a1a"
-            border.color: "#1f2020"
-            border.width: 1
             z: 5
-
-            Column {
-                anchors.centerIn: parent
-                spacing: 6
-
-                Image {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: 42
-                    height: 24
-                    source: "qrc:/images/Bateria/SpryteBateria.png"
-                    sourceClipRect: appRoot.batterySourceRect()
-                    fillMode: Image.PreserveAspectFit
-                    smooth: true
-                    mipmap: true
-                }
-
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: hidManager.batteryKnown ? (hidManager.batteryLevel + "%") : "--"
-                    color: onSurface
-                    font.pixelSize: 17
-                    font.family: titleFont
-                    font.weight: Font.Medium
-                }
-            }
+            textColor: appRoot.onSurface
+            titleFont: appRoot.titleFont
+            batteryKnown: hidManager.batteryKnown
+            charging: hidManager.isCharging
+            batteryLevel: hidManager.batteryLevel
+            sourceRect: appRoot.batterySourceRect()
         }
 
         ConnectionStatusBadge {
@@ -414,7 +254,7 @@ ApplicationWindow {
 
         ParallelAnimation {
             NumberAnimation {
-                target: currentPageLayer
+                target: pageViewport.currentPageLayer
                 property: "x"
                 from: 0
                 to: -34 * appRoot.pageTransitionDirection
@@ -422,7 +262,7 @@ ApplicationWindow {
                 easing.type: Easing.OutCubic
             }
             NumberAnimation {
-                target: currentPageLayer
+                target: pageViewport.currentPageLayer
                 property: "opacity"
                 from: 1.0
                 to: 0.0
@@ -430,7 +270,7 @@ ApplicationWindow {
                 easing.type: Easing.OutCubic
             }
             NumberAnimation {
-                target: currentPageLayer
+                target: pageViewport.currentPageLayer
                 property: "scale"
                 from: 1.0
                 to: 0.992
@@ -441,7 +281,7 @@ ApplicationWindow {
 
         ParallelAnimation {
             NumberAnimation {
-                target: incomingPageLayer
+                target: pageViewport.incomingPageLayer
                 property: "x"
                 from: 40 * appRoot.pageTransitionDirection
                 to: 0
@@ -449,7 +289,7 @@ ApplicationWindow {
                 easing.type: Easing.OutCubic
             }
             NumberAnimation {
-                target: incomingPageLayer
+                target: pageViewport.incomingPageLayer
                 property: "opacity"
                 from: 0.0
                 to: 1.0
@@ -457,7 +297,7 @@ ApplicationWindow {
                 easing.type: Easing.OutCubic
             }
             NumberAnimation {
-                target: incomingPageLayer
+                target: pageViewport.incomingPageLayer
                 property: "scale"
                 from: 0.992
                 to: 1.0
@@ -470,13 +310,14 @@ ApplicationWindow {
             appRoot.currentPageIndex = appRoot.nextPageIndex
             appRoot.nextPageIndex = -1
             appRoot.pageTransitionRunning = false
-            currentPageLayer.x = 0
-            currentPageLayer.opacity = 1.0
-            currentPageLayer.scale = 1.0
-            incomingPageLayer.x = 0
-            incomingPageLayer.opacity = 0.0
-            incomingPageLayer.scale = 1.0
-            incomingPageLoader.source = ""
+            pageViewport.currentPageLoader.source = appRoot.pageSource(appRoot.currentPageIndex)
+            pageViewport.currentPageLayer.x = 0
+            pageViewport.currentPageLayer.opacity = 1.0
+            pageViewport.currentPageLayer.scale = 1.0
+            pageViewport.incomingPageLayer.x = 0
+            pageViewport.incomingPageLayer.opacity = 0.0
+            pageViewport.incomingPageLayer.scale = 1.0
+            pageViewport.incomingPageLoader.source = ""
         }
     }
 
