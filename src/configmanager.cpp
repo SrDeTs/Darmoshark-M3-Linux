@@ -175,6 +175,8 @@ void ConfigManager::setSavePath(const QString &path)
 bool ConfigManager::resetToDefaults()
 {
     m_config = buildDefaultConfig();
+    if (!updateAutostartFile(autoStartEnabled()))
+        return false;
     emit dpiStagesChanged();
     emit configChanged();
     return saveConfig();
@@ -187,6 +189,9 @@ bool ConfigManager::importConfigFromPath(const QString &path)
         return false;
 
     if (!loadConfig(selectedPath))
+        return false;
+
+    if (!updateAutostartFile(autoStartEnabled()))
         return false;
 
     if (!saveConfig())

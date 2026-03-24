@@ -43,6 +43,7 @@ void HidManager::setBackgroundMonitoringEnabled(bool enabled)
         return;
 
     if (enabled) {
+        m_pollTimer->setInterval(2000);
         if (!m_pollTimer->isActive())
             m_pollTimer->start();
 
@@ -52,7 +53,9 @@ void HidManager::setBackgroundMonitoringEnabled(bool enabled)
             scanDevices();
         }
     } else {
-        m_pollTimer->stop();
+        m_pollTimer->setInterval(8000);
+        if (!m_pollTimer->isActive())
+            m_pollTimer->start();
     }
 }
 

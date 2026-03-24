@@ -97,8 +97,8 @@ ApplicationWindow {
     function backgroundSourceForPage(index) {
         var isDpiPage = index === 1
         if (configManager.theme === "White")
-            return isDpiPage ? "qrc:/images/BG-White.png" : "qrc:/images/BG-M3-White.png"
-        return isDpiPage ? "qrc:/images/BG-Black.png" : "qrc:/images/BG-M3-Black.png"
+            return isDpiPage ? "qrc:/images/BG-White.jpg" : "qrc:/images/BG-M3-White.jpg"
+        return isDpiPage ? "qrc:/images/BG-Black.jpg" : "qrc:/images/BG-M3-Black.jpg"
     }
 
     function backgroundSource() {
