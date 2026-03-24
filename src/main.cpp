@@ -226,7 +226,6 @@ int main(int argc, char *argv[])
     }
 
     configManager.saveConfig();
-    hidManager.scanDevices(); // Scan and auto-connect on startup after config is ready
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("hidManager", &hidManager);
@@ -250,6 +249,8 @@ int main(int argc, char *argv[])
 
     if ((startMinimizedToTray || configManager.startMinimizedEnabled()) && appController.trayAvailable())
         appController.hideToTray(false);
+
+    QTimer::singleShot(0, &hidManager, &HidManager::scanDevices);
 
     return app.exec();
 }
