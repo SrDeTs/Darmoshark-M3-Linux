@@ -21,6 +21,7 @@ class ConfigManager : public QObject
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY configChanged)
     Q_PROPERTY(bool autoStartEnabled READ autoStartEnabled WRITE setAutoStartEnabled NOTIFY configChanged)
     Q_PROPERTY(bool minimizeToTrayEnabled READ minimizeToTrayEnabled WRITE setMinimizeToTrayEnabled NOTIFY configChanged)
+    Q_PROPERTY(bool startMinimizedEnabled READ startMinimizedEnabled WRITE setStartMinimizedEnabled NOTIFY configChanged)
 
 public:
     explicit ConfigManager(QObject *parent = nullptr);
@@ -43,6 +44,7 @@ public:
     QString language() const;
     bool autoStartEnabled() const;
     bool minimizeToTrayEnabled() const;
+    bool startMinimizedEnabled() const;
 
     Q_INVOKABLE void setDpiCurrentStage(int stage);
     Q_INVOKABLE void setPollingRate(int rate);
@@ -56,6 +58,7 @@ public:
     Q_INVOKABLE void setLanguage(const QString &language);
     Q_INVOKABLE bool setAutoStartEnabled(bool enabled);
     Q_INVOKABLE void setMinimizeToTrayEnabled(bool enabled);
+    Q_INVOKABLE void setStartMinimizedEnabled(bool enabled);
     Q_INVOKABLE void setDpiValue(int index, int value);
     Q_INVOKABLE void setDpiColor(int index, const QString &color);
 

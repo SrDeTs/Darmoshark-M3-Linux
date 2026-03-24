@@ -42,6 +42,7 @@ static toml::table buildDefaultConfig()
     ui.insert_or_assign(std::string("language"), std::string("pt-BR"));
     ui.insert_or_assign(std::string("auto_start_enabled"), false);
     ui.insert_or_assign(std::string("minimize_to_tray_enabled"), false);
+    ui.insert_or_assign(std::string("start_minimized_enabled"), false);
 
     toml::table buttons;
     buttons.insert_or_assign(std::string("left"), std::string("Left-Click"));
@@ -331,6 +332,13 @@ bool ConfigManager::minimizeToTrayEnabled() const
     return node ? node->value_or(false) : false;
 }
 
+bool ConfigManager::startMinimizedEnabled() const
+{
+    auto *uiTable = m_config["ui"].as_table();
+    auto *node = uiTable ? (*uiTable)["start_minimized_enabled"].as_boolean() : nullptr;
+    return node ? node->value_or(false) : false;
+}
+
 void ConfigManager::setDpiCurrentStage(int stage)
 {
     ensureDpiTable();
@@ -497,6 +505,16 @@ void ConfigManager::setMinimizeToTrayEnabled(bool enabled)
     auto *uiTable = m_config["ui"].as_table();
     if (!uiTable) return;
     uiTable->insert_or_assign(std::string("minimize_to_tray_enabled"), enabled);
+    emit configChanged();
+    saveConfig();
+}
+
+void ConfigManager::setStartMinimizedEnabled(bool enabled)
+{
+    ensureUiTable();
+    auto *uiTable = m_config["ui"].as_table();
+    if (!uiTable) return;
+    uiTable->insert_or_assign(std::string("start_minimized_enabled"), enabled);
     emit configChanged();
     saveConfig();
 }

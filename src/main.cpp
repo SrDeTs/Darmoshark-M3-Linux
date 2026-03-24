@@ -6,6 +6,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QLockFile>
+#include <QMessageLogContext>
 #include <QStandardPaths>
 #include <QTextStream>
 #include <QUrl>
@@ -16,6 +17,56 @@
 #include "hidmanager.h"
 #include "configmanager.h"
 #include "appcontroller.h"
+
+static bool g_verboseLogging = false;
+
+static void appMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &message)
+{
+    if (type == QtDebugMsg && !g_verboseLogging)
+        return;
+
+    QByteArray local = message.toLocal8Bit();
+    FILE *stream = (type == QtWarningMsg || type == QtCriticalMsg || type == QtFatalMsg) ? stderr : stdout;
+
+    switch (type) {
+    case QtDebugMsg:
+        fprintf(stream, "%s\n", local.constData());
+        break;
+    case QtInfoMsg:
+        fprintf(stream, "%s\n", local.constData());
+        break;
+    case QtWarningMsg:
+        fprintf(stream, "%s\n", local.constData());
+        break;
+    case QtCriticalMsg:
+        fprintf(stream, "%s\n", local.constData());
+        break;
+    case QtFatalMsg:
+        fprintf(stream, "%s\n", local.constData());
+        fflush(stream);
+        abort();
+    }
+
+    Q_UNUSED(context);
+    fflush(stream);
+}
+
+static void printHelp()
+{
+    QTextStream out(stdout);
+    out
+        << "Darmoshark M3 " << QStringLiteral(APP_VERSION) << Qt::endl
+        << Qt::endl
+        << "Uso:" << Qt::endl
+        << "  DarmosharkM3 [opcoes]" << Qt::endl
+        << Qt::endl
+        << "Opcoes:" << Qt::endl
+        << "  --help, -h              Mostra esta ajuda" << Qt::endl
+        << "  --version, -v           Mostra a versao do app" << Qt::endl
+        << "  --verbose               Liga logs detalhados" << Qt::endl
+        << "  --minimize-systray      Inicia minimizado na bandeja" << Qt::endl
+        << "  --config <arquivo>      Usa um config.toml alternativo" << Qt::endl;
+}
 
 static QString defaultConfigText()
 {
@@ -43,6 +94,7 @@ static QString defaultConfigText()
         "language = \"pt-BR\"\n"
         "auto_start_enabled = false\n"
         "minimize_to_tray_enabled = false\n"
+        "start_minimized_enabled = false\n"
         "\n"
         "[buttons]\n"
         "left = \"Left-Click\"\n"
@@ -70,6 +122,45 @@ static bool writeDefaultConfigFile(const QString &path)
 
 int main(int argc, char *argv[])
 {
+    bool startMinimizedToTray = false;
+    QString customConfigPath;
+
+    for (int i = 1; i < argc; ++i) {
+        const QString argument = QString::fromLocal8Bit(argv[i]);
+        if (argument == QStringLiteral("--help") || argument == QStringLiteral("-h")) {
+            printHelp();
+            return 0;
+        }
+        if (argument == QStringLiteral("--version") || argument == QStringLiteral("-v")) {
+            QTextStream out(stdout);
+            out << "Darmoshark M3 " << QStringLiteral(APP_VERSION) << Qt::endl;
+            return 0;
+        }
+        if (argument == QStringLiteral("--verbose")) {
+            g_verboseLogging = true;
+            continue;
+        }
+        if (argument == QStringLiteral("--minimize-systray")) {
+            startMinimizedToTray = true;
+            continue;
+        }
+        if (argument == QStringLiteral("--config")) {
+            if (i + 1 >= argc) {
+                QTextStream err(stderr);
+                err << "--config exige um caminho de arquivo" << Qt::endl;
+                return 1;
+            }
+            customConfigPath = QString::fromLocal8Bit(argv[++i]);
+            continue;
+        }
+        if (argument.startsWith(QStringLiteral("--config="))) {
+            customConfigPath = argument.mid(QStringLiteral("--config=").size());
+            continue;
+        }
+    }
+
+    qInstallMessageHandler(appMessageHandler);
+
     const QByteArray platformTheme = qgetenv("QT_QPA_PLATFORMTHEME").trimmed();
     if (platformTheme == "qt6ct") {
         qunsetenv("QT_QPA_PLATFORMTHEME");
@@ -108,8 +199,11 @@ int main(int argc, char *argv[])
     hidManager.scanDevices(); // Scan and auto-connect on startup
     ConfigManager configManager;
     AppController appController;
+    appController.setConfigManager(&configManager);
 
-    QString userConfigPath = QDir::homePath() + "/.config/Darmoshark M3 Linux/config.toml";
+    QString userConfigPath = customConfigPath.isEmpty()
+        ? QDir::homePath() + "/.config/Darmoshark M3 Linux/config.toml"
+        : customConfigPath;
     configManager.setSavePath(userConfigPath);
     const QString configDirectoryPath = QFileInfo(userConfigPath).absolutePath();
     const QUrl configDirectoryUrl = QUrl::fromLocalFile(configDirectoryPath);
@@ -152,6 +246,9 @@ int main(int argc, char *argv[])
 
     if (!engine.rootObjects().isEmpty())
         appController.setMainWindow(qobject_cast<QWindow *>(engine.rootObjects().constFirst()));
+
+    if ((startMinimizedToTray || configManager.startMinimizedEnabled()) && appController.trayAvailable())
+        appController.hideToTray(false);
 
     return app.exec();
 }

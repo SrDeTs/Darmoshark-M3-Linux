@@ -142,7 +142,7 @@ Item {
 
     Rectangle {
         width: 430
-        height: 520
+        height: 568
         anchors.left: parent.left
         anchors.leftMargin: 240
         anchors.top: parent.top
@@ -154,7 +154,10 @@ Item {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 24
+            anchors.leftMargin: 24
+            anchors.rightMargin: 24
+            anchors.topMargin: 24
+            anchors.bottomMargin: 32
             spacing: 0
 
             Text {
@@ -280,7 +283,29 @@ Item {
                 }
             }
 
-            Item { Layout.fillHeight: true; Layout.minimumHeight: 20 }
+            Item { Layout.preferredHeight: 12 }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 28
+
+                Text {
+                    text: I18n.tr(configManager.language, "settings.start_minimized")
+                    color: textPrimary
+                    font.pixelSize: 14
+                    font.family: bodyFont
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Item { Layout.fillWidth: true }
+
+                SettingsSwitch {
+                    checked: configManager.startMinimizedEnabled
+                    onToggled: configManager.setStartMinimizedEnabled(checked)
+                }
+            }
+
+            Item { Layout.fillHeight: true; Layout.minimumHeight: 12 }
 
             Button {
                 Layout.fillWidth: true
