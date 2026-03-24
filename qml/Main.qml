@@ -84,16 +84,25 @@ ApplicationWindow {
         return navPages[index].source
     }
 
-    function selectedNavIndex() {
+    function effectivePageIndex() {
         if (pageTransitionRunning && nextPageIndex >= 0)
             return nextPageIndex
         return currentPageIndex
     }
 
-    function backgroundSource() {
+    function selectedNavIndex() {
+        return effectivePageIndex()
+    }
+
+    function backgroundSourceForPage(index) {
+        var isDpiPage = index === 1
         if (configManager.theme === "White")
-            return "qrc:/images/BG-M3-White.png"
-        return "qrc:/images/BG-M3-Black.png"
+            return isDpiPage ? "qrc:/images/BG-White.png" : "qrc:/images/BG-M3-White.png"
+        return isDpiPage ? "qrc:/images/BG-Black.png" : "qrc:/images/BG-M3-Black.png"
+    }
+
+    function backgroundSource() {
+        return backgroundSourceForPage(effectivePageIndex())
     }
 
     function updateThemeBackground() {
@@ -117,6 +126,14 @@ ApplicationWindow {
 
         nextPageIndex = index
         pageTransitionDirection = index > currentPageIndex ? 1 : -1
+        var nextBackgroundSource = backgroundSourceForPage(index)
+        if (uiSuspended) {
+            activeBackgroundSource = nextBackgroundSource
+        } else if (nextBackgroundSource !== activeBackgroundSource && !themeTransitionRunning) {
+            themeTransitionDirection = configManager.theme === "White" ? 1 : -1
+            themeTransitionRunning = true
+            themeBackground.startTransition(nextBackgroundSource, configManager.theme === "White", themeTransitionDirection)
+        }
         pageViewport.incomingSource = pageSource(index)
         pageViewport.incomingPageLayer.x = 40 * pageTransitionDirection
         pageViewport.incomingPageLayer.opacity = 0.0
