@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Effects
 import "components"
 import "idiomas/I18n.js" as I18n
 
@@ -296,25 +295,11 @@ ApplicationWindow {
         }
     }
 
-    MultiEffect {
-        anchors.fill: parent
-        source: appScene
-        autoPaddingEnabled: false
-        blurEnabled: true
-        blurMax: 96
-        blurMultiplier: 1.6
-        blur: 1.0
-        brightness: -0.04
-        saturation: -0.1
-        visible: appRoot.modalBlurActive
-        z: 90
-    }
-
     Rectangle {
         anchors.fill: parent
         color: Qt.rgba(8 / 255, 10 / 255, 14 / 255, appRoot.modalBlurActive ? 0.34 : 0.0)
         visible: appRoot.modalBlurActive
-        z: 91
+        z: 90
     }
 
     Rectangle {
