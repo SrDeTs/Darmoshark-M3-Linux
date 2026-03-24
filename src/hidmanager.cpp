@@ -105,7 +105,13 @@ bool HidManager::connectDevice(unsigned short vid, unsigned short pid)
         m_currentPid = pid;
         hid_set_nonblocking(m_device, 1);
         qDebug() << "Successfully connected to" << QString::number(vid, 16) << ":" << QString::number(pid, 16);
-        refreshVersionInfo();
+        emit deviceConnectedChanged();
+        pollStatus();
+        QTimer::singleShot(0, this, [this, pid]() {
+            if (!m_device || m_currentPid != pid)
+                return;
+            refreshVersionInfo();
+        });
         if (pid == 0xff30 || pid == 0xff31) {
             QTimer::singleShot(450, this, [this, pid]() {
                 if (!m_device || m_currentPid != pid)
@@ -114,8 +120,6 @@ bool HidManager::connectDevice(unsigned short vid, unsigned short pid)
                     refreshVersionInfo();
             });
         }
-        emit deviceConnectedChanged();
-        pollStatus();
         return true;
     } else {
         qWarning() << "Failed to open device" << QString::number(vid, 16) << ":" << QString::number(pid, 16)
