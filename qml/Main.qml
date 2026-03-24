@@ -41,6 +41,7 @@ ApplicationWindow {
     property int currentPageIndex: 0
     property int nextPageIndex: -1
     property int pageTransitionDirection: 1
+    readonly property bool controlsLocked: !hidManager.deviceConnected
     readonly property real batterySpriteFrameWidth: 1536 / 5
     readonly property real batterySpriteFrameHeight: 1024 / 4
     readonly property real batterySpriteClipHeight: 104
@@ -194,6 +195,15 @@ ApplicationWindow {
             anchors.leftMargin: 8
             anchors.rightMargin: 8
             clip: true
+            enabled: !appRoot.controlsLocked
+            opacity: appRoot.controlsLocked ? 0.42 : 1.0
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 220
+                    easing.type: Easing.OutCubic
+                }
+            }
 
             Item {
                 id: currentPageLayer
@@ -216,6 +226,27 @@ ApplicationWindow {
                     id: incomingPageLoader
                     anchors.fill: parent
                 }
+            }
+        }
+
+        Rectangle {
+            id: disconnectedLockOverlay
+            anchors.fill: pageViewport
+            color: Qt.rgba(8 / 255, 10 / 255, 14 / 255, 0.10)
+            opacity: appRoot.controlsLocked ? 1.0 : 0.0
+            visible: opacity > 0.0
+            z: 2
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 220
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                enabled: appRoot.controlsLocked
             }
         }
 
