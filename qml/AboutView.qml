@@ -24,7 +24,7 @@ Item {
         interval: 1
         repeat: false
         onTriggered: {
-            if (hidManager.firmwareVersion === "N/D" || hidManager.rfVersion === "N/D")
+            if (hidManager.firmwareVersion === "N/D")
                 hidManager.refreshVersionInfo()
         }
     }
