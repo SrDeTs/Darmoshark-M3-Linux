@@ -30,6 +30,7 @@
         <file>qml/components/PageViewport.qml</file>
         <file>qml/components/SettingsSwitch.qml</file>
         <file>qml/components/ThemeBackgroundTransition.qml</file>
+        <file>qml/modals/ConfigFileModal.qml</file>
         <file>qml/idiomas/I18n.js</file>
         <file>sons/Bateria/Bateria-10%.mp3</file>
         <file>sons/Bateria/Bateria-30%.mp3</file>

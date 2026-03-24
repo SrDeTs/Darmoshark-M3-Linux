@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
 import "components"
+import "modals"
 import "idiomas/I18n.js" as I18n
 
 Item {
@@ -124,6 +125,25 @@ Item {
         }
     }
 
+    component SettingsActionButton: Button {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 38
+
+        background: Rectangle {
+            radius: 12
+            color: fieldColor
+        }
+
+        contentItem: Text {
+            text: parent.text
+            color: textPrimary
+            font.pixelSize: 14
+            font.family: titleFont
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+    }
+
     function applyFactoryReset() {
         if (!configManager.resetToDefaults())
             return
@@ -142,7 +162,7 @@ Item {
 
     Rectangle {
         width: 430
-        height: 620
+        height: 572
         anchors.left: parent.left
         anchors.leftMargin: 240
         anchors.top: parent.top
@@ -305,7 +325,55 @@ Item {
                 }
             }
 
-            Item { Layout.preferredHeight: 12 }
+            Item { Layout.fillHeight: true; Layout.minimumHeight: 12 }
+
+            SettingsActionButton {
+                text: I18n.tr(configManager.language, "settings.reset")
+                onClicked: resetConfirmPopup.open()
+            }
+        }
+    }
+
+    Rectangle {
+        width: 360
+        height: 356
+        anchors.right: parent.right
+        anchors.rightMargin: 310
+        anchors.top: parent.top
+        anchors.topMargin: 245
+        radius: 28
+        color: cardColor
+        border.color: cardBorder
+        border.width: 2
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.leftMargin: 24
+            anchors.rightMargin: 24
+            anchors.topMargin: 24
+            anchors.bottomMargin: 24
+            spacing: 0
+
+            Text {
+                text: I18n.tr(configManager.language, "settings.battery_alerts")
+                color: textPrimary
+                font.pixelSize: 20
+                font.family: titleFont
+                font.weight: Font.Medium
+            }
+
+            Item { Layout.preferredHeight: 10 }
+
+            Text {
+                Layout.fillWidth: true
+                text: I18n.tr(configManager.language, "settings.battery_alerts_desc")
+                color: textMuted
+                font.pixelSize: 13
+                font.family: bodyFont
+                wrapMode: Text.WordWrap
+            }
+
+            Item { Layout.preferredHeight: 16 }
 
             RowLayout {
                 Layout.fillWidth: true
@@ -327,29 +395,61 @@ Item {
                 }
             }
 
-            Item { Layout.fillHeight: true; Layout.minimumHeight: 12 }
+            Item { Layout.preferredHeight: 28 }
 
-            Button {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 38
-                text: I18n.tr(configManager.language, "settings.reset")
-
-                background: Rectangle {
-                    radius: 12
-                    color: fieldColor
-                }
-
-                contentItem: Text {
-                    text: parent.text
-                    color: textPrimary
-                    font.pixelSize: 14
-                    font.family: titleFont
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                onClicked: resetConfirmPopup.open()
+            Text {
+                text: I18n.tr(configManager.language, "settings.config_files")
+                color: textPrimary
+                font.pixelSize: 20
+                font.family: titleFont
+                font.weight: Font.Medium
             }
+
+            Item { Layout.preferredHeight: 10 }
+
+            Text {
+                Layout.fillWidth: true
+                text: I18n.tr(configManager.language, "settings.config_files_desc")
+                color: textMuted
+                font.pixelSize: 13
+                font.family: bodyFont
+                wrapMode: Text.WordWrap
+            }
+
+            Item { Layout.fillHeight: true; Layout.minimumHeight: 16 }
+
+            SettingsActionButton {
+                text: I18n.tr(configManager.language, "settings.import_config")
+                onClicked: configFileModal.openImportDialog()
+            }
+
+            Item { Layout.preferredHeight: 10 }
+
+            SettingsActionButton {
+                text: I18n.tr(configManager.language, "settings.export_config")
+                onClicked: configFileModal.openExportDialog()
+            }
+        }
+    }
+
+    ConfigFileModal {
+        id: configFileModal
+        language: configManager.language
+        cardColor: pageRoot.cardColor
+        cardBorder: pageRoot.cardBorder
+        fieldColor: pageRoot.fieldColor
+        textPrimary: pageRoot.textPrimary
+        textSecondary: pageRoot.textSecondary
+        textMuted: pageRoot.textMuted
+        titleFont: pageRoot.titleFont
+        bodyFont: pageRoot.bodyFont
+
+        onImportRequested: function(path) {
+            configManager.importConfigFromPath(path)
+        }
+
+        onExportRequested: function(path) {
+            configManager.exportConfigToPath(path)
         }
     }
 

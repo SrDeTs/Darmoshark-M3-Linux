@@ -9,6 +9,7 @@
 #include <QMediaPlayer>
 #include <QMenu>
 #include <QSystemTrayIcon>
+#include <QDateTime>
 #include <QUrl>
 #include <QWindow>
 
@@ -185,7 +186,7 @@ void AppController::handleBatteryStateChanged()
         return;
     }
 
-    if (charging && batteryLevel >= 100 && !m_fullBatteryNotified) {
+    if (charging && batteryLevel >= 100 && !m_fullBatteryNotified && canNotifyBatteryEvent(100)) {
         notifyBatteryEvent(QStringLiteral("battery.full"), 100);
         m_fullBatteryNotified = true;
     }
@@ -209,7 +210,8 @@ void AppController::handleBatteryStateChanged()
         if (batteryLevel > 50) {
             m_lastBatteryAlertThreshold = -1;
         } else if (threshold != -1
-                   && (m_lastBatteryAlertThreshold == -1 || threshold < m_lastBatteryAlertThreshold)) {
+                   && (m_lastBatteryAlertThreshold == -1 || threshold < m_lastBatteryAlertThreshold)
+                   && canNotifyBatteryEvent(threshold)) {
             notifyBatteryEvent(QStringLiteral("battery.low"), threshold);
             m_lastBatteryAlertThreshold = threshold;
         }
@@ -226,6 +228,8 @@ void AppController::resetBatteryNotificationState()
     m_lastKnownCharging = false;
     m_fullBatteryNotified = false;
     m_batteryBaselineInitialized = false;
+    m_lastBatteryNotificationCode = -1;
+    m_lastBatteryNotificationAtMs = 0;
 }
 
 void AppController::playBatterySound(int percentage)
@@ -259,6 +263,8 @@ void AppController::playBatterySound(int percentage)
 void AppController::notifyBatteryEvent(const QString &messageKey, int percentage)
 {
     playBatterySound(percentage);
+    m_lastBatteryNotificationCode = percentage;
+    m_lastBatteryNotificationAtMs = QDateTime::currentMSecsSinceEpoch();
 
     if (!m_trayIcon)
         return;
@@ -273,4 +279,13 @@ void AppController::notifyBatteryEvent(const QString &messageKey, int percentage
         QSystemTrayIcon::Information,
         3000
     );
+}
+
+bool AppController::canNotifyBatteryEvent(int code) const
+{
+    constexpr qint64 cooldownMs = 120000;
+    const qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (m_lastBatteryNotificationCode != code)
+        return true;
+    return (now - m_lastBatteryNotificationAtMs) >= cooldownMs;
 }

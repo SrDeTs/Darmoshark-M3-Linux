@@ -31,6 +31,8 @@ public:
     Q_INVOKABLE bool saveConfig();
     Q_INVOKABLE void setSavePath(const QString &path);
     Q_INVOKABLE bool resetToDefaults();
+    Q_INVOKABLE bool importConfigFromPath(const QString &path);
+    Q_INVOKABLE bool exportConfigToPath(const QString &path);
 
     QVariantList dpiStages() const;
     int dpiCurrentStage() const;

@@ -37,6 +37,7 @@ private:
     void resetBatteryNotificationState();
     void playBatterySound(int percentage);
     void notifyBatteryEvent(const QString &messageKey, int percentage);
+    bool canNotifyBatteryEvent(int code) const;
 
     QSystemTrayIcon *m_trayIcon = nullptr;
     QMenu *m_trayMenu = nullptr;
@@ -52,4 +53,6 @@ private:
     bool m_lastKnownCharging = false;
     bool m_fullBatteryNotified = false;
     bool m_batteryBaselineInitialized = false;
+    int m_lastBatteryNotificationCode = -1;
+    qint64 m_lastBatteryNotificationAtMs = 0;
 };

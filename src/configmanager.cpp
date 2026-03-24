@@ -180,6 +180,42 @@ bool ConfigManager::resetToDefaults()
     return saveConfig();
 }
 
+bool ConfigManager::importConfigFromPath(const QString &path)
+{
+    const QString selectedPath = path.trimmed();
+    if (selectedPath.isEmpty())
+        return false;
+
+    if (!loadConfig(selectedPath))
+        return false;
+
+    if (!saveConfig())
+        return false;
+
+    emit dpiStagesChanged();
+    emit configChanged();
+    return true;
+}
+
+bool ConfigManager::exportConfigToPath(const QString &path)
+{
+    const QString selectedPath = path.trimmed();
+    if (m_savePath.isEmpty() || selectedPath.isEmpty())
+        return false;
+
+    if (!QFile::exists(m_savePath) && !saveConfig())
+        return false;
+
+    const QFileInfo sourceInfo(m_savePath);
+    const QFileInfo targetInfo(selectedPath);
+    if (sourceInfo.absoluteFilePath() == targetInfo.absoluteFilePath())
+        return saveConfig();
+
+    QDir().mkpath(targetInfo.absolutePath());
+    QFile::remove(selectedPath);
+    return QFile::copy(m_savePath, selectedPath);
+}
+
 void ConfigManager::ensureDpiTable()
 {
     if (!m_config["dpi"].as_table()) {
