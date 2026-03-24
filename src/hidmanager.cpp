@@ -200,33 +200,36 @@ void HidManager::refreshVersionInfo()
 
     QString firmwareVersion = QStringLiteral("N/D");
     QString rfVersion = QStringLiteral("N/D");
-    for (int attempt = 0; attempt < 6; ++attempt) {
-        unsigned char buffer[21] = {0};
-        buffer[0] = 0x51;
+    const bool wiredMode = (m_currentPid == 0xff12);
+    if (wiredMode) {
+        for (int attempt = 0; attempt < 6; ++attempt) {
+            unsigned char buffer[21] = {0};
+            buffer[0] = 0x51;
 
-        const int res = hid_get_feature_report(m_device, buffer, sizeof(buffer));
-        if (res <= 0) {
-            qWarning() << "hid_get_feature_report(0x51) failed:" << res;
-            break;
-        }
+            const int res = hid_get_feature_report(m_device, buffer, sizeof(buffer));
+            if (res <= 0) {
+                qWarning() << "hid_get_feature_report(0x51) failed:" << res;
+                break;
+            }
 
-        const QString version = parseVersionResponse(buffer, res);
-        if (version.isEmpty()) {
+            const QString version = parseVersionResponse(buffer, res);
+            if (version.isEmpty()) {
+                QThread::msleep(20);
+                continue;
+            }
+
+            qDebug() << "Version response from report 0x51:" << version;
+            if (version.startsWith(QLatin1Char('e'), Qt::CaseInsensitive)) {
+                rfVersion = version;
+            } else {
+                firmwareVersion = version;
+            }
+
+            if (firmwareVersion != QStringLiteral("N/D") && rfVersion != QStringLiteral("N/D"))
+                break;
+
             QThread::msleep(20);
-            continue;
         }
-
-        qDebug() << "Version response from report 0x51:" << version;
-        if (version.startsWith(QLatin1Char('e'), Qt::CaseInsensitive)) {
-            rfVersion = version;
-        } else {
-            firmwareVersion = version;
-        }
-
-        if (firmwareVersion != QStringLiteral("N/D") && rfVersion != QStringLiteral("N/D"))
-            break;
-
-        QThread::msleep(20);
     }
 
     if ((firmwareVersion == QStringLiteral("N/D") || rfVersion == QStringLiteral("N/D"))
@@ -622,7 +625,7 @@ QString HidManager::parseVersionResponse(const unsigned char *buffer, int length
         normalized.append(allowed ? static_cast<char>(ch) : ' ');
     }
 
-    static const QRegularExpression versionPattern(QStringLiteral("([A-Za-z]?\\.?\\d+(?:\\.\\d+)+(?:[A-Za-z-]\\d*|[A-Za-z])?)"));
+    static const QRegularExpression versionPattern(QStringLiteral("([A-Za-z]?\\.?\\d+(?:\\.\\d+)+(?:[A-Za-z](?:-?\\d+)?|-\\d+)?)"));
     const QString text = QString::fromLatin1(normalized);
     QRegularExpressionMatchIterator it = versionPattern.globalMatch(text);
     QString bestMatch;
@@ -652,15 +655,53 @@ bool HidManager::readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfV
         return false;
     }
 
+    const bool wiredMode = (m_currentPid == 0xff12);
     const uint16_t reportValue = static_cast<uint16_t>((3u << 8) | 0x51u);
     const uint16_t firmwareReportValue = static_cast<uint16_t>((3u << 8) | 0x82u);
-    const uint16_t interfaceNumber = static_cast<uint16_t>(m_currentPid == 0xff12 ? 2 : 1);
+    const uint16_t interfaceNumber = static_cast<uint16_t>(wiredMode ? 2 : 1);
     const unsigned char requestType = 0xA1;
     const unsigned char setRequestType = 0x21;
-    const unsigned char interruptInEndpoint = 0x82;
+    const unsigned char interruptInEndpoint = static_cast<unsigned char>(wiredMode ? 0x82 : 0x84);
     const int interfaceIndex = static_cast<int>(interfaceNumber);
     bool detachedKernelDriver = false;
     bool success = false;
+    auto tryReadWirelessRfVersion = [&](int attempts, int pauseMs, const char *phaseLabel) -> bool {
+        for (int attempt = 0; attempt < attempts; ++attempt) {
+            unsigned char buffer[21] = {0};
+            const int transferred = libusb_control_transfer(
+                handle,
+                requestType,
+                0x01,
+                reportValue,
+                interfaceNumber,
+                buffer,
+                sizeof(buffer),
+                1000
+            );
+
+            if (transferred > 0) {
+                logHexBuffer(phaseLabel, buffer, transferred);
+                const QString version = parseVersionResponse(buffer, transferred);
+                if (version.startsWith(QLatin1Char('e'), Qt::CaseInsensitive)) {
+                    rfVersion = version;
+                    success = true;
+                    qDebug() << "RF version response from wireless control sequence:" << rfVersion;
+                    return true;
+                }
+            } else {
+                qWarning() << "libusb GET_REPORT(0x51 wireless) failed:" << transferred
+                           << "attempt:" << (attempt + 1) << "/" << attempts;
+            }
+
+            QThread::msleep(pauseMs);
+        }
+
+        return false;
+    };
+
+    if (!wiredMode) {
+        tryReadWirelessRfVersion(3, 10, "Wireless RF raw GET_REPORT(0x51) pre-claim:");
+    }
 
     const int kernelActive = libusb_kernel_driver_active(handle, interfaceIndex);
     if (kernelActive == 1) {
@@ -682,7 +723,7 @@ bool HidManager::readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfV
         return false;
     }
 
-    if (firmwareVersion == QStringLiteral("N/D")) {
+    if (firmwareVersion == QStringLiteral("N/D") && wiredMode) {
         const QList<QByteArray> firmwareReports = {
             QByteArray::fromHex("8201080000000300ffff00000000"),
             QByteArray::fromHex("8201080000000300000001000000"),
@@ -738,59 +779,115 @@ bool HidManager::readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfV
         }
     }
 
-    unsigned char setBuffer[21] = {0};
-    setBuffer[0] = 0x51;
-    setBuffer[1] = 0x04;
-    setBuffer[2] = 0xaa;
-    const int setTransferred = libusb_control_transfer(
-        handle,
-        setRequestType,
-        0x09,
-        reportValue,
-        interfaceNumber,
-        setBuffer,
-        sizeof(setBuffer),
-        1000
-    );
-    if (setTransferred < 0)
-        qWarning() << "libusb SET_REPORT(0x51) failed:" << setTransferred;
+    if (!wiredMode) {
+        if (rfVersion == QStringLiteral("N/D"))
+            tryReadWirelessRfVersion(6, 15, "Wireless RF raw GET_REPORT(0x51) post-claim:");
 
-    for (int attempt = 0; attempt < 6; ++attempt) {
-        unsigned char buffer[21] = {0};
-        const int transferred = libusb_control_transfer(
+        unsigned char queryBuffer[21] = {0};
+        queryBuffer[0] = 0x51;
+        queryBuffer[1] = 0x0c;
+        queryBuffer[2] = 0x02;
+
+        const int queryTransferred = libusb_control_transfer(
             handle,
-            requestType,
-            0x01,
+            setRequestType,
+            0x09,
             reportValue,
             interfaceNumber,
-            buffer,
-            sizeof(buffer),
+            queryBuffer,
+            sizeof(queryBuffer),
             1000
         );
-
-        if (transferred <= 0) {
-            qWarning() << "libusb GET_REPORT(0x51) failed:" << transferred;
-            QThread::msleep(20);
-            continue;
-        }
-
-        const QString version = parseVersionResponse(buffer, transferred);
-        if (version.isEmpty()) {
-            QThread::msleep(20);
-            continue;
-        }
-
-        if (version.startsWith(QLatin1Char('e'), Qt::CaseInsensitive)) {
-            rfVersion = version;
+        if (queryTransferred < 0) {
+            qWarning() << "libusb SET_REPORT(0x51 version query) failed:" << queryTransferred;
         } else {
-            firmwareVersion = version;
+            for (int attempt = 0; attempt < 12; ++attempt) {
+                unsigned char interruptBuffer[64] = {0};
+                int actualLength = 0;
+                const int interruptRes = libusb_interrupt_transfer(
+                    handle,
+                    interruptInEndpoint,
+                    interruptBuffer,
+                    sizeof(interruptBuffer),
+                    &actualLength,
+                    120
+                );
+
+                if (interruptRes != 0 || actualLength <= 0)
+                    continue;
+
+                const QString version = parseVersionResponse(interruptBuffer, actualLength);
+                if (version.isEmpty()) {
+                    QThread::msleep(8);
+                    continue;
+                }
+
+                firmwareVersion = version;
+                success = true;
+                qDebug() << "Firmware version response from wireless interrupt sequence:" << firmwareVersion;
+                break;
+            }
         }
 
-        success = true;
-        if (firmwareVersion != QStringLiteral("N/D") && rfVersion != QStringLiteral("N/D"))
-            break;
+        if (rfVersion == QStringLiteral("N/D")) {
+            QThread::msleep(80);
+            tryReadWirelessRfVersion(12, 20, "Wireless RF raw GET_REPORT(0x51) post-firmware:");
+        }
+    } else {
+        unsigned char setBuffer[21] = {0};
+        setBuffer[0] = 0x51;
+        setBuffer[1] = 0x04;
+        setBuffer[2] = 0xaa;
+        const int setTransferred = libusb_control_transfer(
+            handle,
+            setRequestType,
+            0x09,
+            reportValue,
+            interfaceNumber,
+            setBuffer,
+            sizeof(setBuffer),
+            1000
+        );
+        if (setTransferred < 0)
+            qWarning() << "libusb SET_REPORT(0x51) failed:" << setTransferred;
 
-        QThread::msleep(20);
+        for (int attempt = 0; attempt < 6; ++attempt) {
+            unsigned char buffer[21] = {0};
+            const int transferred = libusb_control_transfer(
+                handle,
+                requestType,
+                0x01,
+                reportValue,
+                interfaceNumber,
+                buffer,
+                sizeof(buffer),
+                1000
+            );
+
+            if (transferred <= 0) {
+                qWarning() << "libusb GET_REPORT(0x51) failed:" << transferred;
+                QThread::msleep(20);
+                continue;
+            }
+
+            const QString version = parseVersionResponse(buffer, transferred);
+            if (version.isEmpty()) {
+                QThread::msleep(20);
+                continue;
+            }
+
+            if (version.startsWith(QLatin1Char('e'), Qt::CaseInsensitive)) {
+                rfVersion = version;
+            } else {
+                firmwareVersion = version;
+            }
+
+            success = true;
+            if (firmwareVersion != QStringLiteral("N/D") && rfVersion != QStringLiteral("N/D"))
+                break;
+
+            QThread::msleep(20);
+        }
     }
 
     libusb_release_interface(handle, interfaceIndex);

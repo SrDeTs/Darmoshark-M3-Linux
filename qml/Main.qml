@@ -70,13 +70,6 @@ ApplicationWindow {
         { titleKey: "nav.about", subtitleKey: "nav.about_subtitle", source: "qrc:/qml/AboutView.qml" }
     ]
 
-    function connectionLabel(mode) {
-        if (!mode || mode.length === 0) return "Desconhecido"
-        if (mode === "2.4G Wireless") return "Sem fio 2.4G"
-        if (mode === "Wired") return "Cabo USB"
-        return mode
-    }
-
     function navIcon(index) {
         if (index === 0) return "qrc:/images/IconsBar/Home.png"
         if (index === 1) return "qrc:/images/IconsBar/DPI.png"
@@ -366,6 +359,21 @@ ApplicationWindow {
                     font.weight: Font.Medium
                 }
             }
+        }
+
+        ConnectionStatusBadge {
+            id: connectionBadge
+            anchors.top: parent.top
+            anchors.topMargin: 24
+            anchors.left: parent.left
+            anchors.leftMargin: 24
+            z: 5
+            language: configManager.language
+            connectionMode: hidManager.connectionMode
+            connected: hidManager.deviceConnected
+            titleFont: appRoot.titleFont
+            textColor: onSurface
+            secondaryTextColor: onSurfaceVariant
         }
     }
 
