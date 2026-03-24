@@ -15,6 +15,16 @@ Item {
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
+    function selectESports(open) {
+        if (configManager.esportsOpen === open)
+            return
+
+        console.log("ESportsModeView.selectESports", open)
+        configManager.setESportsOpen(open)
+        if (typeof hidManager !== "undefined")
+            hidManager.applyESportsMode(open)
+    }
+
     Rectangle {
         id: esportsCard
         width: 450
@@ -88,11 +98,7 @@ Item {
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    configManager.setESportsOpen(modelData.enabledState)
-                                    if (typeof hidManager !== "undefined")
-                                        hidManager.applyESportsMode(modelData.enabledState)
-                                }
+                                onClicked: pageRoot.selectESports(modelData.enabledState)
                             }
                         }
                     }

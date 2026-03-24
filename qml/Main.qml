@@ -32,6 +32,7 @@ ApplicationWindow {
     property color onSurfaceVariant: "#a1afc6" // Fica um cinza azulado
     property color danger: "#ffb4ab"
     property bool configWarningDismissed: false
+    property bool rulesWarningDismissed: false
     property bool modalBlurActive: false
     property bool themeTransitionRunning: false
     property bool pageTransitionRunning: false
@@ -40,6 +41,7 @@ ApplicationWindow {
     property int currentPageIndex: 0
     property int nextPageIndex: -1
     property int pageTransitionDirection: 1
+    property string rulesCommands: "sudo install -m 0644 99-darmoshark.rules /etc/udev/rules.d/99-darmoshark.rules\nsudo udevadm control --reload-rules\nsudo udevadm trigger"
     readonly property bool controlsLocked: !hidManager.deviceConnected
     readonly property bool uiSuspended: appController.uiSuspended
 
@@ -107,7 +109,6 @@ ApplicationWindow {
 
     function updateThemeBackground() {
         var nextSource = backgroundSource()
-        console.log("updateThemeBackground", configManager.theme, activeBackgroundSource, nextSource, themeTransitionRunning)
         if (uiSuspended) {
             activeBackgroundSource = nextSource
             return
@@ -150,6 +151,15 @@ ApplicationWindow {
 
         function onConfigChanged() {
             appRoot.updateThemeBackground()
+        }
+    }
+
+    Connections {
+        target: hidManager
+
+        function onPermissionIssueChanged() {
+            if (!hidManager.permissionIssue)
+                appRoot.rulesWarningDismissed = false
         }
     }
 
@@ -237,6 +247,168 @@ ApplicationWindow {
             textColor: onSurface
             secondaryTextColor: onSurfaceVariant
             visible: !appRoot.uiSuspended
+        }
+
+        Rectangle {
+            id: rulesWarningCard
+            width: 420
+            radius: 24
+            color: "#17191d"
+            border.color: Qt.rgba(255, 180, 171, 0.18)
+            border.width: 1
+            anchors.top: parent.top
+            anchors.topMargin: 24
+            anchors.horizontalCenter: parent.horizontalCenter
+            z: 6
+            visible: !appRoot.uiSuspended && hidManager.permissionIssue && !hidManager.deviceConnected && !appRoot.rulesWarningDismissed
+            opacity: visible ? 1 : 0
+
+            Behavior on opacity {
+                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 20
+                spacing: 10
+
+                Text {
+                    Layout.fillWidth: true
+                    text: I18n.tr(configManager.language, "main.rules_title")
+                    color: appRoot.onSurface
+                    font.family: appRoot.titleFont
+                    font.pixelSize: 22
+                    font.bold: true
+                    wrapMode: Text.WordWrap
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: I18n.tr(configManager.language, "main.rules_desc")
+                    color: appRoot.onSurfaceVariant
+                    font.family: appRoot.bodyFont
+                    font.pixelSize: 13
+                    wrapMode: Text.WordWrap
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: Qt.rgba(255, 255, 255, 0.06)
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: I18n.tr(configManager.language, "main.rules_step1")
+                    color: appRoot.onSurface
+                    font.family: appRoot.bodyFont
+                    font.pixelSize: 13
+                    wrapMode: Text.WordWrap
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: I18n.tr(configManager.language, "main.rules_step2")
+                    color: appRoot.primary
+                    font.family: "monospace"
+                    font.pixelSize: 12
+                    wrapMode: Text.WordWrap
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: I18n.tr(configManager.language, "main.rules_step3")
+                    color: appRoot.primary
+                    font.family: "monospace"
+                    font.pixelSize: 12
+                    wrapMode: Text.WordWrap
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: I18n.tr(configManager.language, "main.rules_step4")
+                    color: appRoot.onSurface
+                    font.family: appRoot.bodyFont
+                    font.pixelSize: 13
+                    wrapMode: Text.WordWrap
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 10
+
+                    Button {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 40
+                        text: I18n.tr(configManager.language, "main.rules_copy")
+
+                        background: Rectangle {
+                            radius: 12
+                            color: appRoot.surfaceContainerHigh
+                            border.color: Qt.rgba(255, 255, 255, 0.06)
+                            border.width: 1
+                        }
+
+                        contentItem: Text {
+                            text: parent.text
+                            color: appRoot.onSurface
+                            font.family: appRoot.titleFont
+                            font.bold: true
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        onClicked: appController.copyTextToClipboard(appRoot.rulesCommands)
+                    }
+
+                    Button {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 40
+                        text: I18n.tr(configManager.language, "main.rules_open_folder")
+
+                        background: Rectangle {
+                            radius: 12
+                            color: appRoot.primary
+                        }
+
+                        contentItem: Text {
+                            text: parent.text
+                            color: "#0e0e0e"
+                            font.family: appRoot.titleFont
+                            font.bold: true
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        onClicked: Qt.openUrlExternally("file:///etc/udev/rules.d")
+                    }
+                }
+
+                Button {
+                    Layout.alignment: Qt.AlignRight
+                    Layout.preferredWidth: 132
+                    Layout.preferredHeight: 36
+                    text: I18n.tr(configManager.language, "main.rules_dismiss")
+
+                    background: Rectangle {
+                        radius: 12
+                        color: "transparent"
+                        border.color: Qt.rgba(255, 255, 255, 0.08)
+                        border.width: 1
+                    }
+
+                    contentItem: Text {
+                        text: parent.text
+                        color: appRoot.onSurfaceVariant
+                        font.family: appRoot.bodyFont
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    onClicked: appRoot.rulesWarningDismissed = true
+                }
+            }
         }
     }
 

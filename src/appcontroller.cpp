@@ -3,6 +3,7 @@
 #include "hidmanager.h"
 
 #include <QApplication>
+#include <QClipboard>
 #include <QAction>
 #include <QAudioOutput>
 #include <QIcon>
@@ -16,11 +17,6 @@
 AppController::AppController(QObject *parent)
     : QObject(parent)
 {
-    m_batteryAudioOutput = new QAudioOutput(this);
-    m_batteryAudioOutput->setVolume(1.0f);
-    m_batteryPlayer = new QMediaPlayer(this);
-    m_batteryPlayer->setAudioOutput(m_batteryAudioOutput);
-
     if (!QSystemTrayIcon::isSystemTrayAvailable())
         return;
 
@@ -86,10 +82,7 @@ void AppController::setHidManager(HidManager *hidManager)
 
     if (m_hidManager) {
         connect(m_hidManager, &HidManager::batteryLevelChanged, this, &AppController::handleBatteryStateChanged, Qt::UniqueConnection);
-        connect(m_hidManager, &HidManager::deviceConnectedChanged, this, [this]() {
-            if (!m_hidManager || !m_hidManager->isDeviceConnected())
-                resetBatteryNotificationState();
-        }, Qt::UniqueConnection);
+        connect(m_hidManager, &HidManager::deviceConnectedChanged, this, &AppController::handleDeviceConnectionChanged, Qt::UniqueConnection);
     }
 }
 
@@ -131,6 +124,12 @@ void AppController::showMainWindow()
 void AppController::quitApplication()
 {
     QApplication::quit();
+}
+
+void AppController::copyTextToClipboard(const QString &text)
+{
+    if (QClipboard *clipboard = QApplication::clipboard())
+        clipboard->setText(text);
 }
 
 QString AppController::trText(const QString &key) const
@@ -254,11 +253,27 @@ void AppController::resetBatteryNotificationState()
     m_lastBatteryNotificationAtMs = 0;
 }
 
+void AppController::handleDeviceConnectionChanged()
+{
+    if (!m_hidManager || !m_hidManager->isDeviceConnected())
+        resetBatteryNotificationState();
+}
+
+void AppController::ensureBatteryAudioInitialized()
+{
+    if (!m_batteryAudioOutput) {
+        m_batteryAudioOutput = new QAudioOutput(this);
+        m_batteryAudioOutput->setVolume(1.0f);
+    }
+
+    if (!m_batteryPlayer) {
+        m_batteryPlayer = new QMediaPlayer(this);
+        m_batteryPlayer->setAudioOutput(m_batteryAudioOutput);
+    }
+}
+
 void AppController::playBatterySound(int percentage)
 {
-    if (!m_batteryPlayer)
-        return;
-
     QString source;
     switch (percentage) {
     case 10:
@@ -277,6 +292,7 @@ void AppController::playBatterySound(int percentage)
         return;
     }
 
+    ensureBatteryAudioInitialized();
     m_batteryPlayer->stop();
     m_batteryPlayer->setSource(QUrl(source));
     m_batteryPlayer->play();

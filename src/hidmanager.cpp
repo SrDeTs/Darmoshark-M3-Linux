@@ -59,6 +59,15 @@ void HidManager::setBackgroundMonitoringEnabled(bool enabled)
     }
 }
 
+void HidManager::setPermissionIssue(bool issue)
+{
+    if (m_permissionIssue == issue)
+        return;
+
+    m_permissionIssue = issue;
+    emit permissionIssueChanged();
+}
+
 void HidManager::scanDevices()
 {
     struct hid_device_info *devs, *cur_dev;
@@ -66,6 +75,7 @@ void HidManager::scanDevices()
     cur_dev = devs;
     
     bool found = false;
+    bool foundKnownDevice = false;
     while (cur_dev) {
         qDebug() << "Found device:" << QString::fromWCharArray(cur_dev->product_string) 
                  << "VID:" << QString::number(cur_dev->vendor_id, 16) 
@@ -75,6 +85,7 @@ void HidManager::scanDevices()
         if (cur_dev->product_id == 0xff12 || cur_dev->product_id == 0xff30 || 
             cur_dev->product_id == 0xff31 || cur_dev->product_id == 0xff10 || 
             cur_dev->product_id == 0xff18) {
+            foundKnownDevice = true;
             
             if (!m_device) {
                 connectDevice(cur_dev->vendor_id, cur_dev->product_id);
@@ -85,6 +96,14 @@ void HidManager::scanDevices()
         cur_dev = cur_dev->next;
     }
     hid_free_enumeration(devs);
+
+    if (m_device) {
+        setPermissionIssue(false);
+    } else if (!found && foundKnownDevice) {
+        setPermissionIssue(true);
+    } else if (!foundKnownDevice) {
+        setPermissionIssue(false);
+    }
 }
 
 bool HidManager::connectDevice(unsigned short vid, unsigned short pid)
@@ -134,11 +153,13 @@ bool HidManager::connectDevice(unsigned short vid, unsigned short pid)
         hid_set_nonblocking(m_device, 1);
         m_versionInfoAttemptedForCurrentConnection = false;
         m_versionInfoRefreshInProgress = false;
+        setPermissionIssue(false);
         qDebug() << "Successfully connected to" << QString::number(vid, 16) << ":" << QString::number(pid, 16);
         emit deviceConnectedChanged();
         pollStatus();
         return true;
     } else {
+        setPermissionIssue(true);
         qWarning() << "Failed to open device" << QString::number(vid, 16) << ":" << QString::number(pid, 16)
                   << ". (Make sure udev rules are applied or use sudo for testing)";
     }
@@ -158,6 +179,7 @@ void HidManager::disconnectDevice()
         m_isCharging = false;
         m_versionInfoAttemptedForCurrentConnection = false;
         m_versionInfoRefreshInProgress = false;
+        setPermissionIssue(false);
         clearVersionInfo();
         if (batteryStateChanged)
             emit batteryLevelChanged();
@@ -203,6 +225,31 @@ void HidManager::sendFeatureReport(const QByteArray &data)
 {
     if (!m_device) return;
 
+    if (data.size() >= 2 && static_cast<unsigned char>(data[0]) == 0x51 && static_cast<unsigned char>(data[1]) == 0x42) {
+        const bool wasPolling = m_pollTimer && m_pollTimer->isActive();
+        if (wasPolling)
+            m_pollTimer->stop();
+
+        hid_close(m_device);
+        m_device = nullptr;
+
+        const bool sentViaLibusb = sendFeatureReportViaLibusb(data);
+        const bool reopenOk = reopenHidDevice();
+
+        if (wasPolling && m_pollTimer)
+            m_pollTimer->start();
+
+        if (!reopenOk) {
+            qWarning() << "Failed to reopen HID device after libusb feature report";
+        }
+
+        if (sentViaLibusb) {
+            logHexBuffer("Sending feature report via libusb:", reinterpret_cast<const unsigned char*>(data.constData()), data.size());
+            qDebug() << "libusb feature report transfer returned:" << data.size();
+            return;
+        }
+    }
+
     QByteArray buffer = data;
     int res = hid_send_feature_report(
         m_device,
@@ -217,6 +264,64 @@ void HidManager::sendFeatureReport(const QByteArray &data)
         qWarning() << "Falling back to hid_write";
         writeReport(data);
     }
+}
+
+bool HidManager::sendFeatureReportViaLibusb(const QByteArray &data) const
+{
+    libusb_context *context = nullptr;
+    if (libusb_init(&context) != 0)
+        return false;
+
+    libusb_device_handle *handle = libusb_open_device_with_vid_pid(context, 0x248a, m_currentPid);
+    if (!handle) {
+        libusb_exit(context);
+        return false;
+    }
+
+    const uint16_t interfaceNumber = static_cast<uint16_t>((m_currentPid == 0xff12) ? 2 : 1);
+    const int interfaceIndex = static_cast<int>(interfaceNumber);
+    bool detachedKernelDriver = false;
+
+    const int kernelActive = libusb_kernel_driver_active(handle, interfaceIndex);
+    if (kernelActive == 1) {
+        const int detachRes = libusb_detach_kernel_driver(handle, interfaceIndex);
+        if (detachRes == 0)
+            detachedKernelDriver = true;
+    }
+
+    const int claimRes = libusb_claim_interface(handle, interfaceIndex);
+    if (claimRes != 0) {
+        qWarning() << "libusb_claim_interface for feature report failed:" << claimRes;
+        if (detachedKernelDriver)
+            libusb_attach_kernel_driver(handle, interfaceIndex);
+        libusb_close(handle);
+        libusb_exit(context);
+        return false;
+    }
+
+    const int transferred = libusb_control_transfer(
+        handle,
+        0x21,
+        0x09,
+        static_cast<uint16_t>((3u << 8) | static_cast<unsigned char>(data[0])),
+        interfaceNumber,
+        reinterpret_cast<unsigned char *>(const_cast<char *>(data.constData())),
+        data.size(),
+        1000
+    );
+
+    libusb_release_interface(handle, interfaceIndex);
+    if (detachedKernelDriver)
+        libusb_attach_kernel_driver(handle, interfaceIndex);
+    libusb_close(handle);
+    libusb_exit(context);
+
+    if (transferred < 0) {
+        qWarning() << "libusb feature report transfer failed:" << transferred;
+        return false;
+    }
+
+    return transferred == data.size();
 }
 
 void HidManager::sendConfigPacket(const QByteArray &data)

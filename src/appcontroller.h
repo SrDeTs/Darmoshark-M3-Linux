@@ -31,13 +31,16 @@ public:
     Q_INVOKABLE void hideToTray(bool notify = true);
     Q_INVOKABLE void showMainWindow();
     Q_INVOKABLE void quitApplication();
+    Q_INVOKABLE void copyTextToClipboard(const QString &text);
 
 private:
     QString trText(const QString &key) const;
     void refreshTrayTexts();
     void setUiSuspended(bool suspended);
     void handleBatteryStateChanged();
+    void handleDeviceConnectionChanged();
     void resetBatteryNotificationState();
+    void ensureBatteryAudioInitialized();
     void playBatterySound(int percentage);
     void notifyBatteryEvent(const QString &messageKey, int percentage);
     bool canNotifyBatteryEvent(int code) const;

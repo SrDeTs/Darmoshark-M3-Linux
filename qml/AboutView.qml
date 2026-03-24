@@ -16,6 +16,7 @@ Item {
     property color accent: "#9dbfff"
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
+    property bool versionRefreshPending: false
 
     Component.onCompleted: refreshVersionsTimer.start()
 
@@ -24,8 +25,18 @@ Item {
         interval: 1
         repeat: false
         onTriggered: {
-            if (hidManager.firmwareVersion === "N/D")
+            if (hidManager.firmwareVersion === "N/D") {
+                pageRoot.versionRefreshPending = true
                 hidManager.refreshVersionInfo()
+            }
+        }
+    }
+
+    Connections {
+        target: hidManager
+
+        function onVersionInfoChanged() {
+            pageRoot.versionRefreshPending = false
         }
     }
 
@@ -75,6 +86,15 @@ Item {
                 text: I18n.tr(configManager.language, "about.subtitle")
                 color: textMuted
                 font.pixelSize: 14
+                font.family: bodyFont
+            }
+
+            Text {
+                Layout.alignment: Qt.AlignHCenter
+                visible: pageRoot.versionRefreshPending
+                text: configManager.language === "en-US" ? "Reading versions..." : "Lendo versões..."
+                color: accent
+                font.pixelSize: 12
                 font.family: bodyFont
             }
 

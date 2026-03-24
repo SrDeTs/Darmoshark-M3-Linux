@@ -148,23 +148,19 @@ std::vector<uint8_t> createRipplePacket(bool enabled, bool wiredMode) {
 }
 
 // Lift Off Distance packet captured from the Windows driver.
-// Low = 1 mm, High = 2 mm.
+// 1mm = 51 42 01 02 02 02 00 01 01 ...
+// 2mm = 51 42 02 02 02 02 00 01 01 ...
 std::vector<uint8_t> createLiftOffDistancePacket(bool low) {
-    std::vector<uint8_t> packet(14, 0x00);
-    packet[0] = 0x82;
-    packet[1] = 0x01;
-    packet[2] = 0x08;
-    packet[3] = 0x00;
-    packet[4] = 0x00;
-    packet[5] = 0x00;
-    packet[6] = 0x03;
-    packet[7] = 0x00;
-    packet[8] = low ? 0x01 : 0x00;
-    packet[9] = 0x00;
-    packet[10] = low ? 0x00 : 0xff;
-    packet[11] = low ? 0x00 : 0xff;
-    packet[12] = 0x00;
-    packet[13] = 0x00;
+    std::vector<uint8_t> packet(21, 0x00);
+    packet[0] = 0x51;
+    packet[1] = 0x42;
+    packet[2] = low ? 0x01 : 0x02;
+    packet[3] = 0x02;
+    packet[4] = 0x02;
+    packet[5] = 0x02;
+    packet[6] = 0x00;
+    packet[7] = 0x01;
+    packet[8] = 0x01;
     return packet;
 }
 
@@ -196,32 +192,20 @@ std::vector<uint8_t> createScrollDirectionRefreshPacket(bool wiredMode) {
 }
 
 // E-Sports Mode packet captured from the Windows driver.
-// Open = faster response mode, Close = default mode.
+// Open  = 51 42 01 02 02 02 00 01 02 ...
+// Close = 51 42 01 02 02 02 00 01 01 ...
 std::vector<uint8_t> createESportsModePacket(bool open, bool wiredMode) {
-    std::vector<uint8_t> packet(14, 0x00);
-    packet[0] = 0x82;
-    packet[1] = 0x01;
-    packet[2] = 0x08;
-    packet[3] = 0x00;
-    packet[4] = 0x00;
-    packet[5] = 0x00;
-    packet[6] = wiredMode ? 0x01 : 0x03;
-    packet[7] = 0x00;
-
-    if (wiredMode) {
-        packet[8] = open ? 0x01 : 0x00;
-        packet[9] = 0x00;
-        packet[10] = open ? 0x00 : 0xff;
-        packet[11] = open ? 0x00 : 0xff;
-    } else {
-        packet[8] = open ? 0x00 : 0x01;
-        packet[9] = 0x00;
-        packet[10] = open ? 0x01 : 0x00;
-        packet[11] = 0x00;
-    }
-
-    packet[12] = 0x00;
-    packet[13] = 0x00;
+    Q_UNUSED(wiredMode);
+    std::vector<uint8_t> packet(21, 0x00);
+    packet[0] = 0x51;
+    packet[1] = 0x42;
+    packet[2] = 0x01;
+    packet[3] = 0x02;
+    packet[4] = 0x02;
+    packet[5] = 0x02;
+    packet[6] = 0x00;
+    packet[7] = 0x01;
+    packet[8] = open ? 0x02 : 0x01;
     return packet;
 }
 

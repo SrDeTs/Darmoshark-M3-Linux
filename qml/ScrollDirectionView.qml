@@ -18,7 +18,6 @@ Item {
     property string bodyFont: "Inter"
 
     function selectScrollDirection(normal) {
-        console.log("ScrollDirectionView.selectScrollDirection", normal)
         if (configManager.scrollNormal === normal)
             return
 

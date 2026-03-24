@@ -95,7 +95,16 @@ var dictionaries = {
         "main.config_recovered": "Configuração recuperada",
         "main.config_created": "Configuração criada",
         "main.config_recovered_desc": "O arquivo estava corrompido e foi recriado.",
-        "main.config_created_desc": "O app criou a configuração inicial."
+        "main.config_created_desc": "O app criou a configuração inicial.",
+        "main.rules_title": "Não foi possível acessar o dispositivo",
+        "main.rules_desc": "O mouse ou dongle foi detectado, mas o app não conseguiu abrir o dispositivo. Em alguns sistemas isso é resolvido com uma regra udev; em outros, o acesso já funciona sem ela.",
+        "main.rules_step1": "1. Se o app continuar sem acessar o dispositivo, instale 99-darmoshark.rules em /etc/udev/rules.d/",
+        "main.rules_step2": "2. Rode: sudo udevadm control --reload-rules",
+        "main.rules_step3": "3. Rode: sudo udevadm trigger",
+        "main.rules_step4": "4. Reconecte o cabo ou dongle e teste o app novamente.",
+        "main.rules_copy": "Copiar passos",
+        "main.rules_open_folder": "Abrir /etc/udev/rules.d",
+        "main.rules_dismiss": "Fechar aviso"
     },
     "en-US": {
         "app.title": "Darmoshark M3",
@@ -191,7 +200,16 @@ var dictionaries = {
         "main.config_recovered": "Configuration recovered",
         "main.config_created": "Configuration created",
         "main.config_recovered_desc": "The file was corrupted and has been recreated.",
-        "main.config_created_desc": "The app created the initial configuration."
+        "main.config_created_desc": "The app created the initial configuration.",
+        "main.rules_title": "Could not access the device",
+        "main.rules_desc": "The mouse or dongle was detected, but the app could not open the device. On some systems this is fixed by installing a udev rule; on others, access already works without it.",
+        "main.rules_step1": "1. If the app still cannot access the device, install 99-darmoshark.rules into /etc/udev/rules.d/",
+        "main.rules_step2": "2. Run: sudo udevadm control --reload-rules",
+        "main.rules_step3": "3. Run: sudo udevadm trigger",
+        "main.rules_step4": "4. Reconnect the cable or dongle and test the app again.",
+        "main.rules_copy": "Copy steps",
+        "main.rules_open_folder": "Open /etc/udev/rules.d",
+        "main.rules_dismiss": "Dismiss"
     }
 }
 

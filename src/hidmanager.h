@@ -11,6 +11,7 @@ class HidManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool deviceConnected READ isDeviceConnected NOTIFY deviceConnectedChanged)
+    Q_PROPERTY(bool permissionIssue READ permissionIssue NOTIFY permissionIssueChanged)
     Q_PROPERTY(QString connectionMode READ connectionMode NOTIFY deviceConnectedChanged)
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
     Q_PROPERTY(bool batteryKnown READ batteryKnown NOTIFY batteryLevelChanged)
@@ -24,6 +25,7 @@ public:
     ~HidManager();
 
     bool isDeviceConnected() const { return m_device != nullptr; }
+    bool permissionIssue() const { return m_permissionIssue; }
     QString connectionMode() const;
     int batteryLevel() const { return m_batteryLevel; }
     bool batteryKnown() const { return m_batteryLevel >= 0; }
@@ -57,6 +59,7 @@ signals:
     void versionInfoChanged();
     void deviceFound(const QString &name, int vid, int pid);
     void backgroundMonitoringChanged();
+    void permissionIssueChanged();
 
 private slots:
     void pollStatus();
@@ -72,6 +75,8 @@ private:
     bool readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfVersion) const;
     bool reopenHidDevice();
     QString versionCacheModeKey() const;
+    void setPermissionIssue(bool issue);
+    bool sendFeatureReportViaLibusb(const QByteArray &data) const;
 
     hid_device *m_device = nullptr;
     QTimer *m_pollTimer = nullptr;
@@ -86,4 +91,5 @@ private:
     bool m_versionInfoRefreshInProgress = false;
     bool m_versionInfoAttemptedForCurrentConnection = false;
     bool m_backgroundMonitoringEnabled = true;
+    bool m_permissionIssue = false;
 };

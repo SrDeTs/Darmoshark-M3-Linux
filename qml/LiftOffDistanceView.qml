@@ -15,6 +15,16 @@ Item {
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
+    function selectLiftOff(high) {
+        if (configManager.liftOffHigh === high)
+            return
+
+        console.log("LiftOffDistanceView.selectLiftOff", high)
+        configManager.setLiftOffHigh(high)
+        if (typeof hidManager !== "undefined")
+            hidManager.applyLiftOffDistance(!high)
+    }
+
     Rectangle {
         id: lodCard
         width: 450
@@ -88,11 +98,7 @@ Item {
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    configManager.setLiftOffHigh(modelData.high)
-                                    if (typeof hidManager !== "undefined")
-                                        hidManager.applyLiftOffDistance(!modelData.high)
-                                }
+                                onClicked: pageRoot.selectLiftOff(modelData.high)
                             }
                         }
                     }
