@@ -16,12 +16,14 @@ class AppController : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool trayAvailable READ trayAvailable CONSTANT)
+    Q_PROPERTY(bool uiSuspended READ uiSuspended NOTIFY uiSuspendedChanged)
 
 public:
     explicit AppController(QObject *parent = nullptr);
     ~AppController() override;
 
     bool trayAvailable() const;
+    bool uiSuspended() const;
     void setMainWindow(QWindow *window);
     void setConfigManager(ConfigManager *configManager);
     void setHidManager(HidManager *hidManager);
@@ -33,6 +35,7 @@ public:
 private:
     QString trText(const QString &key) const;
     void refreshTrayTexts();
+    void setUiSuspended(bool suspended);
     void handleBatteryStateChanged();
     void resetBatteryNotificationState();
     void playBatterySound(int percentage);
@@ -55,4 +58,8 @@ private:
     bool m_batteryBaselineInitialized = false;
     int m_lastBatteryNotificationCode = -1;
     qint64 m_lastBatteryNotificationAtMs = 0;
+    bool m_uiSuspended = false;
+
+signals:
+    void uiSuspendedChanged();
 };

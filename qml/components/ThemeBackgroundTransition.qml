@@ -9,6 +9,7 @@ Item {
     property bool running: false
     property bool lightTheme: false
     property int direction: 1
+    property bool suspended: false
 
     signal transitionFinished(string activeSource)
 
@@ -50,7 +51,7 @@ Item {
     Image {
         id: baseImage
         anchors.fill: parent
-        source: root.activeSource && root.activeSource.length > 0 ? root.activeSource : root.fallbackSource
+        source: root.suspended ? "" : (root.activeSource && root.activeSource.length > 0 ? root.activeSource : root.fallbackSource)
         fillMode: Image.PreserveAspectCrop
         smooth: true
         mipmap: true
@@ -67,7 +68,7 @@ Item {
     Image {
         id: incomingImage
         anchors.fill: parent
-        source: root.incomingSource
+        source: root.suspended ? "" : root.incomingSource
         fillMode: Image.PreserveAspectCrop
         smooth: true
         mipmap: true

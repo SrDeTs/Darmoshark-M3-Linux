@@ -42,6 +42,7 @@ ApplicationWindow {
     property int nextPageIndex: -1
     property int pageTransitionDirection: 1
     readonly property bool controlsLocked: !hidManager.deviceConnected
+    readonly property bool uiSuspended: appController.uiSuspended
 
     onClosing: function(close) {
         if (configManager.minimizeToTrayEnabled && appController.trayAvailable) {
@@ -99,6 +100,10 @@ ApplicationWindow {
     function updateThemeBackground() {
         var nextSource = backgroundSource()
         console.log("updateThemeBackground", configManager.theme, activeBackgroundSource, nextSource, themeTransitionRunning)
+        if (uiSuspended) {
+            activeBackgroundSource = nextSource
+            return
+        }
         if (nextSource === activeBackgroundSource || themeTransitionRunning)
             return
 
@@ -108,18 +113,18 @@ ApplicationWindow {
     }
 
     function navigateTo(index) {
-        if (index === currentPageIndex || pageTransitionRunning)
+        if (index === currentPageIndex || pageTransitionRunning || uiSuspended)
             return
 
         nextPageIndex = index
         pageTransitionDirection = index > currentPageIndex ? 1 : -1
+        pageViewport.incomingSource = pageSource(index)
         pageViewport.incomingPageLayer.x = 40 * pageTransitionDirection
         pageViewport.incomingPageLayer.opacity = 0.0
         pageViewport.incomingPageLayer.scale = 0.992
         pageViewport.currentPageLayer.x = 0
         pageViewport.currentPageLayer.opacity = 1.0
         pageViewport.currentPageLayer.scale = 1.0
-        pageViewport.incomingPageLoader.source = pageSource(index)
         pageTransitionRunning = true
         pageTransition.restart()
     }
@@ -145,6 +150,7 @@ ApplicationWindow {
             anchors.fill: parent
             activeSource: appRoot.activeBackgroundSource
             fallbackSource: appRoot.backgroundSource()
+            suspended: appRoot.uiSuspended
 
             onTransitionFinished: function(nextSource) {
                 appRoot.activeBackgroundSource = nextSource
@@ -162,9 +168,11 @@ ApplicationWindow {
             controlsLocked: appRoot.controlsLocked
             pageTransitionRunning: appRoot.pageTransitionRunning
             incomingOpacity: pageViewport.incomingPageLayer.opacity
+            suspended: appRoot.uiSuspended
+            currentSource: appRoot.pageSource(appRoot.currentPageIndex)
 
             Component.onCompleted: {
-                pageViewport.currentPageLoader.source = appRoot.pageSource(appRoot.currentPageIndex)
+                pageViewport.currentSource = appRoot.pageSource(appRoot.currentPageIndex)
             }
         }
 
@@ -178,6 +186,7 @@ ApplicationWindow {
             surfaceContainer: appRoot.surfaceContainer
             surfaceContainerHigh: appRoot.surfaceContainerHigh
             iconResolver: appRoot.navIcon
+            visible: !appRoot.uiSuspended
             onNavigateRequested: function(index) {
                 appRoot.navigateTo(index)
             }
@@ -195,6 +204,7 @@ ApplicationWindow {
             batteryKnown: hidManager.batteryKnown
             charging: hidManager.isCharging
             batteryLevel: hidManager.batteryLevel
+            visible: !appRoot.uiSuspended
         }
 
         ConnectionStatusBadge {
@@ -210,6 +220,7 @@ ApplicationWindow {
             titleFont: appRoot.titleFont
             textColor: onSurface
             secondaryTextColor: onSurfaceVariant
+            visible: !appRoot.uiSuspended
         }
     }
 
@@ -274,14 +285,14 @@ ApplicationWindow {
             appRoot.currentPageIndex = appRoot.nextPageIndex
             appRoot.nextPageIndex = -1
             appRoot.pageTransitionRunning = false
-            pageViewport.currentPageLoader.source = appRoot.pageSource(appRoot.currentPageIndex)
+            pageViewport.currentSource = appRoot.pageSource(appRoot.currentPageIndex)
             pageViewport.currentPageLayer.x = 0
             pageViewport.currentPageLayer.opacity = 1.0
             pageViewport.currentPageLayer.scale = 1.0
             pageViewport.incomingPageLayer.x = 0
             pageViewport.incomingPageLayer.opacity = 0.0
             pageViewport.incomingPageLayer.scale = 1.0
-            pageViewport.incomingPageLoader.source = ""
+            pageViewport.incomingSource = ""
         }
     }
 

@@ -31,6 +31,31 @@ void HidManager::setConfigManager(ConfigManager *configManager)
     m_configManager = configManager;
 }
 
+void HidManager::setBackgroundMonitoringEnabled(bool enabled)
+{
+    if (m_backgroundMonitoringEnabled == enabled)
+        return;
+
+    m_backgroundMonitoringEnabled = enabled;
+    emit backgroundMonitoringChanged();
+
+    if (!m_pollTimer)
+        return;
+
+    if (enabled) {
+        if (!m_pollTimer->isActive())
+            m_pollTimer->start();
+
+        if (m_device) {
+            pollStatus();
+        } else {
+            scanDevices();
+        }
+    } else {
+        m_pollTimer->stop();
+    }
+}
+
 void HidManager::scanDevices()
 {
     struct hid_device_info *devs, *cur_dev;

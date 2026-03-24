@@ -6,12 +6,13 @@ Item {
     property bool controlsLocked: false
     property bool pageTransitionRunning: false
     property real incomingOpacity: 0.0
+    property bool suspended: false
+    property string currentSource: ""
+    property string incomingSource: ""
 
     default property alias contentChildren: contentHost.data
     property alias currentPageLayer: currentPageLayer
-    property alias currentPageLoader: currentPageLoader
     property alias incomingPageLayer: incomingPageLayer
-    property alias incomingPageLoader: incomingPageLoader
 
     clip: true
     enabled: !root.controlsLocked
@@ -35,6 +36,8 @@ Item {
             Loader {
                 id: currentPageLoader
                 anchors.fill: parent
+                active: !root.suspended && root.currentSource.length > 0
+                source: active ? root.currentSource : ""
             }
         }
 
@@ -47,6 +50,8 @@ Item {
             Loader {
                 id: incomingPageLoader
                 anchors.fill: parent
+                active: !root.suspended && root.incomingSource.length > 0
+                source: active ? root.incomingSource : ""
             }
         }
     }

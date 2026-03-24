@@ -49,6 +49,11 @@ bool AppController::trayAvailable() const
     return m_trayIcon != nullptr;
 }
 
+bool AppController::uiSuspended() const
+{
+    return m_uiSuspended;
+}
+
 void AppController::setMainWindow(QWindow *window)
 {
     m_mainWindow = window;
@@ -93,6 +98,11 @@ void AppController::hideToTray(bool notify)
     if (!m_mainWindow)
         return;
 
+    setUiSuspended(true);
+    if (m_hidManager) {
+        const bool keepBatteryMonitoring = m_configManager && m_configManager->batteryAlertsEnabled();
+        m_hidManager->setBackgroundMonitoringEnabled(keepBatteryMonitoring);
+    }
     m_mainWindow->hide();
 
     if (m_trayIcon && notify) {
@@ -110,6 +120,9 @@ void AppController::showMainWindow()
     if (!m_mainWindow)
         return;
 
+    if (m_hidManager)
+        m_hidManager->setBackgroundMonitoringEnabled(true);
+    setUiSuspended(false);
     m_mainWindow->show();
     m_mainWindow->raise();
     m_mainWindow->requestActivate();
@@ -155,6 +168,15 @@ void AppController::refreshTrayTexts()
 
     if (m_quitAction)
         m_quitAction->setText(trText(QStringLiteral("tray.quit")));
+}
+
+void AppController::setUiSuspended(bool suspended)
+{
+    if (m_uiSuspended == suspended)
+        return;
+
+    m_uiSuspended = suspended;
+    emit uiSuspendedChanged();
 }
 
 void AppController::handleBatteryStateChanged()

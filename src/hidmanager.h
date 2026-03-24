@@ -17,6 +17,7 @@ class HidManager : public QObject
     Q_PROPERTY(bool isCharging READ isCharging NOTIFY batteryLevelChanged)
     Q_PROPERTY(QString firmwareVersion READ firmwareVersion NOTIFY versionInfoChanged)
     Q_PROPERTY(QString rfVersion READ rfVersion NOTIFY versionInfoChanged)
+    Q_PROPERTY(bool backgroundMonitoringEnabled READ backgroundMonitoringEnabled NOTIFY backgroundMonitoringChanged)
 
 public:
     explicit HidManager(QObject *parent = nullptr);
@@ -29,6 +30,7 @@ public:
     bool isCharging() const { return m_isCharging; }
     QString firmwareVersion() const { return m_firmwareVersion; }
     QString rfVersion() const { return m_rfVersion; }
+    bool backgroundMonitoringEnabled() const { return m_backgroundMonitoringEnabled; }
 
     Q_INVOKABLE void scanDevices();
     Q_INVOKABLE bool connectDevice(unsigned short vid, unsigned short pid);
@@ -46,6 +48,7 @@ public:
     Q_INVOKABLE void applyScrollDirection(bool forward);
     Q_INVOKABLE void applyESportsMode(bool open);
     Q_INVOKABLE void refreshVersionInfo();
+    Q_INVOKABLE void setBackgroundMonitoringEnabled(bool enabled);
     void setConfigManager(ConfigManager *configManager);
 
 signals:
@@ -53,6 +56,7 @@ signals:
     void batteryLevelChanged();
     void versionInfoChanged();
     void deviceFound(const QString &name, int vid, int pid);
+    void backgroundMonitoringChanged();
 
 private slots:
     void pollStatus();
@@ -81,4 +85,5 @@ private:
     ConfigManager *m_configManager = nullptr;
     bool m_versionInfoRefreshInProgress = false;
     bool m_versionInfoAttemptedForCurrentConnection = false;
+    bool m_backgroundMonitoringEnabled = true;
 };
