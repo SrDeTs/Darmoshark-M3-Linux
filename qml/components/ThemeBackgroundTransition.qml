@@ -4,6 +4,7 @@ Item {
     id: root
 
     property string activeSource: ""
+    property string fallbackSource: ""
     property string incomingSource: ""
     property bool running: false
     property bool lightTheme: false
@@ -49,7 +50,7 @@ Item {
     Image {
         id: baseImage
         anchors.fill: parent
-        source: root.activeSource
+        source: root.activeSource && root.activeSource.length > 0 ? root.activeSource : root.fallbackSource
         fillMode: Image.PreserveAspectCrop
         smooth: true
         mipmap: true

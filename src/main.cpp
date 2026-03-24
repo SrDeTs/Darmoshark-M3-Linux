@@ -244,10 +244,13 @@ int main(int argc, char *argv[])
         }, Qt::QueuedConnection);
     engine.load(url);
 
-    if (!engine.rootObjects().isEmpty())
+    if (!engine.rootObjects().isEmpty()) {
         appController.setMainWindow(qobject_cast<QWindow *>(engine.rootObjects().constFirst()));
+    }
 
-    if ((startMinimizedToTray || configManager.startMinimizedEnabled()) && appController.trayAvailable())
+    const bool shouldStartMinimized = (startMinimizedToTray || configManager.startMinimizedEnabled()) && appController.trayAvailable();
+
+    if (shouldStartMinimized)
         appController.hideToTray(false);
 
     QTimer::singleShot(0, &hidManager, &HidManager::scanDevices);

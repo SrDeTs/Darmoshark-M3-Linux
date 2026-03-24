@@ -178,6 +178,7 @@ ApplicationWindow {
             id: themeBackground
             anchors.fill: parent
             activeSource: appRoot.activeBackgroundSource
+            fallbackSource: appRoot.backgroundSource()
 
             onTransitionFinished: function(nextSource) {
                 appRoot.activeBackgroundSource = nextSource
