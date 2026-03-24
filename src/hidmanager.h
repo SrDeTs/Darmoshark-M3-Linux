@@ -79,4 +79,6 @@ private:
     QString m_firmwareVersion = QStringLiteral("N/D");
     QString m_rfVersion = QStringLiteral("N/D");
     ConfigManager *m_configManager = nullptr;
+    bool m_versionInfoRefreshInProgress = false;
+    bool m_versionInfoAttemptedForCurrentConnection = false;
 };

@@ -17,6 +17,18 @@ Item {
     property string titleFont: "Inter"
     property string bodyFont: "Inter"
 
+    Component.onCompleted: refreshVersionsTimer.start()
+
+    Timer {
+        id: refreshVersionsTimer
+        interval: 1
+        repeat: false
+        onTriggered: {
+            if (hidManager.firmwareVersion === "N/D" || hidManager.rfVersion === "N/D")
+                hidManager.refreshVersionInfo()
+        }
+    }
+
     Rectangle {
         id: aboutCard
         width: 346

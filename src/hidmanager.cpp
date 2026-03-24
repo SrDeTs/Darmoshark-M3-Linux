@@ -104,6 +104,8 @@ bool HidManager::connectDevice(unsigned short vid, unsigned short pid)
     if (m_device) {
         m_currentPid = pid;
         hid_set_nonblocking(m_device, 1);
+        m_versionInfoAttemptedForCurrentConnection = false;
+        m_versionInfoRefreshInProgress = false;
         qDebug() << "Successfully connected to" << QString::number(vid, 16) << ":" << QString::number(pid, 16);
         emit deviceConnectedChanged();
         pollStatus();
@@ -126,6 +128,8 @@ void HidManager::disconnectDevice()
         const bool batteryStateChanged = (m_batteryLevel != -1) || m_isCharging;
         m_batteryLevel = -1;
         m_isCharging = false;
+        m_versionInfoAttemptedForCurrentConnection = false;
+        m_versionInfoRefreshInProgress = false;
         clearVersionInfo();
         if (batteryStateChanged)
             emit batteryLevelChanged();
@@ -203,9 +207,37 @@ void HidManager::refreshVersionInfo()
         return;
     }
 
+    if (m_versionInfoRefreshInProgress)
+        return;
+
+    const bool wiredMode = (m_currentPid == 0xff12);
+    if (!wiredMode && m_versionInfoAttemptedForCurrentConnection && m_firmwareVersion != QStringLiteral("N/D"))
+        return;
+
+    m_versionInfoRefreshInProgress = true;
+    m_versionInfoAttemptedForCurrentConnection = true;
+
     QString firmwareVersion = QStringLiteral("N/D");
     QString rfVersion = QStringLiteral("N/D");
-    const bool wiredMode = (m_currentPid == 0xff12);
+    const QString modeKey = versionCacheModeKey();
+
+    if (m_configManager && !wiredMode) {
+        const QString cachedFirmwareVersion = m_configManager->cachedFirmwareVersion(0x248a, m_currentPid, modeKey);
+        if (cachedFirmwareVersion != QStringLiteral("N/D")) {
+            firmwareVersion = cachedFirmwareVersion;
+            const QString cachedRfVersion = m_configManager->cachedRfVersion(0x248a, m_currentPid, modeKey, cachedFirmwareVersion);
+            if (cachedRfVersion != QStringLiteral("N/D"))
+                rfVersion = cachedRfVersion;
+
+            if (rfVersion != QStringLiteral("N/D")) {
+                qDebug() << "Using cached version info:" << firmwareVersion << rfVersion;
+                setVersionInfo(firmwareVersion, rfVersion);
+                m_versionInfoRefreshInProgress = false;
+                return;
+            }
+        }
+    }
+
     if (wiredMode) {
         for (int attempt = 0; attempt < 6; ++attempt) {
             unsigned char buffer[21] = {0};
@@ -263,7 +295,6 @@ void HidManager::refreshVersionInfo()
     }
 
     if (m_configManager && !wiredMode) {
-        const QString modeKey = versionCacheModeKey();
         if (firmwareVersion != QStringLiteral("N/D")) {
             m_configManager->rememberFirmwareVersion(0x248a, m_currentPid, modeKey, firmwareVersion);
         } else {
@@ -286,6 +317,7 @@ void HidManager::refreshVersionInfo()
     }
 
     setVersionInfo(firmwareVersion, rfVersion);
+    m_versionInfoRefreshInProgress = false;
 }
 
 bool HidManager::reopenHidDevice()
@@ -702,43 +734,6 @@ bool HidManager::readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfV
     const int interfaceIndex = static_cast<int>(interfaceNumber);
     bool detachedKernelDriver = false;
     bool success = false;
-    auto tryReadWirelessRfVersion = [&](int attempts, int pauseMs, const char *phaseLabel) -> bool {
-        for (int attempt = 0; attempt < attempts; ++attempt) {
-            unsigned char buffer[21] = {0};
-            const int transferred = libusb_control_transfer(
-                handle,
-                requestType,
-                0x01,
-                reportValue,
-                interfaceNumber,
-                buffer,
-                sizeof(buffer),
-                1000
-            );
-
-            if (transferred > 0) {
-                logHexBuffer(phaseLabel, buffer, transferred);
-                const QString version = parseVersionResponse(buffer, transferred);
-                if (version.startsWith(QLatin1Char('e'), Qt::CaseInsensitive)) {
-                    rfVersion = version;
-                    success = true;
-                    qDebug() << "RF version response from wireless control sequence:" << rfVersion;
-                    return true;
-                }
-            } else {
-                qWarning() << "libusb GET_REPORT(0x51 wireless) failed:" << transferred
-                           << "attempt:" << (attempt + 1) << "/" << attempts;
-            }
-
-            QThread::msleep(pauseMs);
-        }
-
-        return false;
-    };
-
-    if (!wiredMode) {
-        tryReadWirelessRfVersion(3, 10, "Wireless RF raw GET_REPORT(0x51) pre-claim:");
-    }
 
     const int kernelActive = libusb_kernel_driver_active(handle, interfaceIndex);
     if (kernelActive == 1) {
@@ -817,9 +812,6 @@ bool HidManager::readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfV
     }
 
     if (!wiredMode) {
-        if (rfVersion == QStringLiteral("N/D"))
-            tryReadWirelessRfVersion(6, 15, "Wireless RF raw GET_REPORT(0x51) post-claim:");
-
         unsigned char queryBuffer[21] = {0};
         queryBuffer[0] = 0x51;
         queryBuffer[1] = 0x0c;
@@ -864,11 +856,6 @@ bool HidManager::readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfV
                 qDebug() << "Firmware version response from wireless interrupt sequence:" << firmwareVersion;
                 break;
             }
-        }
-
-        if (rfVersion == QStringLiteral("N/D")) {
-            QThread::msleep(80);
-            tryReadWirelessRfVersion(12, 20, "Wireless RF raw GET_REPORT(0x51) post-firmware:");
         }
     } else {
         unsigned char setBuffer[21] = {0};
