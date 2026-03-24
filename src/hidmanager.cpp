@@ -1,4 +1,5 @@
 #include "hidmanager.h"
+#include "configmanager.h"
 #include "mouseprotocol.h"
 #include <QDebug>
 #include <QRegularExpression>
@@ -23,6 +24,11 @@ HidManager::~HidManager()
 {
     disconnectDevice();
     hid_exit();
+}
+
+void HidManager::setConfigManager(ConfigManager *configManager)
+{
+    m_configManager = configManager;
 }
 
 void HidManager::scanDevices()
@@ -100,6 +106,14 @@ bool HidManager::connectDevice(unsigned short vid, unsigned short pid)
         hid_set_nonblocking(m_device, 1);
         qDebug() << "Successfully connected to" << QString::number(vid, 16) << ":" << QString::number(pid, 16);
         refreshVersionInfo();
+        if (pid == 0xff30 || pid == 0xff31) {
+            QTimer::singleShot(450, this, [this, pid]() {
+                if (!m_device || m_currentPid != pid)
+                    return;
+                if (m_firmwareVersion == QStringLiteral("N/D") || m_rfVersion == QStringLiteral("N/D"))
+                    refreshVersionInfo();
+            });
+        }
         emit deviceConnectedChanged();
         pollStatus();
         return true;
@@ -257,6 +271,29 @@ void HidManager::refreshVersionInfo()
         qWarning() << "Unable to read version info from connected device";
     }
 
+    if (m_configManager && !wiredMode) {
+        const QString modeKey = versionCacheModeKey();
+        if (firmwareVersion != QStringLiteral("N/D")) {
+            m_configManager->rememberFirmwareVersion(0x248a, m_currentPid, modeKey, firmwareVersion);
+        } else {
+            const QString cachedFirmwareVersion = m_configManager->cachedFirmwareVersion(0x248a, m_currentPid, modeKey);
+            if (cachedFirmwareVersion != QStringLiteral("N/D")) {
+                qDebug() << "Using cached firmware version:" << cachedFirmwareVersion;
+                firmwareVersion = cachedFirmwareVersion;
+            }
+        }
+
+        if (firmwareVersion != QStringLiteral("N/D") && rfVersion != QStringLiteral("N/D")) {
+            m_configManager->rememberRfVersion(0x248a, m_currentPid, modeKey, firmwareVersion, rfVersion);
+        } else if (firmwareVersion != QStringLiteral("N/D")) {
+            const QString cachedRfVersion = m_configManager->cachedRfVersion(0x248a, m_currentPid, modeKey, firmwareVersion);
+            if (cachedRfVersion != QStringLiteral("N/D")) {
+                qDebug() << "Using cached RF version:" << cachedRfVersion;
+                rfVersion = cachedRfVersion;
+            }
+        }
+    }
+
     setVersionInfo(firmwareVersion, rfVersion);
 }
 
@@ -271,6 +308,15 @@ bool HidManager::reopenHidDevice()
 
     hid_set_nonblocking(m_device, 1);
     return true;
+}
+
+QString HidManager::versionCacheModeKey() const
+{
+    if (m_currentPid == 0xff12)
+        return QStringLiteral("wired");
+    if (m_currentPid == 0xff30 || m_currentPid == 0xff31)
+        return QStringLiteral("2.4g");
+    return QStringLiteral("unknown");
 }
 
 void HidManager::applyDpi(const QVariantList &stages, int current_stage)

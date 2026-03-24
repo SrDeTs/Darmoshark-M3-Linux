@@ -339,6 +339,60 @@ bool ConfigManager::startMinimizedEnabled() const
     return node ? node->value_or(false) : false;
 }
 
+QString ConfigManager::cachedFirmwareVersion(int vid, int pid, const QString &mode) const
+{
+    auto *cacheTable = m_config["version_cache"].as_table();
+    auto *firmwareTable = cacheTable ? (*cacheTable)["firmware"].as_table() : nullptr;
+    if (!firmwareTable)
+        return QStringLiteral("N/D");
+
+    const auto cachedVid = (*firmwareTable)["vid"].as_integer();
+    const auto cachedPid = (*firmwareTable)["pid"].as_integer();
+    const auto cachedMode = (*firmwareTable)["mode"].as_string();
+    const auto cachedFirmware = (*firmwareTable)["firmware_version"].as_string();
+
+    if (!cachedVid || !cachedPid || !cachedMode || !cachedFirmware)
+        return QStringLiteral("N/D");
+
+    if (cachedVid->value_or(-1) != vid || cachedPid->value_or(-1) != pid)
+        return QStringLiteral("N/D");
+
+    if (QString::fromStdString(cachedMode->get()) != mode)
+        return QStringLiteral("N/D");
+
+    const QString value = QString::fromStdString(cachedFirmware->get()).trimmed();
+    return value.isEmpty() ? QStringLiteral("N/D") : value;
+}
+
+QString ConfigManager::cachedRfVersion(int vid, int pid, const QString &mode, const QString &firmwareVersion) const
+{
+    auto *cacheTable = m_config["version_cache"].as_table();
+    auto *rfTable = cacheTable ? (*cacheTable)["rf"].as_table() : nullptr;
+    if (!rfTable)
+        return QStringLiteral("N/D");
+
+    const auto cachedVid = (*rfTable)["vid"].as_integer();
+    const auto cachedPid = (*rfTable)["pid"].as_integer();
+    const auto cachedMode = (*rfTable)["mode"].as_string();
+    const auto cachedFirmware = (*rfTable)["firmware_version"].as_string();
+    const auto cachedRfVersion = (*rfTable)["rf_version"].as_string();
+
+    if (!cachedVid || !cachedPid || !cachedMode || !cachedFirmware || !cachedRfVersion)
+        return QStringLiteral("N/D");
+
+    if (cachedVid->value_or(-1) != vid || cachedPid->value_or(-1) != pid)
+        return QStringLiteral("N/D");
+
+    if (QString::fromStdString(cachedMode->get()) != mode)
+        return QStringLiteral("N/D");
+
+    if (QString::fromStdString(cachedFirmware->get()) != firmwareVersion)
+        return QStringLiteral("N/D");
+
+    const QString value = QString::fromStdString(cachedRfVersion->get()).trimmed();
+    return value.isEmpty() ? QStringLiteral("N/D") : value;
+}
+
 void ConfigManager::setDpiCurrentStage(int stage)
 {
     ensureDpiTable();
@@ -544,4 +598,49 @@ void ConfigManager::setDpiColor(int index, const QString &color)
             saveConfig();
         }
     }
+}
+
+void ConfigManager::rememberFirmwareVersion(int vid, int pid, const QString &mode, const QString &firmwareVersion)
+{
+    if (mode.trimmed().isEmpty() || firmwareVersion.trimmed().isEmpty())
+        return;
+
+    auto *cacheTable = m_config["version_cache"].as_table();
+    if (!cacheTable) {
+        m_config.insert_or_assign(std::string("version_cache"), toml::table{});
+        cacheTable = m_config["version_cache"].as_table();
+    }
+    if (!cacheTable)
+        return;
+
+    toml::table firmwareTable;
+    firmwareTable.insert_or_assign(std::string("vid"), static_cast<int64_t>(vid));
+    firmwareTable.insert_or_assign(std::string("pid"), static_cast<int64_t>(pid));
+    firmwareTable.insert_or_assign(std::string("mode"), mode.toStdString());
+    firmwareTable.insert_or_assign(std::string("firmware_version"), firmwareVersion.toStdString());
+    cacheTable->insert_or_assign(std::string("firmware"), std::move(firmwareTable));
+    saveConfig();
+}
+
+void ConfigManager::rememberRfVersion(int vid, int pid, const QString &mode, const QString &firmwareVersion, const QString &rfVersion)
+{
+    if (mode.trimmed().isEmpty() || firmwareVersion.trimmed().isEmpty() || rfVersion.trimmed().isEmpty())
+        return;
+
+    auto *cacheTable = m_config["version_cache"].as_table();
+    if (!cacheTable) {
+        m_config.insert_or_assign(std::string("version_cache"), toml::table{});
+        cacheTable = m_config["version_cache"].as_table();
+    }
+    if (!cacheTable)
+        return;
+
+    toml::table rfTable;
+    rfTable.insert_or_assign(std::string("vid"), static_cast<int64_t>(vid));
+    rfTable.insert_or_assign(std::string("pid"), static_cast<int64_t>(pid));
+    rfTable.insert_or_assign(std::string("mode"), mode.toStdString());
+    rfTable.insert_or_assign(std::string("firmware_version"), firmwareVersion.toStdString());
+    rfTable.insert_or_assign(std::string("rf_version"), rfVersion.toStdString());
+    cacheTable->insert_or_assign(std::string("rf"), std::move(rfTable));
+    saveConfig();
 }

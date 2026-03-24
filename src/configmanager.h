@@ -45,6 +45,8 @@ public:
     bool autoStartEnabled() const;
     bool minimizeToTrayEnabled() const;
     bool startMinimizedEnabled() const;
+    QString cachedFirmwareVersion(int vid, int pid, const QString &mode) const;
+    QString cachedRfVersion(int vid, int pid, const QString &mode, const QString &firmwareVersion) const;
 
     Q_INVOKABLE void setDpiCurrentStage(int stage);
     Q_INVOKABLE void setPollingRate(int rate);
@@ -61,6 +63,8 @@ public:
     Q_INVOKABLE void setStartMinimizedEnabled(bool enabled);
     Q_INVOKABLE void setDpiValue(int index, int value);
     Q_INVOKABLE void setDpiColor(int index, const QString &color);
+    Q_INVOKABLE void rememberFirmwareVersion(int vid, int pid, const QString &mode, const QString &firmwareVersion);
+    Q_INVOKABLE void rememberRfVersion(int vid, int pid, const QString &mode, const QString &firmwareVersion, const QString &rfVersion);
 
 signals:
     void dpiStagesChanged();

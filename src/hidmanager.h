@@ -5,6 +5,8 @@
 #include <QVector>
 #include <hidapi/hidapi.h>
 
+class ConfigManager;
+
 class HidManager : public QObject
 {
     Q_OBJECT
@@ -44,6 +46,7 @@ public:
     Q_INVOKABLE void applyScrollDirection(bool forward);
     Q_INVOKABLE void applyESportsMode(bool open);
     Q_INVOKABLE void refreshVersionInfo();
+    void setConfigManager(ConfigManager *configManager);
 
 signals:
     void deviceConnectedChanged();
@@ -64,6 +67,7 @@ private:
     QString parseVersionResponse(const unsigned char *buffer, int length) const;
     bool readVersionInfoViaLibusb(QString &firmwareVersion, QString &rfVersion) const;
     bool reopenHidDevice();
+    QString versionCacheModeKey() const;
 
     hid_device *m_device = nullptr;
     QTimer *m_pollTimer = nullptr;
@@ -74,4 +78,5 @@ private:
     QVector<int> m_recentBatterySamples;
     QString m_firmwareVersion = QStringLiteral("N/D");
     QString m_rfVersion = QStringLiteral("N/D");
+    ConfigManager *m_configManager = nullptr;
 };

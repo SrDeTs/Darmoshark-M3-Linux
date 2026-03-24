@@ -195,11 +195,11 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    HidManager hidManager;
-    hidManager.scanDevices(); // Scan and auto-connect on startup
     ConfigManager configManager;
     AppController appController;
     appController.setConfigManager(&configManager);
+    HidManager hidManager;
+    hidManager.setConfigManager(&configManager);
 
     QString userConfigPath = customConfigPath.isEmpty()
         ? QDir::homePath() + "/.config/Darmoshark M3 Linux/config.toml"
@@ -226,6 +226,7 @@ int main(int argc, char *argv[])
     }
 
     configManager.saveConfig();
+    hidManager.scanDevices(); // Scan and auto-connect on startup after config is ready
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("hidManager", &hidManager);
