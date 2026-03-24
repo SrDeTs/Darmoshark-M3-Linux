@@ -3,7 +3,6 @@
         <file>images/BG-Black.png</file>
         <file>images/BG-M3-Black.png</file>
         <file>images/BG-M3-White.png</file>
-        <file>images/Bateria/SpryteBateria.png</file>
         <file>images/BG-White.png</file>
         <file>images/LogoDarmoshark.png</file>
         <file>images/IconsBar/About.png</file>
@@ -32,5 +31,9 @@
         <file>qml/components/SettingsSwitch.qml</file>
         <file>qml/components/ThemeBackgroundTransition.qml</file>
         <file>qml/idiomas/I18n.js</file>
+        <file>sons/Bateria/Bateria-10%.mp3</file>
+        <file>sons/Bateria/Bateria-30%.mp3</file>
+        <file>sons/Bateria/Bateria-50%.mp3</file>
+        <file>sons/Bateria/Bateria-100%.mp3</file>
     </qresource>
 </RCC>

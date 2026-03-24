@@ -42,9 +42,6 @@ ApplicationWindow {
     property int nextPageIndex: -1
     property int pageTransitionDirection: 1
     readonly property bool controlsLocked: !hidManager.deviceConnected
-    readonly property real batterySpriteFrameWidth: 1536 / 5
-    readonly property real batterySpriteFrameHeight: 1024 / 4
-    readonly property real batterySpriteClipHeight: 104
 
     onClosing: function(close) {
         if (configManager.minimizeToTrayEnabled && appController.trayAvailable) {
@@ -97,38 +94,6 @@ ApplicationWindow {
         if (configManager.theme === "White")
             return "qrc:/images/BG-M3-White.png"
         return "qrc:/images/BG-M3-Black.png"
-    }
-
-    function batterySpriteIndex() {
-        if (!hidManager.batteryKnown)
-            return 0
-
-        if (hidManager.isCharging)
-            return 12
-
-        var level = hidManager.batteryLevel
-        if (level <= 0) return 0
-        if (level <= 5) return 1
-        if (level <= 10) return 2
-        if (level <= 20) return 3
-        if (level <= 30) return 4
-        if (level <= 40) return 5
-        if (level <= 50) return 6
-        if (level <= 60) return 7
-        if (level <= 70) return 8
-        if (level <= 80) return 9
-        if (level <= 90) return 10
-        return 11
-    }
-
-    function batterySourceRect() {
-        var index = batterySpriteIndex()
-        var column = index % 5
-        var row = Math.floor(index / 5)
-        return Qt.rect(column * batterySpriteFrameWidth,
-                       row * batterySpriteFrameHeight,
-                       batterySpriteFrameWidth,
-                       batterySpriteClipHeight)
     }
 
     function updateThemeBackground() {
@@ -230,7 +195,6 @@ ApplicationWindow {
             batteryKnown: hidManager.batteryKnown
             charging: hidManager.isCharging
             batteryLevel: hidManager.batteryLevel
-            sourceRect: appRoot.batterySourceRect()
         }
 
         ConnectionStatusBadge {

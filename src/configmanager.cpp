@@ -43,6 +43,7 @@ static toml::table buildDefaultConfig()
     ui.insert_or_assign(std::string("auto_start_enabled"), false);
     ui.insert_or_assign(std::string("minimize_to_tray_enabled"), false);
     ui.insert_or_assign(std::string("start_minimized_enabled"), false);
+    ui.insert_or_assign(std::string("battery_alerts_enabled"), true);
 
     toml::table buttons;
     buttons.insert_or_assign(std::string("left"), std::string("Left-Click"));
@@ -339,6 +340,13 @@ bool ConfigManager::startMinimizedEnabled() const
     return node ? node->value_or(false) : false;
 }
 
+bool ConfigManager::batteryAlertsEnabled() const
+{
+    auto *uiTable = m_config["ui"].as_table();
+    auto *node = uiTable ? (*uiTable)["battery_alerts_enabled"].as_boolean() : nullptr;
+    return node ? node->value_or(true) : true;
+}
+
 QString ConfigManager::cachedFirmwareVersion(int vid, int pid, const QString &mode) const
 {
     auto *cacheTable = m_config["version_cache"].as_table();
@@ -569,6 +577,16 @@ void ConfigManager::setStartMinimizedEnabled(bool enabled)
     auto *uiTable = m_config["ui"].as_table();
     if (!uiTable) return;
     uiTable->insert_or_assign(std::string("start_minimized_enabled"), enabled);
+    emit configChanged();
+    saveConfig();
+}
+
+void ConfigManager::setBatteryAlertsEnabled(bool enabled)
+{
+    ensureUiTable();
+    auto *uiTable = m_config["ui"].as_table();
+    if (!uiTable) return;
+    uiTable->insert_or_assign(std::string("battery_alerts_enabled"), enabled);
     emit configChanged();
     saveConfig();
 }

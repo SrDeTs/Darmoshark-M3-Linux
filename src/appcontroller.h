@@ -8,6 +8,9 @@ class QMenu;
 class QWindow;
 class QAction;
 class ConfigManager;
+class HidManager;
+class QMediaPlayer;
+class QAudioOutput;
 
 class AppController : public QObject
 {
@@ -21,6 +24,7 @@ public:
     bool trayAvailable() const;
     void setMainWindow(QWindow *window);
     void setConfigManager(ConfigManager *configManager);
+    void setHidManager(HidManager *hidManager);
 
     Q_INVOKABLE void hideToTray(bool notify = true);
     Q_INVOKABLE void showMainWindow();
@@ -29,6 +33,10 @@ public:
 private:
     QString trText(const QString &key) const;
     void refreshTrayTexts();
+    void handleBatteryStateChanged();
+    void resetBatteryNotificationState();
+    void playBatterySound(int percentage);
+    void notifyBatteryEvent(const QString &messageKey, int percentage);
 
     QSystemTrayIcon *m_trayIcon = nullptr;
     QMenu *m_trayMenu = nullptr;
@@ -36,4 +44,12 @@ private:
     QAction *m_showAction = nullptr;
     QAction *m_quitAction = nullptr;
     ConfigManager *m_configManager = nullptr;
+    HidManager *m_hidManager = nullptr;
+    QMediaPlayer *m_batteryPlayer = nullptr;
+    QAudioOutput *m_batteryAudioOutput = nullptr;
+    int m_lastBatteryAlertThreshold = -1;
+    int m_lastKnownBatteryLevel = -1;
+    bool m_lastKnownCharging = false;
+    bool m_fullBatteryNotified = false;
+    bool m_batteryBaselineInitialized = false;
 };

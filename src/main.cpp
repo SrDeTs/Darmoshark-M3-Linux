@@ -95,6 +95,7 @@ static QString defaultConfigText()
         "auto_start_enabled = false\n"
         "minimize_to_tray_enabled = false\n"
         "start_minimized_enabled = false\n"
+        "battery_alerts_enabled = true\n"
         "\n"
         "[buttons]\n"
         "left = \"Left-Click\"\n"
@@ -200,6 +201,7 @@ int main(int argc, char *argv[])
     appController.setConfigManager(&configManager);
     HidManager hidManager;
     hidManager.setConfigManager(&configManager);
+    appController.setHidManager(&hidManager);
 
     QString userConfigPath = customConfigPath.isEmpty()
         ? QDir::homePath() + "/.config/Darmoshark M3 Linux/config.toml"

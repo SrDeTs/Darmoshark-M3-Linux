@@ -8,8 +8,21 @@ Rectangle {
     property bool batteryKnown: false
     property bool charging: false
     property int batteryLevel: -1
-    property rect sourceRect: Qt.rect(0, 0, 0, 0)
-
+    readonly property color batteryColor: {
+        if (!root.batteryKnown)
+            return "#9aa6bc"
+        if (root.charging)
+            return "#7ed38b"
+        if (root.batteryLevel <= 10)
+            return "#ff6b6b"
+        if (root.batteryLevel <= 20)
+            return "#ff8c5a"
+        if (root.batteryLevel <= 35)
+            return "#ffb357"
+        if (root.batteryLevel <= 60)
+            return "#ffd166"
+        return "#8ddf8a"
+    }
     width: 118
     height: 84
     radius: 20
@@ -17,28 +30,14 @@ Rectangle {
     border.color: "#1f2020"
     border.width: 1
 
-    Column {
+    Text {
         anchors.centerIn: parent
-        spacing: 6
-
-        Image {
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: 42
-            height: 24
-            source: "qrc:/images/Bateria/SpryteBateria.png"
-            sourceClipRect: root.sourceRect
-            fillMode: Image.PreserveAspectFit
-            smooth: true
-            mipmap: true
-        }
-
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: root.batteryKnown ? (root.batteryLevel + "%") : "--"
-            color: root.textColor
-            font.pixelSize: 17
-            font.family: root.titleFont
-            font.weight: Font.Medium
-        }
+        text: root.batteryKnown ? (root.batteryLevel + "%") : "--"
+        color: root.batteryColor
+        font.pixelSize: 33
+        font.family: root.titleFont
+        font.weight: Font.DemiBold
+        style: Text.Outline
+        styleColor: Qt.rgba(0, 0, 0, 0.16)
     }
 }

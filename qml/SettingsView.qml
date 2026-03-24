@@ -142,7 +142,7 @@ Item {
 
     Rectangle {
         width: 430
-        height: 568
+        height: 620
         anchors.left: parent.left
         anchors.leftMargin: 240
         anchors.top: parent.top
@@ -302,6 +302,28 @@ Item {
                 SettingsSwitch {
                     checked: configManager.startMinimizedEnabled
                     onToggled: configManager.setStartMinimizedEnabled(checked)
+                }
+            }
+
+            Item { Layout.preferredHeight: 12 }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 28
+
+                Text {
+                    text: I18n.tr(configManager.language, "settings.battery_alerts")
+                    color: textPrimary
+                    font.pixelSize: 14
+                    font.family: bodyFont
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Item { Layout.fillWidth: true }
+
+                SettingsSwitch {
+                    checked: configManager.batteryAlertsEnabled
+                    onToggled: configManager.setBatteryAlertsEnabled(checked)
                 }
             }
 
